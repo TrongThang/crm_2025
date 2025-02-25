@@ -12,6 +12,7 @@ class ERROR_CODES(Enum):
     PRICE_INVALID = 4
     PRICE_GREATER_ZERO = 5
     PRICE_LESSER_ZERO = 6
+    COST_PRICE_GREATER_SELL_PRICE = 7
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
@@ -74,6 +75,7 @@ class MESSAGES(Enum):
     PRICE_INVALID = "Giá sản phẩm không hợp lệ!"
     # PRICE_GREATER_ZERO = "Giá phải lớn hơn 0"
     PRICE_LESSER_ZERO = "Giá sản phẩm phải lớn hơn 0"
+    COST_PRICE_GREATER_SELL_PRICE = "Giá nhập phải nhỏ hơn giá bán"
 
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"

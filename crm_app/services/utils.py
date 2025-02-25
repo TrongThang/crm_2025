@@ -3,6 +3,19 @@ from crm_app.docs.containts import ERROR_CODES, MESSAGES, get_error_response
 import os
 import datetime
 
+def serialize_data(data):
+    def serialize_value(value):
+        if isinstance(value, datetime.datetime):
+            return value.isoformat()  # Chuyển datetime thành chuỗi ISO 8601
+        elif isinstance(value, bytes):
+            return value.decode('utf-8', errors='ignore')  # Chuyển bytes thành chuỗi UTF-8
+        return value  # Giữ nguyên các kiểu dữ liệu khác
+
+    return [
+        {key: serialize_value(value) for key, value in dict(row).items()}
+        for row in data
+    ]
+
 def validate_name(name, model,existing_id = None,max_length = 255):
     if name is None:
         return get_error_response(ERROR_CODES.DVT_NAME_REQUIRED)
@@ -43,12 +56,14 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_uploaded_file(file, upload_folder, filename = None, prefix="", suffix=""):
+    print('file:', file)
+
     if not file or file.filename == '':
         return  { 
             "errorCode":ERROR_CODES.FILE_NOT_FOUND,
             "message":MESSAGES.FILE_NOT_FOUND
         }
-
+    print('file:', file)
     if allowed_file(file.filename):
         # 📌 Lấy phần mở rộng file
         ext = file.filename.rsplit('.', 1)[1].lower()
@@ -80,6 +95,7 @@ def save_uploaded_file(file, upload_folder, filename = None, prefix="", suffix="
             "message":MESSAGES.FILE_EXTENSION}
 
 def delete_file(upload_folder, filename):
+
     if not filename:
         return {"errorCode": ERROR_CODES.NOT_FOUND}, 404
 
@@ -88,3 +104,11 @@ def delete_file(upload_folder, filename):
         os.remove(file_path)
         return {"message": MESSAGES.SUCCESS}, 200
     return {"errorCode": ERROR_CODES.NOT_FOUND}, 404
+
+def isExistId(id, model):
+    if isinstance(model, type) and hasattr(model, 'query'):
+        existing_record = model.query.get(id)
+        if existing_record is None:
+            return get_error_response(ERROR_CODES.NOT_FOUND)
+        
+    return True

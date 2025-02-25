@@ -1,5 +1,6 @@
 from crm_app.models.BaseModel import BaseModel
 from sqlalchemy import DateTime, String, Column, Float, TIMESTAMP
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class BaoHanh(BaseModel):
@@ -8,6 +9,8 @@ class BaoHanh(BaseModel):
     created_at = Column(TIMESTAMP, default = datetime.now())
     updated_at = Column(TIMESTAMP)
     deleted_at = Column(TIMESTAMP)
+
+    san_phams = relationship("SanPham", back_populates="thoi_gian_bao_hanh")
 
     def __str__(self):
         return str(self.id)

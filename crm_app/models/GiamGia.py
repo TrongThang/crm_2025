@@ -1,5 +1,6 @@
 from crm_app.models.BaseModel import BaseModel
 from sqlalchemy import TIMESTAMP, String, Column, Float
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class GiamGia(BaseModel):
@@ -9,6 +10,8 @@ class GiamGia(BaseModel):
     created_at = Column(TIMESTAMP, default = datetime.now())
     updated_at = Column(TIMESTAMP)
     deleted_at = Column(TIMESTAMP)
+
+    san_phams = relationship("SanPham", back_populates="loai_giam_gia")
 
     def __str__(self):
         return str(self.id)
