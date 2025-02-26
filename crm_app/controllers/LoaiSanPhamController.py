@@ -7,9 +7,9 @@ class LoaiSanPhamController(Resource):
     # @swag_from('')
     def get(self):
         data = request.args
-        kw = data.get('kw')
+        filter = data.get('filter')
 
-        result = get_loai_sp(kw=kw)
+        result = get_loai_sp(filter=filter)
 
         return result
     

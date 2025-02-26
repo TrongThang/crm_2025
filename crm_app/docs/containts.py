@@ -13,6 +13,8 @@ class ERROR_CODES(Enum):
     PRICE_GREATER_ZERO = 5
     PRICE_LESSER_ZERO = 6
     COST_PRICE_GREATER_SELL_PRICE = 7
+    PHONE_INVALID = 8
+    EMAIL_INVALID = 9
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
@@ -61,6 +63,9 @@ class ERROR_CODES(Enum):
     ACCOUNT_INVALID = 7001
     USERNAME_LENGTH = 7002
     PASSWORD_LENGTH = 7003
+    NHAN_VIEN_NAME_REQUIRED = 7004
+    NHAN_VIEN_NOT_FOUND = 7005
+    NHAN_VIEN_NAME_LENGTH = 7006
 
 
 class MESSAGES(Enum):
@@ -76,6 +81,8 @@ class MESSAGES(Enum):
     # PRICE_GREATER_ZERO = "Giá phải lớn hơn 0"
     PRICE_LESSER_ZERO = "Giá sản phẩm phải lớn hơn 0"
     COST_PRICE_GREATER_SELL_PRICE = "Giá nhập phải nhỏ hơn giá bán"
+    PHONE_INVALID = "Số điện thoại không hợp lệ!"
+    EMAIL_INVALID = "Email không hợp lệ!"
 
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
@@ -125,7 +132,8 @@ class MESSAGES(Enum):
     ACCOUNT_INVALID = "Tài khoản không hợp lệ"
     USERNAME_LENGTH = "Tên đăng nhập quá dài hoặc quá ngắn"
     PASSWORD_LENGTH = "Mật khẩu quá dài hoặc quá ngắn"
-
+    NHAN_VIEN_NAME_LENGTH = "Họ tên từ 1 đến 255 ký tự"
+    
 def get_error_response(error_code: ERROR_CODES, result = None):
     """Trả về response JSON chứa errorCode và message tương ứng"""
     message = MESSAGES[error_code.name].value if error_code.name in MESSAGES.__members__ else "Lỗi không xác định"

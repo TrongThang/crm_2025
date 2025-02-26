@@ -7,9 +7,9 @@ class DonViTinhController(Resource):
     # @swag_from('')
     def get(self):
         data = request.args
-        kw = data.get('kw')
+        filter = data.get('filter')
 
-        result = get_don_vi_tinh(kw=kw)
+        result = get_don_vi_tinh(filter=filter)
 
         return result
     

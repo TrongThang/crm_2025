@@ -7,10 +7,9 @@ class GiamGiaController(Resource):
     # @swag_from('')
     def get(self):
         data = request.args
-        kw = data.get('kw')
-        value = data.get('value')
+        filter = data.get('filter')
 
-        result = get_giam_gia(kw=kw, value=value)
+        result = get_giam_gia(filter)
 
         return result
     

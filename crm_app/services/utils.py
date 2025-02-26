@@ -2,6 +2,7 @@ from flask import jsonify, current_app
 from crm_app.docs.containts import ERROR_CODES, MESSAGES, get_error_response
 import os
 import datetime
+import re
 
 def serialize_data(data):
     def serialize_value(value):
@@ -23,11 +24,13 @@ def validate_name(name, model,existing_id = None,max_length = 255):
         return get_error_response(ERROR_CODES.DVT_NAME_LENGTH)
     
     if isinstance(model, type) and hasattr(model, 'query'):
-        existing_record = model.query.filter_by(ten=name).first()
-        if existing_record and (existing_id is None or existing_record.id != existing_id):
-            return get_error_response(ERROR_CODES.DVT_NAME_EXISTED)
+        filter_field = 'ten' if hasattr(model, 'ten') else 'ten_san_pham' if hasattr(model, 'ten_san_pham') else None
 
-        
+        if filter_field:
+            existing_record = model.query.filter_by(ten=name).first()
+            if existing_record and (existing_id is None or existing_record.id != existing_id):
+                return get_error_response(ERROR_CODES.DVT_NAME_EXISTED)
+
     elif isinstance(model, (list, set)):
         if name in model:
             return get_error_response(ERROR_CODES.DVT_NAME_EXISTED)
@@ -50,6 +53,16 @@ def validate_number(number, model):
         return get_error_response(ERROR_CODES.PRICE_LESSER_ZERO) 
     
     return None
+
+def validate_email(email):
+    valid = re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email)
+    return valid
+
+def validate_phone(phone):
+    rule = re.compile(r'/^[0-9]{10,14}$/')
+
+    if not rule.search(phone):
+        return get_error_response(ERROR_CODES.PHONE_INVALID)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
 def allowed_file(filename):
@@ -106,8 +119,9 @@ def delete_file(upload_folder, filename):
     return {"errorCode": ERROR_CODES.NOT_FOUND}, 404
 
 def isExistId(id, model):
+    print('id:', id)
     if isinstance(model, type) and hasattr(model, 'query'):
-        existing_record = model.query.get(id)
+        existing_record = model.query.get(id )
         if existing_record is None:
             return get_error_response(ERROR_CODES.NOT_FOUND)
         

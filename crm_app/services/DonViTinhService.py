@@ -1,13 +1,14 @@
 from flask import jsonify
 from crm_app.docs.containts import ERROR_CODES, MESSAGES
 from crm_app.services.utils import *
+from crm_app.services.helpers import *
 from crm_app.models.DonViTinh import DonViTinh
 from crm_app import db
 from sqlalchemy import text
 
-def get_don_vi_tinh (kw = None):
-    kw = f"%{kw}%" if kw else "%"
-    query = text("SELECT id, ten, created_at, updated_at, deleted_at FROM don_vi_tinh WHERE ten LIKE :kw")
+def get_don_vi_tinh (filter = None):
+    build_where = build_where_query(filter=filter)
+    query = text("SELECT id, ten, created_at, updated_at, deleted_at FROM don_vi_tinh {build_where}")
     data = db.session.execute(query, {'kw': kw}).fetchall()
 
     result = [{

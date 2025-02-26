@@ -7,9 +7,9 @@ class BaoHanhController(Resource):
     # @swag_from('')
     def get(self):
         data = request.args
-        kw = data.get('kw')
+        filter = data.get('filter')
 
-        result = get_bao_hanh(kw=kw)
+        result = get_bao_hanh(filter=filter)
 
         return result
     

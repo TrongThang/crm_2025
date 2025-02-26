@@ -1,15 +1,15 @@
-from BaseModel import BaseModel
-from sqlalchemy import TIMESTAMP, String, Column, INT, Float, TEXT
+from crm_app.models.BaseModel import BaseModel
+from sqlalchemy import TIMESTAMP, String, Column, INT, Float, TEXT, BOOLEAN
 from datetime import datetime
 
-class SanPham(BaseModel):
+class NhanVien(BaseModel):
     __tablename__ = 'nhan_vien'
     ten_dang_nhap = Column(String(255), nullable= False)
     mat_khau = Column(String(255))
     ho_ten = Column(INT)
     email = Column(String(255))
     dien_thoai = Column(INT)
-    dia_chi = Column(Float)
+    dia_chi = Column(String(255))
     avatar = Column(TEXT)
     chuc_vu_id = Column(BOOLEAN, default=True)
     created_at = Column(TIMESTAMP, default = datetime.now)

@@ -5,10 +5,10 @@ from crm_app.models.BaoHanh import BaoHanh
 from crm_app import db
 from sqlalchemy import text
 
-def get_bao_hanh (kw = None):
-    kw = f"%{kw}%" if kw else "%"
-    query = text("SELECT id, ten, created_at, updated_at, deleted_at FROM thoi_gian_bao_hanh WHERE ten LIKE :kw")
-    data = db.session.execute(query, {'kw': kw}).fetchall()
+def get_bao_hanh (filter = None):
+    build_where = build_where_query(filter=filter)
+    query = text(f"SELECT id, ten, created_at, updated_at, deleted_at FROM thoi_gian_bao_hanh {build_where}")
+    data = db.session.execute(query).fetchall()
 
     result = [{
         'id': row.id,

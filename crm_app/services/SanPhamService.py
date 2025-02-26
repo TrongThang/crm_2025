@@ -9,6 +9,9 @@ from crm_app.models.GiamGia import GiamGia
 from crm_app import db
 from sqlalchemy import text
 import json
+from crm_app.services.helpers import *
+
+from crm_app.services.ChiTietSanPhamService import *
 
 def to_dict_test(self):
     result = {}
@@ -24,22 +27,27 @@ def to_dict_test(self):
 def to_dict(result_set):
     result_list = [
         {
-            "id": row["sp_id"],
-            "ten": row["sp_ten"],
+            "id": row["id"],
+            "ten": row["ten"],
             "upc": row["upc"],
-            "hinh_anh": row["sp_hinh_anh"],
+            "hinh_anh": row["hinh_anh"],
             "vat": row["vat"],
             "mo_ta": (
-                row["sp_mo_ta"].decode('utf-8', errors='replace')
-                if isinstance(row["sp_mo_ta"], bytes)
-                else row["sp_mo_ta"]
+                row["mo_ta"].decode('utf-8', errors='replace')
+                if isinstance(row["mo_ta"], bytes)
+                else row["mo_ta"]
             ),
-            "trang_thai": row["sp_trang_thai"],
-            "loai_san_pham": {"id": row["lsp_id"], "ten": row["lsp_ten"]} if row["lsp_id"] else None,
-            "don_vi_tinh": {"id": row["dvt_id"], "ten": row["dvt_ten"]} if row["dvt_id"] else None,
-            "loai_giam_gia": {"id": row["gg_id"], "ten": row["gg_ten"]} if row["gg_id"] else None,
-            "thoi_gian_bao_hanh": {"id": row["bh_id"], "ten": row["bh_ten"]} if row["bh_id"] else None,
-            "created_at": str(row["created_at"]),  # Chuyển datetime thành string
+            "trang_thai": row["trang_thai"],
+            "loai_san_pham_id": row["loai_san_pham_id"],
+            "loai_san_pham": row["loai_san_pham"],
+            "don_vi_tinh_id": row["don_vi_tinh_id"],
+            "don_vi_tinh": row["don_vi_tinh"],
+            "loai_giam_gia_id": row["loai_giam_gia_id"],
+            "loai_giam_gia": row["loai_giam_gia"],
+            "thoi_gian_bao_hanh_id": row["thoi_gian_bao_hanh_id"],
+            "thoi_gian_bao_hanh": row["thoi_gian_bao_hanh"],
+
+            "created_at": str(row["created_at"]),
             "updated_at": str(row["updated_at"]),
             "deleted_at": str(row["deleted_at"]) if row["deleted_at"] else None
         }
@@ -48,55 +56,41 @@ def to_dict(result_set):
 
     return result_list
 
-def get_san_pham (ten=None, mota=None, vat=None, lsp=None, dvt=None, gg=None, bh=None):
-    ten = f"%{ten}" if ten else "%"
-    mota = f"%{mota}" if mota else "%"
-    vat = f"%{vat}" if vat else "%"
-    lsp = f"%{lsp}" if lsp else "%"
-    dvt = f"%{dvt}" if dvt else "%"
-    gg = f"%{gg}" if gg else "%"
-    bh = f"%{bh}" if bh else "%"
-
-    query = text("""
-    SELECT 
-        sp.id as sp_id, sp.ten as sp_ten, upc, sp.hinh_anh as sp_hinh_anh, vat,
-            mo_ta as sp_mo_ta, trang_thai as sp_trang_thai, 
-        lsp.id as lsp_id, lsp.ten as lsp_ten, dvt.id as dvt_id, dvt.ten as dvt_ten, 
-        gg.id as gg_id, gg.ten as gg_ten, bh.id as bh_id, bh.ten as bh_ten, 
-        sp.created_at, sp.updated_at, sp.deleted_at 
-    FROM san_pham sp 
-        LEFT JOIN 
-            loai_san_pham lsp ON lsp.id = sp.loai_san_pham_id
-        LEFT JOIN 
-            don_vi_tinh dvt ON dvt.id = sp.don_vi_tinh_id
-        LEFT JOIN 
-            loai_giam_gia gg ON gg.id = sp.loai_giam_gia_id
-        LEFT JOIN
-            thoi_gian_bao_hanh bh ON bh.id = sp.thoi_gian_bao_hanh_id
-    WHERE sp.ten LIKE :ten
-        OR sp.mo_ta LIKE :mota 
-        OR sp.vat LIKE :vat
-        OR lsp.ten LIKE :lsp_ten
-        OR dvt.ten LIKE :dvt_ten
-        OR gg.ten LIKE :gg_ten
-        OR bh.ten LIKE :bh_ten
-                """)
-    result_set  = db.session.execute(query,{
-        'ten':ten,
-        'mota':mota,
-        'vat':vat,
-        'lsp_ten':lsp,
-        'dvt_ten':dvt,
-        'gg_ten':gg,
-        'bh_ten':bh,
-    }).mappings().all()
-
+def get_san_pham (skip, take, sort, order, filter):
+    build_where = build_where_query(filter=filter)
+    opt_order = f" {order.upper()} " if order else "" 
+    build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
     
+    print("build_sort:", build_sort) 
+
+    query = text(f"""
+    SELECT 
+        san_pham.id as id, san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, vat, mo_ta as mo_ta, trang_thai, 
+        loai_san_pham.id as loai_san_pham_id, loai_san_pham.ten as loai_san_pham, don_vi_tinh.id as don_vi_tinh_id, don_vi_tinh.ten as don_vi_tinh, 
+        loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh, 
+        san_pham.created_at, san_pham.updated_at, san_pham.deleted_at 
+    FROM san_pham 
+        LEFT JOIN 
+            loai_san_pham ON loai_san_pham.id = san_pham.loai_san_pham_id
+        LEFT JOIN   
+            don_vi_tinh ON don_vi_tinh.id = san_pham.don_vi_tinh_id
+        LEFT JOIN 
+            loai_giam_gia ON loai_giam_gia.id = san_pham.loai_giam_gia_id
+        LEFT JOIN
+            thoi_gian_bao_hanh ON thoi_gian_bao_hanh.id = san_pham.thoi_gian_bao_hanh_id
+    {build_where} 
+    {build_sort} 
+    LIMIT {take} 
+    OFFSET {skip} 
+                """)
+    result_set = db.session.execute(query).mappings().all()
+
     result_list = to_dict(result_set=result_set)
 
     return get_error_response(ERROR_CODES.SUCCESS, result=result_list)
 
-def post_san_pham (ten=None, upc=None, vat=None, mo_ta=None, trang_thai=None, file = None, loai_id=None, dvt_id=None, gg_id=None, bh_id=None, ):
+def post_san_pham (ten, upc, vat, mo_ta, trang_thai, file, loai_id, dvt_id, gg_id, bh_id, 
+ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl):
     error = validate_name(name=ten, model=SanPham)
     if error:
         return error
@@ -120,12 +114,31 @@ def post_san_pham (ten=None, upc=None, vat=None, mo_ta=None, trang_thai=None, fi
     san_pham = SanPham(ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, hinh_anh = filename, loai_san_pham_id=loai_id, don_vi_tinh_id=dvt_id, loai_giam_gia_id=gg_id, thoi_gian_bao_hanh_id=bh_id)
 
     db.session.add(san_pham)
+    db.session.flush()
+    for ten_ct, file_ct, nhap, ban, soluong in zip(ten_pl, file_pl, gia_nhap, gia_ban, so_luong):
+        result_ct = add_chi_tiet_san_pham(
+            san_pham_id=san_pham.id, 
+            ten_phan_loai=ten_ct,  
+            file_phan_loai=file_ct,  
+            gia_nhap=nhap,  
+            gia_ban=ban,  
+            so_luong=soluong,  
+            trang_thai_pl=san_pham.trang_thai
+        )
+
+        if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS:  
+            return result_ct
+        
     db.session.commit()
 
     return get_error_response(ERROR_CODES.SUCCESS)
 
-def put_san_pham (id = None, ten=None, upc=None, vat=None, mo_ta=None, trang_thai=None, file = None, loai_id=None, dvt_id=None, gg_id=None, bh_id=None):
+def put_san_pham (id, ten, upc, vat, mo_ta, trang_thai, file, loai_id, dvt_id, gg_id, bh_id,
+                id_pl, ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl
+                ):
     san_pham = SanPham.query.get(id)
+    print('san_pham:', san_pham.id)
+    print('san_pham:', san_pham.ten)
     if san_pham is None:
         return get_error_response(ERROR_CODES.SAN_PHAM_NOT_FOUND)
     
@@ -152,7 +165,7 @@ def put_san_pham (id = None, ten=None, upc=None, vat=None, mo_ta=None, trang_tha
     if trang_thai is not None:
         san_pham.trang_thai = trang_thai
     if loai_id is not None:
-        isExisted = isExistId(dvt_id, LoaiSanPham)
+        isExisted = isExistId(loai_id, LoaiSanPham)
         if isExisted != True:
             return isExisted
         san_pham.loai_san_pham_id = loai_id
@@ -181,6 +194,21 @@ def put_san_pham (id = None, ten=None, upc=None, vat=None, mo_ta=None, trang_tha
         else:
             return get_error_response(upload['errorCode'])
     
+    for id, ten_ct, file_ct, nhap, ban, soluong in zip(id_pl, ten_pl, file_pl, gia_nhap, gia_ban, so_luong):
+        result_ct = update_chi_tiet_san_pham(
+            id=id,
+            san_pham_id=san_pham.id, 
+            ten_phan_loai=ten_ct,  
+            file_phan_loai=file_ct,  
+            gia_nhap=nhap,  
+            gia_ban=ban,  
+            so_luong=soluong,  
+            trang_thai_pl=san_pham.trang_thai
+        )
+
+        if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS:  
+            return result_ct
+        
     db.session.commit()
 
     return get_error_response(ERROR_CODES.SUCCESS)
@@ -191,7 +219,29 @@ def delete_san_pham(id):
     if sp_delete is None:
         return get_error_response(ERROR_CODES.SAN_PHAM_NOT_FOUND)
     
+    result_ct = delete_many_chi_tiet_san_pham(san_pham_id=id)
+
+    # if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS: 
+    delete_file(upload_folder="san_pham",filename=sp_delete.hinh_anh)
     db.session.delete(sp_delete)
+    db.session.commit()
+
+    return get_error_response(ERROR_CODES.SUCCESS)
+
+def delete_chi_tiet_san_pham(id_ct = None, id_pl = None):
+    if id_pl is not None:
+        for id in id_pl:
+            ct_delete = ChiTietSanPham.query.get(id)
+            if ct_delete is None:
+                return get_error_response(ERROR_CODES.CTSP_INVALID_ID)
+            db.session.delete(ct_delete)
+    elif id_ct is not None:
+        ct_delete = ChiTietSanPham.query.get(id_ct)
+        if ct_delete is None:
+            return get_error_response(ERROR_CODES.CTSP_INVALID_ID)
+        delete_file(upload_folder="chi_tiet_sp",filename=ct_delete.hinh_anh)
+        db.session.delete(ct_delete)
+    
     db.session.commit()
 
     return get_error_response(ERROR_CODES.SUCCESS)

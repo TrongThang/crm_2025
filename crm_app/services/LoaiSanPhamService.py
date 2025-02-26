@@ -1,15 +1,16 @@
 from flask import jsonify
 from crm_app.docs.containts import ERROR_CODES, MESSAGES
 from crm_app.services.utils import *
+from crm_app.services.helpers import *
 from crm_app.models.LoaiSanPham import LoaiSanPham
 from crm_app import db
 from sqlalchemy import text
 
-def get_loai_sp (kw):
-    kw = f"%{kw}%" if kw else "%"
+def get_loai_sp (filter):
+    build_where = build_where_query(filter=filter)
 
-    query = text("SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at FROM loai_san_pham WHERE ten LIKE :kw")
-    data = db.session.execute(query, {'kw': kw}).fetchall()
+    query = text(f"SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at FROM loai_san_pham {build_where}")
+    data = db.session.execute(query).fetchall()
 
     result = [{
         'id': row.id,
@@ -53,7 +54,6 @@ def put_loai_sp (id, name, file):
         loai_sp.ten = name
     if file is not None:
         upload = save_uploaded_file(file, "loai_sp", filename=loai_sp.hinh_anh,prefix='loai_sp')
-
         if(upload['errorCode'] == ERROR_CODES.SUCCESS):
             loai_sp.hinh_anh = upload['filename']
         elif upload['errorCode'] == ERROR_CODES.FILE_NOT_FOUND:

@@ -1,5 +1,4 @@
 from crm_app.models.ChiTietSanPham import ChiTietSanPham
-from crm_app.controllers.SanPhamController import ChiTietSanPhamController
 from crm_app.services.utils import *
 from crm_app import db
 
@@ -28,7 +27,7 @@ def add_chi_tiet_san_pham(san_pham_id, ten_phan_loai, file_phan_loai, gia_nhap, 
     if ten_phan_loai is not None:
         khong_phan_loai = False
 
-    upload = save_uploaded_file(file, "chi_tiet_sp", prefix='chi_tiet_sp_')
+    upload = save_uploaded_file(file_phan_loai, "chi_tiet_sp", prefix=f'chi_tiet_sp_{ten_phan_loai}_')
     if upload['errorCode'] == ERROR_CODES.SUCCESS:
         filename = upload['filename']
     elif (upload['errorCode'] == ERROR_CODES.FILE_NOT_FOUND):
@@ -62,7 +61,6 @@ def update_chi_tiet_san_pham(id, san_pham_id, ten_phan_loai, file_phan_loai, gia
             return error
         chi_tiet.so_luong = so_luong
 
-    # if gia_ban is not None:
     if gia_nhap is not None:
         error = validate_number(number=gia_nhap, model=ChiTietSanPham)
         if error:
@@ -84,11 +82,8 @@ def update_chi_tiet_san_pham(id, san_pham_id, ten_phan_loai, file_phan_loai, gia
     if trang_thai_pl is not None:
         chi_tiet.trang_thai = trang_thai_pl
     
-    if khong_phan_loai is not None:
-        chi_tiet.khong_phan_loai = khong_phan_loai
-    
     if file_phan_loai is not None:
-        upload = save_uploaded_file(file, "chi_tiet_sp", prefix='chi_tiet_sp_')
+        upload = save_uploaded_file(file_phan_loai, "chi_tiet_sp", filename=chi_tiet.hinh_anh, prefix=f'chi_tiet_sp_{ten_phan_loai}_')
         if upload['errorCode'] == ERROR_CODES.SUCCESS:
             filename = upload['filename']
         elif (upload['errorCode'] == ERROR_CODES.FILE_NOT_FOUND):
@@ -100,12 +95,23 @@ def update_chi_tiet_san_pham(id, san_pham_id, ten_phan_loai, file_phan_loai, gia
 
     return get_error_response(ERROR_CODES.SUCCESS)
 
-def delete_chi_tiet_san_pham (id):
+def delete_one_chi_tiet_san_pham (id = None):
     chi_tiet = ChiTietSanPham.query.get(id)
+
     if chi_tiet is None:
         return get_error_response(ERROR_CODES.CTSP_INVALID_ID)
     
     db.session.delete(chi_tiet)
     db.session.commit()
-    
+
+    return get_error_response(ERROR_CODES.SUCCESS)
+
+def delete_many_chi_tiet_san_pham (san_pham_id = None):
+    if san_pham_id is not None:
+        list_chi_tiet = ChiTietSanPham.query.filter_by(san_pham_id=san_pham_id)
+        for ct in list_chi_tiet:
+            chi_tiet = ChiTietSanPham.query.get(ct.id)
+            db.session.delete(chi_tiet)
+        db.session.commit()
+
     return get_error_response(ERROR_CODES.SUCCESS)
