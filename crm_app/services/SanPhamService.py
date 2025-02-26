@@ -57,7 +57,8 @@ def to_dict(result_set):
     return result_list
 
 def get_san_pham (skip, take, sort, order, filter):
-    build_where = build_where_query(filter=filter)
+    build_where = build_where_query(filter=filter) if filter else ''
+
     opt_order = f" {order.upper()} " if order else "" 
     build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
     

@@ -5,7 +5,7 @@ from datetime import datetime
 
 class DonViTinh(BaseModel):
     __tablename__ = 'don_vi_tinh'
-    ten = Column(String(255), nullable = False)
+    ten = Column(String(255), nullable = False, unique=True)
     created_at = Column(TIMESTAMP, default = datetime.now())
     updated_at = Column(TIMESTAMP)
     deleted_at = Column(TIMESTAMP)

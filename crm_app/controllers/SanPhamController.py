@@ -12,7 +12,7 @@ class SanPhamController(Resource):
         take = data.get('take')
         sort = data.get('sort')
         order = data.get('order')
-        filter = data.get('filter')
+        filter = data.get('filters')
 
         result = get_san_pham(skip=skip, take=take, sort=sort, order=order, filter=filter)
         return result

@@ -5,7 +5,7 @@ from datetime import datetime
 
 class GiamGia(BaseModel):
     __tablename__ = 'loai_giam_gia'
-    ten = Column(String(255), nullable = False)
+    ten = Column(String(255), nullable = False, unique=True)
     gia_tri = Column(Float, default = 0)
     created_at = Column(TIMESTAMP, default = datetime.now())
     updated_at = Column(TIMESTAMP)

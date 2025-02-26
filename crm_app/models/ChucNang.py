@@ -4,11 +4,11 @@ from datetime import datetime
 
 class ChucNang(BaseModel):
     __tablename__ = "chuc_nang"
-    ten = Column(String(255), nullable=Fasle)
-    created_at = Column(TIMESTAMP, default=datetime.now)
-    code = Column(String(255))
+    ten = Column(String(255), nullable=False, unique=True)
+    code = Column(String(255), unique=True)
     type = Column(String(255))
-    show_in_menu = Column(String(255))
+    show_in_menu = Column(String(255)) 
+    created_at = Column(TIMESTAMP, default=datetime.now)
     updated_at = Column(TIMESTAMP, default=datetime.now, onupdate=datetime.now)
     created_at = Column(TIMESTAMP)
 

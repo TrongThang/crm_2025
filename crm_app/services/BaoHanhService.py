@@ -1,13 +1,15 @@
-from flask import jsonify
+from flask import jsonify, make_response
 from crm_app.docs.containts import ERROR_CODES, MESSAGES
 from crm_app.services.utils import *
+from crm_app.services.helpers import build_where_query
 from crm_app.models.BaoHanh import BaoHanh
 from crm_app import db
 from sqlalchemy import text
 
 def get_bao_hanh (filter = None):
-    build_where = build_where_query(filter=filter)
-    query = text(f"SELECT id, ten, created_at, updated_at, deleted_at FROM thoi_gian_bao_hanh {build_where}")
+    build_where = build_where_query(filter=filter) if filter else ''
+
+    query = text(f"""SELECT id, ten, created_at, updated_at, deleted_at FROM thoi_gian_bao_hanh {build_where}""")
     data = db.session.execute(query).fetchall()
 
     result = [{
@@ -20,7 +22,7 @@ def get_bao_hanh (filter = None):
     for row in data
     ]
 
-    return get_error_response(error_code=ERROR_CODES.SUCCESS,result=result)
+    return make_response(get_error_response(error_code=ERROR_CODES.SUCCESS,result=result), 200)
 
 def post_bao_hanh (name):
     error = validate_number(
@@ -33,8 +35,9 @@ def post_bao_hanh (name):
     newThoiGianBaoHanh = BaoHanh(ten=name)
     db.session.add(newThoiGianBaoHanh)
     db.session.commit()
+    db.session.flush()
 
-    return jsonify({"errorCode": ERROR_CODES.SUCCESS.value, "message": MESSAGES.SUCCESS.value})
+    return make_response(get_error_response(error_code=ERROR_CODES.SUCCESS), 200)
 
 def put_bao_hanh (id, name):
     error = validate_number(
@@ -47,13 +50,13 @@ def put_bao_hanh (id, name):
     bao_hanh = BaoHanh.query.get(id)
     
     if bao_hanh is None:
-        return get_error_response(ERROR_CODES.DVT_NOT_FOUND)
+        return make_response(get_error_response(ERROR_CODES.DVT_NOT_FOUND), 401)
 
     bao_hanh.ten = name
 
     db.session.commit()
 
-    return get_error_response(ERROR_CODES.SUCCESS)
+    return make_response(get_error_response(error_code=ERROR_CODES.SUCCESS), 200)
 
 def delete_bao_hanh(id):
     bao_hanh = BaoHanh.query.get(id)
@@ -61,4 +64,4 @@ def delete_bao_hanh(id):
     db.session.delete(bao_hanh)
     db.session.commit()
 
-    return get_error_response(ERROR_CODES.SUCCESS)
+    return make_response(get_error_response(error_code=ERROR_CODES.SUCCESS), 200)

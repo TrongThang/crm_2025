@@ -4,6 +4,8 @@ from flask import request, jsonify, make_response
 from crm_app import app,db
 from functools import wraps
 from crm_app.models.NhanVien import NhanVien
+from crm_app.docs.containts import ERROR_CODES
+from crm_app.services.utils import validate_name
 import bcrypt
 import jwt
 import hashlib
@@ -22,20 +24,28 @@ def create_token(username):
 def login(username, password):
     print('login', username, password)
     if password is None:
-        return jsonify({'message': 'Tài khoản hoặc mật khẩu không chinnh xác', 'success': False})
+        return jsonify({'message': 'Tài khoản hoặc mật khẩu không chinnh xác', 'errorCode': a})
 
     user = NhanVien.query.filter_by(ten_dang_nhap=username).first()
-    # user = NhanVien.query.get(1)
+
     print('users:', user)
     if not username or not user:
-        return jsonify({'message': 'Không tìm thấy tên tài khoản người dùng', 'success': False})
+        return make_response(jsonify({'message': 'Không tìm thấy tên tài khoản người dùng', 'errorCode': 1}), 401)
+    
+    # error = validate_name(name=username, model=NhanVien, max_length=50)
+    # if error:
+    #     return error
+    
+    # error = validate_name(name=password, model=NhanVien, max_length=50)
+    # if error:
+    #     return error
     
     if hashlib.md5(password.encode()).hexdigest() == user.mat_khau:
     # if bcrypt.checkpw(password.encode('utf-8'), user.mat_khau.encode('utf-8')):
         token = create_token(username)
         return jsonify({'token': token, 'success': True})
     else:
-        return jsonify({'message':'Mật khẩu không chính xác', 'success': False})
+        return make_response(jsonify({'message':'Mật khẩu không chính xác', 'errorCode': 1}), 401)
 
 def register(username, password):
     if password is None:

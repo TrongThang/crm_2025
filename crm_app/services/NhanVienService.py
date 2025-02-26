@@ -5,9 +5,9 @@ from crm_app.models.ChucVu import ChucVu
 
 from crm_app import db
 def get_nhan_vien(filter):
-    build_where = build_where_query(filter=filter)
+    build_where = build_where_query(filter=filter) if filter else ''
     query = text(f"""SELECT 
-                        nhan_vien.id, ho_ten, email, dien_thoai, dia_chi, avatar, cv.ten as chuc_vu, cv.id as chuc_vu_id, nhan_vien.created_at, nhan_vien.updated_at, nhan_vien.deleted_at
+                        nhan_vien.id, ten_dang_nhap,ho_ten, email, dien_thoai, dia_chi, avatar, cv.ten as chuc_vu, cv.id as chuc_vu_id, nhan_vien.created_at, nhan_vien.updated_at, nhan_vien.deleted_at
                     FROM nhan_vien
                         LEFT JOIN chuc_vu cv ON cv.id = nhan_vien.id
                     {build_where}
@@ -16,13 +16,15 @@ def get_nhan_vien(filter):
 
     result = [{
         'id': row.id,
+        'ten_dang_nhap': row.ten_dang_nhap,
+        'mat_khau': None,
         'ho_ten': row.ho_ten,
         'email': row.email,
         'dien_thoai': row.dien_thoai,
         'dia_chi': row.dia_chi,
         'avatar': row.avatar,
         'chuc_vu_id': row.avatar,
-        'chuc_vu': row.chuc_vu,
+        'ten_chuc_vu': row.chuc_vu,
         'created_at': row.created_at,
         'updated_at': row.updated_at,
         'deleted_at': row.deleted_at,
@@ -30,7 +32,7 @@ def get_nhan_vien(filter):
     for row in data
     ]
 
-    return get_error_response(ERROR_CODES.SUCCESS, data)
+    return get_error_response(ERROR_CODES.SUCCESS, result)
 
 def post_nhan_vien(ho_ten, email, dien_thoai, avatar, chuc_vu_id):
     error = validate_name(ho_ten)
@@ -96,6 +98,10 @@ def put_nhan_vien(id, ho_ten, email, dien_thoai, avatar, chuc_vu_id):
     return get_error_response(ERROR_CODES.SUCCESS)
 
 
-def delete_nhan_vien():
-
+def delete_nhan_vien(id):
+    nhan_vien = NhanVien.query.get(id)
+    if nhan_vien is None:
+        return get_error_response(ERROR_CODES.NHAN_VIEN_NOT_FOUND)
+    db.session.delete(nhan_vien)
+    db.session.commit()
     return get_error_response(ERROR_CODES.SUCCESS)

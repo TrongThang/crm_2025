@@ -1,0 +1,89 @@
+tags:
+  - Bảo hành
+summary: Lấy danh sách bảo hành
+description: API để lấy danh sách bảo hành từ cơ sở dữ liệu
+
+parameters:
+  - name: filters
+    in: body
+    required: false
+    schema:
+      type: object
+      properties:
+        filters:
+          type: array
+          description: Danh sách các điều kiện lọc
+          items:
+            type: object
+            properties:
+              condition:
+                type: string
+                description: Điều kiện lọc (vd":" "=", "LIKE", ">", "<")
+                example: "="
+              field:
+                type: string
+                description: Trường dữ liệu cần lọc (vd":" "ten", "created_at")
+                example: "ten"
+              value:
+                type: string
+                description: Giá trị cần so sánh
+                example: "Bảo hành 12 tháng"
+        limit:
+          type: integer
+          description: Giới hạn số bản ghi trả về
+          example: 10
+        order:
+          type: string
+          description: Trường để sắp xếp (vd':' "created_at", "id")
+          example: "created_at"
+        page:
+          type: integer
+          description: Số trang cần lấy
+          example: 1
+        sort:
+          type: string
+          description: Sắp xếp tăng hoặc giảm ("asc", "desc")
+          example: "desc"
+responses:
+  200:
+    description: Lấy danh sách bảo hành thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              ten:
+                type: string
+                example: "Bảo hành 12 tháng"
+              created_at:
+                type: string
+                format: date-time
+                example: "2024-02-26T10:30:00Z"
+              updated_at:
+                type: string
+                format: date-time
+                example: "2024-02-26T10:30:00Z"
+              deleted_at:
+                type: string
+                format: date-time
+                example: null
+  400:
+    description: Lỗi dữ liệu đầu vào
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Dữ liệu không hợp lệ"

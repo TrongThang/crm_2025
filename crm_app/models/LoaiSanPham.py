@@ -5,7 +5,7 @@ from datetime import datetime
 
 class LoaiSanPham(BaseModel):
     __tablename__ = 'loai_san_pham'
-    ten = Column(String(255), nullable= False)
+    ten = Column(String(255), nullable= False, unique=True)
     hinh_anh = Column(String(255))
     created_at = Column(TIMESTAMP, default = datetime.now)
     updated_at = Column(TIMESTAMP, default = datetime.now, onupdate=datetime.now)

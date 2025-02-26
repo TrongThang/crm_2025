@@ -7,7 +7,7 @@ class DonViTinhController(Resource):
     # @swag_from('')
     def get(self):
         data = request.args
-        filter = data.get('filter')
+        filter = data.get('filters')
 
         result = get_don_vi_tinh(filter=filter)
 

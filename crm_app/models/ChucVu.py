@@ -4,7 +4,7 @@ from datetime import datetime
 
 class ChucVu(BaseModel):
     __tablename__ = "chuc_vu"
-    ten = Column(String(255), nullable=Fasle)
+    ten = Column(String(255), nullable=False, unique=True)
     created_at = Column(TIMESTAMP, default=datetime.now)
     updated_at = Column(TIMESTAMP, default=datetime.now, onupdate=datetime.now)
     created_at = Column(TIMESTAMP)

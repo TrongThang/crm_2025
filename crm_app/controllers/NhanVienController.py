@@ -4,7 +4,7 @@ from flask_restful import Resource
 class NhanVienController (Resource):
     def get():
         data = request.args
-        filter = data.get('filter')
+        filter = data.get('filters')
 
         pass
 

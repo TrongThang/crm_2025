@@ -1,0 +1,47 @@
+tags:
+  - Bao Hanh
+summary: Thêm thời hạn bảo hành mới
+description: API để thêm một thời hạn bảo hành mới
+
+parameters:
+  - name: ten
+    in: body
+    type: object
+    properties:
+      ten:
+        type: string
+    required: true
+    description: Thời gian bảo hành mong muốn
+
+responses:
+  200:
+    description: Thêm thời hạn bảo hành thành công
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            ten:
+              type: string
+            CreateAt:
+              type: string
+              format: date
+            UpdatedAt:
+              type: string
+              format: date
+            DeletedAt:
+              type: string
+              format: date
+        success:
+          type: boolean
+  400:
+    description: Lỗi dữ liệu đầu vào
+    examples:
+      application/json:
+      examples1:
+          message: "Tiêu đề không được bỏ trống"
+      examples2:
+          message: "Hạn chót lớn hơn thời gian hiện tại"

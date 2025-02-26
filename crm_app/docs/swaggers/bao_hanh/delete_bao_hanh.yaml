@@ -1,0 +1,55 @@
+tags:
+  - Bảo hành
+summary: Cập nhật bảo hành
+description: API để cập nhật tên bảo hành trong hệ thống
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID của bảo hành cần cập nhật
+          example: 1
+        name:
+          type: string
+          description: Tên mới của bảo hành
+          example: "Bảo hành 24 tháng"
+
+responses:
+  200:
+    description: Cập nhật bảo hành thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Cập nhật bảo hành thành công"
+  400:
+    description: Dữ liệu đầu vào không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "ID hoặc tên bảo hành không hợp lệ"
+  404:
+    description: Không tìm thấy bảo hành
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Không tìm thấy bảo hành với ID đã cung cấp"

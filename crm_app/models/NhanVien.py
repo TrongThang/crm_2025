@@ -4,11 +4,11 @@ from datetime import datetime
 
 class NhanVien(BaseModel):
     __tablename__ = 'nhan_vien'
-    ten_dang_nhap = Column(String(255), nullable= False)
+    ten_dang_nhap = Column(String(255), nullable= False, unique=True)
     mat_khau = Column(String(255))
-    ho_ten = Column(INT)
+    ho_ten = Column(String(255))
     email = Column(String(255))
-    dien_thoai = Column(INT)
+    dien_thoai = Column(String(255))
     dia_chi = Column(String(255))
     avatar = Column(TEXT)
     chuc_vu_id = Column(BOOLEAN, default=True)

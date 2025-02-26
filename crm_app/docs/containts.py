@@ -128,18 +128,25 @@ class MESSAGES(Enum):
     GIAM_GIA_NAME_EXISTED = "Tên giảm giá đã tồn tại"
     GIAM_GIA_INVALID_ID = "ID giảm giá không hợp lệ"
     GIAM_GIA_INVALID_PERCENT = "Mức giá giảm không được lớn hơn 90%"
+
     # NHAN_VIEN - 7xxx
     ACCOUNT_INVALID = "Tài khoản không hợp lệ"
     USERNAME_LENGTH = "Tên đăng nhập quá dài hoặc quá ngắn"
     PASSWORD_LENGTH = "Mật khẩu quá dài hoặc quá ngắn"
     NHAN_VIEN_NAME_LENGTH = "Họ tên từ 1 đến 255 ký tự"
+
+    #CHUC_VU - 8xxx
+    CHUC_VU_NOT_FOUND = "Kh"
+    CHUC_VU_NAME_LENGTH = ""
+    CHUC_VU_NAME_REQUIRED = ""
+
     
 def get_error_response(error_code: ERROR_CODES, result = None):
     """Trả về response JSON chứa errorCode và message tương ứng"""
     message = MESSAGES[error_code.name].value if error_code.name in MESSAGES.__members__ else "Lỗi không xác định"
 
     return jsonify({
-        "errorCode": error_code.value,
+        "error": error_code.value,
         "message": message,
         "data": result
     })

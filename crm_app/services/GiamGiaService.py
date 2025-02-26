@@ -9,7 +9,7 @@ from sqlalchemy import text
 def get_giam_gia (filter):
     build_where = build_where_query(filter=filter)
 
-    query = text(f"SELECT id, ten, gia_tri, created_at, updated_at, deleted_at FROM loai_giam_gia {build_where}")
+    query = text(f"""SELECT id, ten, gia_tri, created_at, updated_at, deleted_at FROM loai_giam_gia {build_where}""")
     data = db.session.execute(query).fetchall()
 
     result = [{

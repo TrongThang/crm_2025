@@ -5,12 +5,23 @@ from crm_app.services.helpers import *
 from crm_app.models.LoaiSanPham import LoaiSanPham
 from crm_app import db
 from sqlalchemy import text
+import math
 
-def get_loai_sp (filter):
-    build_where = build_where_query(filter=filter)
-
-    query = text(f"SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at FROM loai_san_pham {build_where}")
+def get_loai_sp (filter, limit, page):
+    build_where = build_where_query(filter=filter) if filter else ''
+    limit = limit if limit else 10
+    page = page if page else 1
+    skip = limit * (page - 1)
+    query = text(f"""
+                SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at 
+                FROM loai_san_pham 
+                {build_where} 
+                LIMIT {limit}
+                OFFSET {skip}
+            """)
+    print(query)
     data = db.session.execute(query).fetchall()
+    total_page = math.ceil(len(data)/limit)
 
     result = [{
         'id': row.id,
@@ -22,15 +33,16 @@ def get_loai_sp (filter):
     }
     for row in data
     ]
-
-    return get_error_response(error_code=ERROR_CODES.SUCCESS,result=result)
+    
+    response_data = {"data": result, "total_page": total_page}
+    return get_error_response(error_code=ERROR_CODES.SUCCESS,result=response_data)
 
 def post_loai_sp (name, file):
     error = validate_name(name=name, model=LoaiSanPham)
     if error:
         return error
     
-    upload = save_uploaded_file(file, 'loai_sp',prefix='loai_sp_')
+    upload = save_uploaded_file(file, 'loai_sp',prefix='loai_sp_')  
     if(upload['errorCode'] == ERROR_CODES.SUCCESS):
         filename = upload['filename'] 
     elif (upload['errorCode'] == ERROR_CODES.FILE_NOT_FOUND):

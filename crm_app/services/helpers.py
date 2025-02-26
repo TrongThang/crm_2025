@@ -10,31 +10,41 @@ def build_where_query(filter):
                 or field == 'thoi_gian_bao_hanh'
             ):
                 field = f"{field}.ten" 
-            elif field == 'ten':
-                field = f"san_pham.{field}"
+            # elif field == 'ten':
+            #     field = f"san_pham.{field}"
 
             if operator == 'contains':
-                sql_condition.append(f" {field} LIKE '%{value}%' ")
+                sql_condition.append(f""" {field} LIKE '%{value}%' """)
             elif operator == 'notcontains':
-                sql_condition.append(f" {field} NOT LIKE '%{value}'")
+                sql_condition.append(f""" {field} NOT LIKE '%{value}' """)
             elif operator == 'startswith':
-                sql_condition.append(f" {field} LIKE '{value}%'")
+                sql_condition.append(f""" {field} LIKE '{value}%' """)
             elif operator == 'endswith':
-                sql_condition.append(f" {field} LIKE '%{value}'")
+                sql_condition.append(f""" {field} LIKE '%{value}' """)
             elif operator == '=':
-                sql_condition.append(f" {field} = '{value}'")
+                sql_condition.append(f""" {field} = '{value}' """)
             elif operator == '<>':
-                sql_condition.append(f" {field} <> '{value}'")
+                sql_condition.append(f""" {field} <> '{value}' """)
             elif operator == '<':
-                sql_condition.append(f" {field} < {value}")
+                sql_condition.append(f""" {field} < {value} """)
             elif operator == '>':
-                sql_condition.append(f" {field} > {value}")
+                sql_condition.append(f""" {field} > {value} """)
             if operator == '<=':
-                sql_condition.append(f" {field} <= {value}")
+                sql_condition.append(f""" {field} <= {value} """)
             if operator == '>=':
-                sql_condition.append(f" {field} >= {value}")
+                sql_condition.append(f""" {field} >= {value} """)
         elif isinstance(item, str):
             logical_operator = item.upper()
-
+    print("logical_operator:", logical_operator)
+    print("sql_condition:", sql_condition)
     return " WHERE " + f" {logical_operator} ".join(sql_condition)
 
+# view-nhan-vien -> view 
+def get_word_before_dash(str):
+    result = ''
+    for c in str:
+        if(c == '-'):
+            return result
+        result = result + c
+
+    return result

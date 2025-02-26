@@ -7,9 +7,9 @@ from crm_app import db
 from sqlalchemy import text
 
 def get_don_vi_tinh (filter = None):
-    build_where = build_where_query(filter=filter)
-    query = text("SELECT id, ten, created_at, updated_at, deleted_at FROM don_vi_tinh {build_where}")
-    data = db.session.execute(query, {'kw': kw}).fetchall()
+    build_where = build_where_query(filter=filter) if filter else ''
+    query = text(f"""SELECT id, ten, created_at, updated_at, deleted_at FROM don_vi_tinh {build_where}""")
+    data = db.session.execute(query).fetchall()
 
     result = [{
         'id': dvt.id,

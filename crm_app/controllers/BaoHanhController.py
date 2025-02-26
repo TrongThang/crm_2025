@@ -4,23 +4,25 @@ from flask_restful import Resource
 from crm_app.services.BaoHanhService import *
 
 class BaoHanhController(Resource):
-    # @swag_from('')
+    @swag_from('../docs/swaggers/bao_hanh/get_bao_hanh.yaml')
     def get(self):
-        data = request.args
-        filter = data.get('filter')
+        data = request.get_json()
+        filter = data.get('filters')
 
         result = get_bao_hanh(filter=filter)
 
         return result
     
+    @swag_from('../docs/swaggers/bao_hanh/post_bao_hanh.yaml')
     def post(self):
         data = request.get_json()
-        name = data.get('name')
+        ten = data.get('ten')
 
-        result = post_bao_hanh(name=name)
+        result = post_bao_hanh(name=ten)
 
         return result
 
+    @swag_from('../docs/swaggers/bao_hanh/put_bao_hanh.yaml')
     def put(self):
         data = request.get_json()
         id = data.get('id')
@@ -30,6 +32,7 @@ class BaoHanhController(Resource):
 
         return result
 
+    @swag_from('../docs/swaggers/bao_hanh/put_bao_hanh.yaml')
     def delete(self):
         data = request.get_json()
         id = data.get('id')

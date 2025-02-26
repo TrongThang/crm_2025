@@ -6,17 +6,18 @@ from crm_app.services.LoaiSanPhamService import *
 class LoaiSanPhamController(Resource):
     # @swag_from('')
     def get(self):
-        data = request.args
-        filter = data.get('filter')
-
-        result = get_loai_sp(filter=filter)
+        data = request.get_json()
+        filter = data.get('filters')
+        limit = data.get('limit')
+        page = data.get('page')
+        result = get_loai_sp(filter=filter, limit=limit, page=page)
 
         return result
     
     def post(self):
         data = request.form
-        name = data.get('name')
-        file = request.files.get('file')
+        name = data.get('ten')
+        file = request.files.get('hinh_anh')
         result = post_loai_sp(name=name, file=file)
 
         return result
@@ -24,8 +25,8 @@ class LoaiSanPhamController(Resource):
     def put(self):
         data = request.form
         id = data.get('id')
-        name = data.get('name')
-        file = request.files.get('file')
+        name = data.get('ten')
+        file = request.files.get('hinh_anh')
 
         result = put_loai_sp(id=id, name=name, file=file)
 
@@ -37,4 +38,3 @@ class LoaiSanPhamController(Resource):
 
         result = delete_loai_sp(id=id)
         return result
-
