@@ -1,0 +1,59 @@
+tags:
+  - Loại sản phẩm
+summary: Cập nhật loại sản phẩm
+description: API để cập nhật thông tin loại sản phẩm, bao gồm tên và ảnh.
+
+consumes:
+  - multipart/form-data
+
+parameters:
+  - name: id
+    in: formData
+    type: integer
+    required: true
+    description: ID của loại sản phẩm cần cập nhật
+  - name: ten
+    in: formData
+    type: string
+    required: false
+    description: Tên mới của loại sản phẩm
+  - name: hinh_anh
+    in: formData
+    type: file
+    required: false
+    description: Ảnh mới của loại sản phẩm
+
+responses:
+  200:
+    description: Cập nhật thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Cập nhật loại sản phẩm thành công"
+  400:
+    description: Lỗi dữ liệu đầu vào hoặc upload file thất bại
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "ID không hợp lệ hoặc file upload bị lỗi"
+  404:
+    description: Không tìm thấy loại sản phẩm
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Loại sản phẩm không tồn tại"

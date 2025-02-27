@@ -12,9 +12,6 @@ class NhanVien(BaseModel):
     dia_chi = Column(String(255))
     avatar = Column(TEXT)
     chuc_vu_id = Column(BOOLEAN, default=True)
-    created_at = Column(TIMESTAMP, default = datetime.now)
-    updated_at = Column(TIMESTAMP, default = datetime.now, onupdate=datetime.now)
-    deleted_at = Column(TIMESTAMP, nullable=True)
 
     def __str__(self):
         return str(self.id)

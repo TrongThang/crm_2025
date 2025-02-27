@@ -1,0 +1,90 @@
+tags:
+  - Giảm Giá
+summary: Lấy danh sách loại giảm giá
+
+parameters:
+  - name: filters
+    in: query
+    required: false
+    type: string
+    example: '[{"field": "ten", "condition": "contains", "value": "abc"}]'
+    description: Bộ lọc dữ liệu theo các điều kiện cụ thể dưới dạng chuỗi JSON.
+
+  - name: limit
+    in: query
+    required: false
+    type: integer
+    default: 10
+    example: 10
+    description: Số lượng bản ghi trên mỗi trang (phân trang).
+
+  - name: page
+    in: query
+    required: false
+    type: integer
+    default: 1
+    example: 1
+    description: Trang hiện tại của kết quả phân trang.
+
+  - name: sort
+    in: query
+    required: false
+    type: string
+    example: "created_at"
+    description: Trường cần sắp xếp (ví dụ':' `ten`, `gia_tri`, `created_at`).
+
+  - name: order
+    in: query
+    required: false
+    type: string
+    enum: [asc, desc]
+    example: "desc"
+    description: Thứ tự sắp xếp (`asc` - tăng dần, `desc` - giảm dần).
+
+responses:
+  200:
+    description: Lấy danh sách thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: integer
+                example: 1
+              ten:
+                type: string
+                example: "Giảm 10%"
+              gia_tri:
+                type: number
+                example: 10
+              CreatedAt:
+                type: string
+                format: date-time
+                example: "2024-02-26T12:00:00Z"
+              UpdatedAt:
+                type: string
+                format: date-time
+                example: "2024-02-27T12:00:00Z"
+              DeletedAt:
+                type: string
+                format: date-time
+                nullable: true
+                example: null
+  400:
+    description: Lỗi đầu vào
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Lỗi đầu vào không hợp lệ"

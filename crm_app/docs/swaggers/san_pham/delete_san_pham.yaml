@@ -1,0 +1,63 @@
+tags:
+  - Sản Phẩm
+  
+summary: Xóa sản phẩm hoặc chi tiết sản phẩm
+description: Xóa một sản phẩm hoặc các chi tiết sản phẩm dựa trên ID được cung cấp.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: ID của sản phẩm cần xóa
+          id_ct:
+            type: integer
+            description: ID của chi tiết sản phẩm cần xóa
+          id_pl:
+            type: array
+            items:
+              type: integer
+            description: Danh sách ID của các chi tiết sản phẩm cần xóa
+responses:
+  200:
+    description: Xóa thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            errorCode:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Xóa thành công"
+  400:
+    description: Dữ liệu đầu vào không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            errorCode:
+              type: integer
+              example: 1
+            message:
+              type: string
+              example: "ID không hợp lệ"
+  404:
+    description: Không tìm thấy sản phẩm hoặc chi tiết sản phẩm
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            errorCode:
+              type: integer
+              example: 2
+            message:
+              type: string
+              example: "Không tìm thấy sản phẩm hoặc chi tiết sản phẩm"

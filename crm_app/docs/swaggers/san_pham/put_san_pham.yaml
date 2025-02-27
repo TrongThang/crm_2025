@@ -1,0 +1,157 @@
+tags:
+  - Sản Phẩm
+
+summary: Cập nhật thông tin sản phẩm
+description: API dùng để cập nhật thông tin sản phẩm và các chi tiết liên quan.
+consumes:
+  - multipart/form-data
+parameters:
+  - name: file
+    in: formData
+    type: file
+    required: false
+    description: Ảnh sản phẩm
+  - name: id
+    in: formData
+    type: string
+    required: true
+    description: ID sản phẩm cần cập nhật
+  - name: ten
+    in: formData
+    type: string
+    required: false
+    description: Tên sản phẩm
+  - name: upc
+    in: formData
+    type: string
+    required: false
+    description: Mã vạch sản phẩm (UPC)
+  - name: vat
+    in: formData
+    type: number
+    required: false
+    description: Thuế VAT áp dụng
+  - name: mo_ta
+    in: formData
+    type: string
+    required: false
+    description: Mô tả sản phẩm
+  - name: trang_thai
+    in: formData
+    type: string
+    required: false
+    description: Trạng thái sản phẩm
+  - name: loai_id
+    in: formData
+    type: string
+    required: false
+    description: ID loại sản phẩm
+  - name: dvt_id
+    in: formData
+    type: string
+    required: false
+    description: ID đơn vị tính
+  - name: gg_id
+    in: formData
+    type: string
+    required: false
+    description: ID chương trình giảm giá
+  - name: bh_id
+    in: formData
+    type: string
+    required: false
+    description: ID bảo hành
+  - name: id_pl
+    in: formData
+    type: array
+    items:
+      type: string
+    required: false
+    description: Danh sách ID phân loại
+  - name: ten_pl
+    in: formData
+    type: array
+    items:
+      type: string
+    required: false
+    description: Danh sách tên phân loại
+  - name: file_pl
+    in: formData
+    type: array
+    items:
+      type: file
+    required: false
+    description: Danh sách ảnh của phân loại
+  - name: gia_nhap
+    in: formData
+    type: array
+    items:
+      type: number
+    required: false
+    description: Danh sách giá nhập của từng phân loại
+  - name: gia_ban
+    in: formData
+    type: array
+    items:
+      type: number
+    required: false
+    description: Danh sách giá bán của từng phân loại
+  - name: so_luong
+    in: formData
+    type: array
+    items:
+      type: integer
+    required: false
+    description: Danh sách số lượng của từng phân loại
+  - name: trang_thai_pl
+    in: formData
+    type: array
+    items:
+      type: string
+    required: false
+    description: Danh sách trạng thái của từng phân loại
+responses:
+  200:
+    description: Cập nhật sản phẩm thành công
+    schema:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Cập nhật sản phẩm thành công"
+  400:
+    description: Yêu cầu không hợp lệ hoặc thiếu thông tin cần thiết
+    schema:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          example: 1
+        message:
+          type: string
+          example: "Thiếu thông tin cần thiết"
+  404:
+    description: Không tìm thấy sản phẩm
+    schema:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          example: 2
+        message:
+          type: string
+          example: "Sản phẩm không tồn tại"
+  500:
+    description: Lỗi hệ thống
+    schema:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: "Lỗi hệ thống, vui lòng thử lại sau"

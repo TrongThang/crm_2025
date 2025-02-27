@@ -1,0 +1,51 @@
+tags:
+  - Loại sản phẩm
+summary: Xóa loại sản phẩm
+description: API để xóa loại sản phẩm theo ID, đồng thời xóa ảnh nếu có.
+
+parameters:
+  - name: id
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+    description: ID của loại sản phẩm cần xóa
+
+responses:
+  200:
+    description: Xóa thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Xóa loại sản phẩm thành công"
+  400:
+    description: Lỗi dữ liệu đầu vào
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "ID không hợp lệ"
+  404:
+    description: Không tìm thấy loại sản phẩm
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Loại sản phẩm không tồn tại"

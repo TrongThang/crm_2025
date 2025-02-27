@@ -5,9 +5,9 @@ from crm_app.services.SanPhamService import *
 from crm_app.services.helpers import *
 
 class SanPhamController(Resource):
-    # @swag_from('')
+    @swag_from('../docs/swaggers/san_pham/get_san_pham.yaml')
     def get(self):
-        data = request.get_json()
+        data = request.args
         skip = data.get('skip')
         take = data.get('take')
         sort = data.get('sort')
@@ -17,6 +17,7 @@ class SanPhamController(Resource):
         result = get_san_pham(skip=skip, take=take, sort=sort, order=order, filter=filter)
         return result
     
+    @swag_from('../docs/swaggers/san_pham/post_san_pham.yaml')
     def post(self):
         file = request.files.get('file')
         data = request.form
@@ -40,6 +41,7 @@ class SanPhamController(Resource):
         result = post_san_pham(ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, file=file, loai_id=loai_id, dvt_id=dvt_id, gg_id=gg_id, bh_id=bh_id, ten_pl=ten_pl, file_pl=file_pl, gia_nhap=gia_nhap, gia_ban=gia_ban, so_luong=so_luong, trang_thai_pl=trang_thai_pl)
         return result 
 
+    @swag_from('../docs/swaggers/san_pham/put_san_pham.yaml')
     def put(self):
         file = request.files.get('file')
         data = request.form
@@ -66,6 +68,7 @@ class SanPhamController(Resource):
 
         return result
 
+    @swag_from('../docs/swaggers/san_pham/delete_san_pham.yaml')
     def delete(self):
         data = request.get_json()
         id = data.get('id')

@@ -1,0 +1,55 @@
+tags:
+  - Giảm Giá
+summary: Thêm mới loại giảm giá
+description: API để thêm mới một loại giảm giá.
+
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        ten:
+          type: string
+          example: "Giảm 20%"
+          description: Tên loại giảm giá
+        value:
+          type: number
+          example: 20
+          description: Giá trị giảm giá
+
+responses:
+  200:
+    description: Thêm mới thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Thêm mới thành công"
+  400:
+    description: Lỗi đầu vào không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Tên hoặc giá trị không hợp lệ"
+  409:
+    description: Tên giảm giá đã tồn tại
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 409
+        message:
+          type: string
+          example: "Loại giảm giá đã tồn tại"

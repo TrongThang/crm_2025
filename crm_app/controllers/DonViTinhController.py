@@ -4,23 +4,28 @@ from flask_restful import Resource
 from crm_app.services.DonViTinhService import *
 
 class DonViTinhController(Resource):
-    # @swag_from('')
+    @swag_from('../docs/swaggers/don_vi_tinh/get_don_vi_tinh.yaml')
     def get(self):
         data = request.args
         filter = data.get('filters')
-
-        result = get_don_vi_tinh(filter=filter)
+        limit = data.get('limit')
+        page = data.get('page')
+        order = data.get('order')
+        sort = data.get('sort')
+        result = get_don_vi_tinh(filter=filter, limit=limit, page=page, sort=sort, order=order)
 
         return result
     
+    @swag_from('../docs/swaggers/don_vi_tinh/post_don_vi_tinh.yaml')
     def post(self):
         data = request.get_json()
-        name = data.get('name')
+        ten = data.get('ten')
 
-        result = post_don_vi_tinh(name=name)
+        result = post_don_vi_tinh(ten=ten)
 
         return result
 
+    @swag_from('../docs/swaggers/don_vi_tinh/put_don_vi_tinh.yaml')
     def put(self):
         data = request.get_json()
         id = data.get('id')
@@ -30,6 +35,7 @@ class DonViTinhController(Resource):
 
         return result
 
+    @swag_from('../docs/swaggers/don_vi_tinh/delete_don_vi_tinh.yaml')
     def delete(self):
         data = request.get_json()
         id = data.get('id')

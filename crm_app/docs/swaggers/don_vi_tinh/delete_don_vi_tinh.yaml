@@ -1,0 +1,36 @@
+tags:
+  - Đơn Vị Tính
+summary: Xóa đơn vị tính
+description: API để xóa một đơn vị tính dựa vào ID.
+
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: integer
+    example: 1
+    description: ID của đơn vị tính cần xóa
+
+responses:
+  200:
+    description: Xóa thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Xóa thành công"
+  404:
+    description: Không tìm thấy đơn vị tính
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Đơn vị tính không tồn tại"

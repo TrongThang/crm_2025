@@ -1,0 +1,57 @@
+tags:
+  - Đơn Vị Tính
+summary: Cập nhật đơn vị tính
+description: API để cập nhật thông tin của một đơn vị tính dựa vào ID.
+
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: integer
+    example: 1
+    description: ID của đơn vị tính cần cập nhật
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Thùng"
+          description: Tên mới của đơn vị tính
+
+responses:
+  200:
+    description: Cập nhật thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Cập nhật thành công"
+  400:
+    description: Lỗi đầu vào
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Tên đã tồn tại hoặc dữ liệu không hợp lệ"
+  404:
+    description: Không tìm thấy đơn vị tính
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Đơn vị tính không tồn tại"

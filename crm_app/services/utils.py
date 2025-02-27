@@ -4,20 +4,7 @@ import os
 import datetime
 import re
 
-def serialize_data(data):
-    def serialize_value(value):
-        if isinstance(value, datetime.datetime):
-            return value.isoformat()  # Chuyển datetime thành chuỗi ISO 8601
-        elif isinstance(value, bytes):
-            return value.decode('utf-8', errors='ignore')  # Chuyển bytes thành chuỗi UTF-8
-        return value  # Giữ nguyên các kiểu dữ liệu khác
-
-    return [
-        {key: serialize_value(value) for key, value in dict(row).items()}
-        for row in data
-    ]
-
-def validate_name(name, model,existing_id = None,max_length = 255):
+def validate_name(name, model,existing_id = None,max_length = 255, is_unique = True):
     if name is None:
         return get_error_response(ERROR_CODES.DVT_NAME_REQUIRED)
     if len(name) > max_length:
@@ -26,7 +13,7 @@ def validate_name(name, model,existing_id = None,max_length = 255):
     if isinstance(model, type) and hasattr(model, 'query'):
         filter_field = 'ten' if hasattr(model, 'ten') else 'ten_san_pham' if hasattr(model, 'ten_san_pham') else None
 
-        if filter_field:
+        if filter_field and is_unique == True:
             existing_record = model.query.filter_by(ten=name).first()
             if existing_record and (existing_id is None or existing_record.id != existing_id):
                 return get_error_response(ERROR_CODES.DVT_NAME_EXISTED)
@@ -41,7 +28,7 @@ def validate_name(name, model,existing_id = None,max_length = 255):
 def validate_number(number, model):
     if number is None:
         print('is None')
-        return get_error_response(ERROR_CODES.PRICE_INVALID)
+        return get_error_response(ERROR_CODES.NUMBER_INVALID)
 
     try:
         number = float(number)

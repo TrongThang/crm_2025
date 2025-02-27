@@ -15,7 +15,9 @@ class ERROR_CODES(Enum):
     COST_PRICE_GREATER_SELL_PRICE = 7
     PHONE_INVALID = 8
     EMAIL_INVALID = 9
-
+    NAME_EXISTED = 10
+    NUMBER_INVALID = 11
+    
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
     SAN_PHAM_NAME_REQUIRED = 1002
@@ -83,6 +85,8 @@ class MESSAGES(Enum):
     COST_PRICE_GREATER_SELL_PRICE = "Giá nhập phải nhỏ hơn giá bán"
     PHONE_INVALID = "Số điện thoại không hợp lệ!"
     EMAIL_INVALID = "Email không hợp lệ!"
+    NAME_EXISTED = "Tên đã tồn tại!"
+    NUMBER_INVALID = "Số không hợp lệ!"
 
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"

@@ -1,0 +1,71 @@
+tags:
+  - Đơn Vị Tính
+summary: Thêm đơn vị tính mới
+description: API để thêm mới một đơn vị tính.
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - ten
+      properties:
+        ten:
+          type: string
+          example: "Hộp"
+    description: Tên đơn vị tính
+
+responses:
+  200:
+    description: Thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        result:
+          type: object
+          properties:
+            ID:
+              type: integer
+              example: 1
+            ten:
+              type: string
+              example: "Hộp"
+            CreatedAt:
+              type: string
+              format: date-time
+              example: "2024-02-25T12:00:00Z"
+            UpdatedAt:
+              type: string
+              format: date-time
+              example: "2024-02-26T14:30:00Z"
+            DeletedAt:
+              type: string
+              format: date-time
+              nullable: true
+  400:
+    description: Dữ liệu đầu vào không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Tên đơn vị tính không hợp lệ"
+  409:
+    description: Đơn vị tính đã tồn tại
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 409
+        message:
+          type: string
+          example: "Đơn vị tính đã tồn tại"

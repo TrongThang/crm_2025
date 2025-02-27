@@ -35,7 +35,7 @@ def get_nhan_vien(filter):
     return get_error_response(ERROR_CODES.SUCCESS, result)
 
 def post_nhan_vien(ho_ten, email, dien_thoai, avatar, chuc_vu_id):
-    error = validate_name(ho_ten)
+    error = validate_name(ho_ten, is_unique=False)
     if error:
         return error
     

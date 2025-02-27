@@ -1,0 +1,70 @@
+tags:
+  - Giảm Giá
+summary: Cập nhật thông tin loại giảm giá
+description: API để cập nhật thông tin loại giảm giá dựa trên ID.
+
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: ID của loại giảm giá cần cập nhật
+        name:
+          type: string
+          example: "Giảm 30%"
+          description: Tên mới của loại giảm giá (có thể để trống nếu không thay đổi)
+        value:
+          type: number
+          example: 30
+          description: Giá trị mới của giảm giá (có thể để trống nếu không thay đổi)
+
+responses:
+  200:
+    description: Cập nhật thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Cập nhật thành công"
+  400:
+    description: Dữ liệu đầu vào không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Tên hoặc giá trị giảm giá không hợp lệ"
+  404:
+    description: Không tìm thấy loại giảm giá
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Loại giảm giá không tồn tại"
+  422:
+    description: Giá trị giảm giá vượt quá giới hạn
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 422
+        message:
+          type: string
+          example: "Giá trị giảm giá không thể lớn hơn 90"

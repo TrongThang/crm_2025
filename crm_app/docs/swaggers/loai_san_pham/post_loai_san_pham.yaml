@@ -1,0 +1,43 @@
+tags:
+  - Loại sản phẩm
+summary: Thêm mới loại sản phẩm
+description: API để thêm một loại sản phẩm mới với tên và ảnh sản phẩm.
+
+consumes:
+  - multipart/form-data
+
+parameters:
+  - name: ten
+    in: formData
+    type: string
+    required: true
+    description: Tên loại sản phẩm
+  - name: hinh_anh
+    in: formData
+    type: file
+    required: false
+    description: Ảnh đại diện của loại sản phẩm
+
+responses:
+  200:
+    description: Thêm loại sản phẩm thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Thêm loại sản phẩm thành công"
+  400:
+    description: Lỗi dữ liệu đầu vào hoặc upload file thất bại
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Tên không hợp lệ hoặc file upload bị lỗi"

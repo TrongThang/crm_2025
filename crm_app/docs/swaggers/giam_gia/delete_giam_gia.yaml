@@ -1,0 +1,40 @@
+tags:
+  - Giảm Giá
+summary: Xóa loại giảm giá
+description: API để xóa một loại giảm giá dựa trên ID.
+
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: ID của loại giảm giá cần xóa
+
+responses:
+  200:
+    description: Xóa thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Xóa thành công"
+  404:
+    description: Không tìm thấy loại giảm giá
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Loại giảm giá không tồn tại"

@@ -12,9 +12,6 @@ class ChiTietSanPham(BaseModel):
     so_luong = Column(INT, default=0)
     trang_thai = Column(BOOLEAN, default=True)
     khong_phan_loai = Column(BOOLEAN, default=False)
-    created_at = Column(TIMESTAMP, default = datetime.now())
-    updated_at = Column(TIMESTAMP, default = datetime.now(), onupdate=datetime.now())
-    deleted_at = Column(TIMESTAMP)
 
     def __str__(self):
         return str(self.id)

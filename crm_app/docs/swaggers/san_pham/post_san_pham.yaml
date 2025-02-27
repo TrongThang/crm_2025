@@ -1,0 +1,127 @@
+tags:
+  - Sản Phẩm
+
+summary: Thêm mới sản phẩm
+
+description: API để thêm mới sản phẩm, hỗ trợ cả ảnh đại diện và các phân loại chi tiết.
+
+consumes:
+  - multipart/form-data
+
+parameters:
+  - in: formData
+    name: ten
+    type: string
+    required: true
+    description: Tên sản phẩm
+  - in: formData
+    name: upc
+    type: string
+    required: true
+    description: Mã UPC của sản phẩm
+  - in: formData
+    name: vat
+    type: number
+    required: true
+    description: Thuế VAT
+  - in: formData
+    name: mo_ta
+    type: string
+    required: false
+    description: Mô tả sản phẩm
+  - in: formData
+    name: trang_thai
+    type: string
+    required: true
+    description: Trạng thái sản phẩm
+  - in: formData
+    name: file
+    type: file
+    required: false
+    description: Ảnh đại diện của sản phẩm
+  - in: formData
+    name: loai_id
+    type: integer
+    required: true
+    description: ID loại sản phẩm
+  - in: formData
+    name: dvt_id
+    type: integer
+    required: true
+    description: ID đơn vị tính
+  - in: formData
+    name: gg_id
+    type: integer
+    required: false
+    description: ID loại giảm giá
+  - in: formData
+    name: bh_id
+    type: integer
+    required: false
+    description: ID thời gian bảo hành
+  - in: formData
+    name: ten_pl
+    type: array
+    items:
+      type: string
+    required: false
+    description: Danh sách tên phân loại sản phẩm
+  - in: formData
+    name: file_pl
+    type: array
+    items:
+      type: file
+    required: false
+    description: Danh sách file hình ảnh phân loại sản phẩm
+  - in: formData
+    name: gia_nhap
+    type: array
+    items:
+      type: number
+    required: false
+    description: Giá nhập của từng phân loại
+  - in: formData
+    name: gia_ban
+    type: array
+    items:
+      type: number
+    required: false
+    description: Giá bán của từng phân loại
+  - in: formData
+    name: so_luong
+    type: array
+    items:
+      type: integer
+    required: false
+    description: Số lượng tồn kho của từng phân loại
+  - in: formData
+    name: trang_thai_pl
+    type: array
+    items:
+      type: string
+    required: false
+    description: Trạng thái của từng phân loại
+
+responses:
+  200:
+    description: Sản phẩm được thêm thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Thêm sản phẩm thành công"
+  400:
+    description: Lỗi dữ liệu đầu vào
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Dữ liệu đầu vào không hợp lệ"

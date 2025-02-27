@@ -7,29 +7,36 @@ from crm_app import db
 from sqlalchemy import text
 import math
 
-def get_loai_sp (filter, limit, page):
+def get_loai_sp (filter, limit, page, sort, order):
     build_where = build_where_query(filter=filter) if filter else ''
     limit = limit if limit else 10
     page = page if page else 1
-    skip = limit * (page - 1)
+    skip = int(limit) * (int(page) - 1)
+    opt_order = f" {order.upper()} " if order else "" 
+    build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
+
+    query_all = text("""SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at 
+                FROM loai_san_pham """)
     query = text(f"""
-                SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at 
-                FROM loai_san_pham 
+                {query_all}
                 {build_where} 
+                {build_sort}
                 LIMIT {limit}
                 OFFSET {skip}
             """)
     print(query)
     data = db.session.execute(query).fetchall()
-    total_page = math.ceil(len(data)/limit)
+    limit = int(limit)
+    all_item = len(db.session.execute(query_all).fetchall())
+    total_page = math.ceil(all_item/limit)
 
     result = [{
-        'id': row.id,
+        'ID': row.id,
         'ten': row.ten,
         'hinh_anh': row.hinh_anh,
-        'created_at': row.created_at,
-        'updated_at': row.updated_at,
-        'deleted_at': row.deleted_at,
+        'CreatedAt': row.created_at,
+        'UpdatedAt': row.updated_at,
+        'DeletedAt': row.deleted_at,
     }
     for row in data
     ]
@@ -53,7 +60,9 @@ def post_loai_sp (name, file):
     loai_sp = LoaiSanPham(ten=name, hinh_anh=filename)
     db.session.add(loai_sp)
     db.session.commit()
-    return get_error_response(ERROR_CODES.SUCCESS)
+
+    result = loai_sp.to_dict()
+    return get_error_response(ERROR_CODES.SUCCESS, result=result)
 
 def put_loai_sp (id, name, file):
     loai_sp = LoaiSanPham.query.get(id)
@@ -83,7 +92,6 @@ def delete_loai_sp (id):
     if loai_sp.hinh_anh:
         result = delete_file('loai_sp', loai_sp.hinh_anh)
     # if result['errorCode'] == ERROR_CODES.SUCCESS:
-    db.session.delete(loai_sp)
-    db.session.commit()
+    loai_sp.soft_delete()
     return get_error_response(ERROR_CODES.SUCCESS)
     

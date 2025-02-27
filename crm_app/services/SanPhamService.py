@@ -12,7 +12,7 @@ import json
 from crm_app.services.helpers import *
 
 from crm_app.services.ChiTietSanPhamService import *
-
+import math 
 def to_dict_test(self):
     result = {}
     for key, value in self.__dict__.items():
@@ -56,13 +56,13 @@ def to_dict(result_set):
 
     return result_list
 
-def get_san_pham (skip, take, sort, order, filter):
+def get_san_pham (limit, page, sort, order, filter):
     build_where = build_where_query(filter=filter) if filter else ''
-
+    limit = limit if limit else 10
+    page = page if page else 1
+    skip = limit * (page - 1)
     opt_order = f" {order.upper()} " if order else "" 
     build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
-    
-    print("build_sort:", build_sort) 
 
     query = text(f"""
     SELECT 
@@ -81,14 +81,16 @@ def get_san_pham (skip, take, sort, order, filter):
             thoi_gian_bao_hanh ON thoi_gian_bao_hanh.id = san_pham.thoi_gian_bao_hanh_id
     {build_where} 
     {build_sort} 
-    LIMIT {take} 
+    LIMIT {limit} 
     OFFSET {skip} 
                 """)
     result_set = db.session.execute(query).mappings().all()
 
     result_list = to_dict(result_set=result_set)
+    total_page = math.ceil(len(result_list)/limit)
 
-    return get_error_response(ERROR_CODES.SUCCESS, result=result_list)
+    response_data = {"data": result_list, "total_page": total_page}
+    return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 
 def post_san_pham (ten, upc, vat, mo_ta, trang_thai, file, loai_id, dvt_id, gg_id, bh_id, 
 ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl):
@@ -224,7 +226,7 @@ def delete_san_pham(id):
 
     # if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS: 
     delete_file(upload_folder="san_pham",filename=sp_delete.hinh_anh)
-    db.session.delete(sp_delete)
+    sp_delete.soft_delete()
     db.session.commit()
 
     return get_error_response(ERROR_CODES.SUCCESS)
@@ -235,13 +237,13 @@ def delete_chi_tiet_san_pham(id_ct = None, id_pl = None):
             ct_delete = ChiTietSanPham.query.get(id)
             if ct_delete is None:
                 return get_error_response(ERROR_CODES.CTSP_INVALID_ID)
-            db.session.delete(ct_delete)
+            ct_delete.soft_delete()
     elif id_ct is not None:
         ct_delete = ChiTietSanPham.query.get(id_ct)
         if ct_delete is None:
             return get_error_response(ERROR_CODES.CTSP_INVALID_ID)
         delete_file(upload_folder="chi_tiet_sp",filename=ct_delete.hinh_anh)
-        db.session.delete(ct_delete)
+        ct_delete.soft_delete()
     
     db.session.commit()
 

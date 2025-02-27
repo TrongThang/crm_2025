@@ -5,9 +5,15 @@ from datetime import datetime
 class ChucVu(BaseModel):
     __tablename__ = "chuc_vu"
     ten = Column(String(255), nullable=False, unique=True)
-    created_at = Column(TIMESTAMP, default=datetime.now)
-    updated_at = Column(TIMESTAMP, default=datetime.now, onupdate=datetime.now)
-    created_at = Column(TIMESTAMP)
 
     def __str__ (self):
         return str(self.id)
+    
+    def to_dict(self):
+        return {
+            'ID': self.id,
+            'ten': self.ten,
+            'CreatedAt': self.created_at,
+            'UpdatedAt': self.updated_at,
+            'DeletedAt': self.deleted_at,
+        }

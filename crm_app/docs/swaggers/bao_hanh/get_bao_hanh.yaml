@@ -1,49 +1,41 @@
 tags:
   - Bảo hành
 summary: Lấy danh sách bảo hành
-description: API để lấy danh sách bảo hành từ cơ sở dữ liệu
+description: API để lấy danh sách bảo hành từ cơ sở dữ liệu với hỗ trợ lọc, phân trang và sắp xếp.
 
 parameters:
-  - name: filters
-    in: body
+  - in: query
+    name: filters
     required: false
-    schema:
-      type: object
-      properties:
-        filters:
-          type: array
-          description: Danh sách các điều kiện lọc
-          items:
-            type: object
-            properties:
-              condition:
-                type: string
-                description: Điều kiện lọc (vd":" "=", "LIKE", ">", "<")
-                example: "="
-              field:
-                type: string
-                description: Trường dữ liệu cần lọc (vd":" "ten", "created_at")
-                example: "ten"
-              value:
-                type: string
-                description: Giá trị cần so sánh
-                example: "Bảo hành 12 tháng"
-        limit:
-          type: integer
-          description: Giới hạn số bản ghi trả về
-          example: 10
-        order:
-          type: string
-          description: Trường để sắp xếp (vd':' "created_at", "id")
-          example: "created_at"
-        page:
-          type: integer
-          description: Số trang cần lấy
-          example: 1
-        sort:
-          type: string
-          description: Sắp xếp tăng hoặc giảm ("asc", "desc")
-          example: "desc"
+    type: string
+    description: Bộ lọc dữ liệu dưới dạng JSON (ví dụ':' '{"field"':' "ten", "condition"':' "=", "value"':' "Bảo hành 12 tháng"}')
+    example: '[{"field": "ten", "condition": "contains", "value": "abc"}]'
+  - in: query
+    name: limit
+    required: false
+    type: integer
+    description: Giới hạn số bản ghi trả về
+    example: 10
+  - in: query
+    name: page
+    required: false
+    type: integer
+    description: Trang hiện tại của kết quả phân trang
+    example: 1
+  - in: query
+    name: sort
+    required: false
+    type: string
+    description: Trường để sắp xếp (vd':' "created_at", "id")
+    example: "created_at"
+  - in: query
+    name: order
+    required: false
+    type: string
+    enum: [asc, desc]
+    description: Hướng sắp xếp ("asc" hoặc "desc")
+    example: "desc"
+
 responses:
   200:
     description: Lấy danh sách bảo hành thành công
@@ -75,6 +67,7 @@ responses:
               deleted_at:
                 type: string
                 format: date-time
+                nullable: true
                 example: null
   400:
     description: Lỗi dữ liệu đầu vào

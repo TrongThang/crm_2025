@@ -6,10 +6,13 @@ from crm_app.services.BaoHanhService import *
 class BaoHanhController(Resource):
     @swag_from('../docs/swaggers/bao_hanh/get_bao_hanh.yaml')
     def get(self):
-        data = request.get_json()
+        data = request.args
         filter = data.get('filters')
-
-        result = get_bao_hanh(filter=filter)
+        limit = data.get('limit')
+        page = data.get('page')
+        order = data.get('order')
+        sort = data.get('sort')
+        result = get_bao_hanh(filter=filter, limit=limit, page=page, sort=sort, order=order)
 
         return result
     
@@ -32,7 +35,7 @@ class BaoHanhController(Resource):
 
         return result
 
-    @swag_from('../docs/swaggers/bao_hanh/put_bao_hanh.yaml')
+    @swag_from('../docs/swaggers/bao_hanh/delete_bao_hanh.yaml')
     def delete(self):
         data = request.get_json()
         id = data.get('id')

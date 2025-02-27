@@ -1,0 +1,85 @@
+tags:
+  - Loại sản phẩm
+summary: Lấy danh sách loại sản phẩm
+description: API để lấy danh sách loại sản phẩm với bộ lọc và phân trang
+
+parameters:
+  - name: filters
+    in: query
+    required: false
+    type: string
+    description: Bộ lọc sản phẩm dưới dạng JSON string (ví dụ':' `[{"field"':' "ten", "condition"':' "contains", "value"':' "abc"}]`)
+    example: '[{"field": "ten", "condition": "contains", "value": "abc"}]'
+    
+  - name: limit
+    in: query
+    required: false
+    type: integer
+    description: Số lượng sản phẩm mỗi trang (mặc định là 10)
+    example: 10
+
+  - name: page
+    in: query
+    required: false
+    type: integer
+    description: Trang hiện tại (mặc định là 1)
+    example: 1
+
+  - name: sort
+    in: query
+    required: false
+    type: string
+    description: Sắp xếp theo trường nào (ví dụ':' `CreatedAt`)
+    example: "CreatedAt"
+
+  - name: order
+    in: query
+    required: false
+    type: string
+    enum: ["asc", "desc"]
+    description: Thứ tự sắp xếp (tăng dần hoặc giảm dần)
+    example: "desc"
+
+responses:
+  200:
+    description: Lấy danh sách loại sản phẩm thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                type: integer
+              ten:
+                type: string
+              hinh_anh:
+                type: string
+              CreatedAt:
+                type: string
+                format: date-time
+              UpdatedAt:
+                type: string
+                format: date-time
+              DeletedAt:
+                type: string
+                format: date-time
+        total_page:
+          type: integer
+          example: 5
+  400:
+    description: Lỗi dữ liệu đầu vào
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Dữ liệu đầu vào không hợp lệ"

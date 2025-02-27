@@ -1,0 +1,127 @@
+tags:
+  - Sản Phẩm
+summary: Lấy danh sách sản phẩm
+description: API để lấy danh sách sản phẩm có hỗ trợ phân trang, sắp xếp và lọc dữ liệu.
+
+parameters:
+  - in: query
+    name: skip
+    type: integer
+    required: false
+    default: 0
+    example: 0
+    description: Số lượng sản phẩm bỏ qua (dùng để phân trang)
+
+  - in: query
+    name: take
+    type: integer
+    required: false
+    default: 10
+    example: 10
+    description: Số lượng sản phẩm cần lấy
+
+  - in: query
+    name: sort
+    type: string
+    required: false
+    example: "created_at"
+    description: Trường cần sắp xếp (ví dụ':' `ten`, `gia`, `created_at`)
+
+  - in: query
+    name: order
+    type: string
+    required: false
+    enum: [asc, desc]
+    example: "desc"
+    description: Thứ tự sắp xếp (`asc` - tăng dần, `desc` - giảm dần)
+
+  - in: query
+    name: filters
+    type: string
+    required: false
+    example: '[{"field": "ten", "condition": "contains", "value": "abc"}]'
+    description: Bộ lọc tìm kiếm dưới dạng JSON string (cần encode JSON trước khi gửi)
+
+responses:
+  200:
+    description: Trả về danh sách sản phẩm
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              ten:
+                type: string
+                example: "Laptop ASUS ZenBook"
+              upc:
+                type: string
+                example: "123456789"
+              hinh_anh:
+                type: string
+                example: "https://example.com/laptop.jpg"
+              vat:
+                type: number
+                example: 10
+              mo_ta:
+                type: string
+                example: "Laptop mạnh mẽ với Intel Core i7"
+              trang_thai:
+                type: string
+                example: "active"
+              loai_san_pham_id:
+                type: integer
+                example: 2
+              loai_san_pham:
+                type: string
+                example: "Laptop"
+              don_vi_tinh_id:
+                type: integer
+                example: 1
+              don_vi_tinh:
+                type: string
+                example: "Cái"
+              loai_giam_gia_id:
+                type: integer
+                example: 3
+              loai_giam_gia:
+                type: string
+                example: "Giảm giá 10%"
+              thoi_gian_bao_hanh_id:
+                type: integer
+                example: 12
+              thoi_gian_bao_hanh:
+                type: string
+                example: "12 tháng"
+              created_at:
+                type: string
+                format: date-time
+                example: "2024-01-01T12:00:00Z"
+              updated_at:
+                type: string
+                format: date-time
+                example: "2024-02-01T12:00:00Z"
+              deleted_at:
+                type: string
+                format: date-time
+                nullable: true
+                example: null
+  400:
+    description: Lỗi dữ liệu đầu vào không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Dữ liệu đầu vào không hợp lệ"

@@ -15,9 +15,6 @@ class SanPham(BaseModel):
     don_vi_tinh_id = Column(INT, ForeignKey("don_vi_tinh.id"))
     loai_giam_gia_id = Column(INT, ForeignKey("loai_giam_gia.id"))
     thoi_gian_bao_hanh_id = Column(INT, ForeignKey("thoi_gian_bao_hanh.id"))
-    created_at = Column(TIMESTAMP, default = datetime.now)
-    updated_at = Column(TIMESTAMP, default = datetime.now, onupdate=datetime.now)
-    deleted_at = Column(TIMESTAMP, nullable=True)
 
     loai_san_pham = relationship("LoaiSanPham", back_populates="san_phams")
     don_vi_tinh = relationship("DonViTinh", back_populates="san_phams")
@@ -27,3 +24,5 @@ class SanPham(BaseModel):
 
     def __str__(self):
         return str(self.id)
+    
+    

@@ -67,6 +67,5 @@ def delete_chuc_vu(id):
     chuc_vu = ChucVu.query.get(id)
     if chuc_vu is None:
         return
-    db.session.delete(chuc_vu)
-    db.session.commit()
+    chuc_vu.soft_delete()
     return get_error_response(ERROR_CODES.SUCCESS)

@@ -101,7 +101,7 @@ def delete_one_chi_tiet_san_pham (id = None):
     if chi_tiet is None:
         return get_error_response(ERROR_CODES.CTSP_INVALID_ID)
     
-    db.session.delete(chi_tiet)
+    chi_tiet.soft_delete()
     db.session.commit()
 
     return get_error_response(ERROR_CODES.SUCCESS)
@@ -111,7 +111,7 @@ def delete_many_chi_tiet_san_pham (san_pham_id = None):
         list_chi_tiet = ChiTietSanPham.query.filter_by(san_pham_id=san_pham_id)
         for ct in list_chi_tiet:
             chi_tiet = ChiTietSanPham.query.get(ct.id)
-            db.session.delete(chi_tiet)
+            chi_tiet.soft_delete()
         db.session.commit()
 
     return get_error_response(ERROR_CODES.SUCCESS)
