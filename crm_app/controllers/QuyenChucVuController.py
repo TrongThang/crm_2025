@@ -12,11 +12,11 @@ class QuyenChucVuController(Resource):
         return result
     
     def post(self):
-        data = request.args
+        data = request.get_json()
         chuc_vu_id = data.get('chuc_vu_id')
-        lst_quyen = data.getlist('lst_quyen')
-
-        result = post_quyen_chuc_vu(chuc_vu_id=chuc_vu_id, lst_quyen=lst_quyen)
+        list_quyen = data.get('quyen')
+        print(list_quyen)
+        result = modify_quyen_chuc_vu(chuc_vu_id=chuc_vu_id, list_quyen=list_quyen)
 
         return result
     

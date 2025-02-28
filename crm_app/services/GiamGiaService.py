@@ -5,8 +5,9 @@ from crm_app.services.helpers import *
 from crm_app.models.GiamGia import GiamGia
 from crm_app import db
 from sqlalchemy import text
+import math
 
-def get_giam_gia (limit, page, filter):
+def get_giam_gia (limit, page, filter, order, sort):
     build_where = build_where_query(filter=filter)
     limit = limit if limit else 10
     page = page if page else 1

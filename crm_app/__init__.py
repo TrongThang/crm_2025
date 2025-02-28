@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from flask_cors import CORS
@@ -15,6 +15,15 @@ app.config['SWAGGER'] = {
     'uiversion': 3
 }
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# @app.route('/uploads/<path:folder>/<path:filename>')
+# def serve_static(folder, filename):
+#     print("folder:", folder)
+#     print("filename:", filename)
+#     print('path:', (os.path.join(app.config['UPLOAD_FOLDER'], folder), filename))
+#     # return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'loai_sp'), filename)
+#     # return send_from_directory('uploads/loai_sp/', filename)
+#     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], folder), filename)
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)

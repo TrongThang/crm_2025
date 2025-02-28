@@ -8,28 +8,36 @@ from sqlalchemy import text
 import math
 
 def get_loai_sp (filter, limit, page, sort, order):
+    print(filter)
     build_where = build_where_query(filter=filter) if filter else ''
-    limit = limit if limit else 10
-    page = page if page else 1
-    skip = int(limit) * (int(page) - 1)
+    limit = limit
+    page = page
+    skip = int(limit) * (int(page) - 1) if limit and page else 0
+    
     opt_order = f" {order.upper()} " if order else "" 
     build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
+    build_limit = f" LIMIT {limit}" if limit else ""
+    build_offset = f" OFFSET {skip}" if limit and page else ""
 
-    query_all = text("""SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at 
-                FROM loai_san_pham """)
+    build_where = f"{build_where} AND deleted_at IS NULL" if build_where else ' WHERE deleted_at IS NULL'
+    query_all = text(f"""
+                SELECT id, ten, hinh_anh, created_at, updated_at, deleted_at 
+                FROM loai_san_pham
+                {build_where}
+                """)
     query = text(f"""
                 {query_all}
-                {build_where} 
                 {build_sort}
-                LIMIT {limit}
-                OFFSET {skip}
+                {build_limit}
+                {build_offset}
             """)
-    print(query)
+    print("query:", query)
+    print("query_all:", query_all)
     data = db.session.execute(query).fetchall()
-    limit = int(limit)
+    limit = int(limit) if limit else 1
     all_item = len(db.session.execute(query_all).fetchall())
     total_page = math.ceil(all_item/limit)
-
+    print("total_page:", all_item, '/',  limit)
     result = [{
         'ID': row.id,
         'ten': row.ten,
@@ -69,12 +77,14 @@ def put_loai_sp (id, name, file):
     if loai_sp is None:
         return get_error_response(ERROR_CODES.LOAI_SP_NOT_FOUND)
     if name is not None:
-        error = validate_name(name=name, model=LoaiSanPham)
+        error = validate_name(name=name, model=LoaiSanPham, is_unique=False)
         if error:
             return error
         loai_sp.ten = name
+    print("file:", file)
     if file is not None:
-        upload = save_uploaded_file(file, "loai_sp", filename=loai_sp.hinh_anh,prefix='loai_sp')
+        print("chỉnh sửa hình")
+        upload = save_uploaded_file(file, "loai_sp", filename=loai_sp.hinh_anh, prefix='loai_sp')
         if(upload['errorCode'] == ERROR_CODES.SUCCESS):
             loai_sp.hinh_anh = upload['filename']
         elif upload['errorCode'] == ERROR_CODES.FILE_NOT_FOUND:

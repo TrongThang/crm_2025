@@ -74,9 +74,9 @@ def save_uploaded_file(file, upload_folder, filename = None, prefix="", suffix="
             os.makedirs(full_upload_path, exist_ok=True)
 
         # 📌 Đổi tên file theo format YYYYMMDD_HHMMSS + tiền tố/hậu tố
-        if filename:
-            result = delete_file(upload_folder=upload_folder, filename=filename)
-            # new_filename = filename
+        # if filename:
+        #     # result = delete_file(upload_folder=upload_folder, filename=filename)
+        #     new_filename = filename
         
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         new_filename = f"{prefix}{timestamp}{suffix}.{ext}"
