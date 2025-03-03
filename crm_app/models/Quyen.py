@@ -1,5 +1,6 @@
 from crm_app.models.BaseModel import BaseModel
 from sqlalchemy import TIMESTAMP, String, Column, INT, Float, TEXT, BOOLEAN
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class Quyen(BaseModel):

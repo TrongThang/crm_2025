@@ -22,12 +22,12 @@ def get_chuc_vu(filter):
         id_chuc_vu = row.id
         if id_chuc_vu not in chuc_vu_dict:
             chuc_vu_dict[id_chuc_vu] = {
-                'id': row.id,
+                'ID': row.id,
                 'ten': row.ten, 
                 'ten_quyen': [],
-                'created_at': row.created_at,
-                'updated_at': row.updated_at,
-                'deleted_at': row.deleted_at,
+                'CreatedAt': row.created_at,
+                'UpdatedAt': row.updated_at,
+                'DeletedAt': row.deleted_at,
             }
             if row.ten_quyen:
                 chuc_vu_dict[id_chuc_vu]["ten_quyen"].append(row.ten_quyen)

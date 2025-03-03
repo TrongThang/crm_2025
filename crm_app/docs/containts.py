@@ -4,7 +4,7 @@ class ERROR_CODES(Enum):
     SUCCESS = 0
     NOT_FOUND = 404
     SERVER_EROR = 500
-    BAD_REQUES = 400
+    BAD_REQUEST = 400
 
     FILE_SIZE = 1
     FILE_EXTENSION = 2
@@ -17,7 +17,10 @@ class ERROR_CODES(Enum):
     EMAIL_INVALID = 9
     NAME_EXISTED = 10
     NUMBER_INVALID = 11
-    
+    NAME_REQUIRED = 12 
+    NAME_LENGTH = 13
+    DATETIME_INVALID = 14
+
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
     SAN_PHAM_NAME_REQUIRED = 1002
@@ -69,6 +72,13 @@ class ERROR_CODES(Enum):
     NHAN_VIEN_NOT_FOUND = 7005
     NHAN_VIEN_NAME_LENGTH = 7006
 
+    #NHA_PHAN_PHOI - 8xxx
+    NHA_PHAN_PHOI_NOT_FOUND = 8001
+    NHA_PHAN_PHOI_NAME_LRNGTH = 8002
+
+    #KHO - 9xxx
+    KHO_NOT_FOUND = 9001
+
 
 class MESSAGES(Enum):
     SUCCESS = "Thành công"
@@ -87,6 +97,8 @@ class MESSAGES(Enum):
     EMAIL_INVALID = "Email không hợp lệ!"
     NAME_EXISTED = "Tên đã tồn tại!"
     NUMBER_INVALID = "Số không hợp lệ!"
+    NAME_REQUIRED = "Yêu cầu nhập tên!"
+    DATETIME_INVALID = "Ngày giờ không hợp lệ!"
 
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
@@ -143,6 +155,11 @@ class MESSAGES(Enum):
     CHUC_VU_NOT_FOUND = "Kh"
     CHUC_VU_NAME_LENGTH = ""
     CHUC_VU_NAME_REQUIRED = ""
+
+    NHA_PHAN_PHOI_NOT_FOUND = "Không tìm thấy nhà phân phối hợp lệ"
+    NHA_PHAN_PHOI_NAME_LENGTH = "Tên nhà phân phối từ 1 đến 255 ký tự"
+
+    KHO_NOT_FOUND = "Không tìm thấy kho hợp lệ"
 
     
 def get_error_response(error_code: ERROR_CODES, result = None):

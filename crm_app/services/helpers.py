@@ -1,41 +1,45 @@
+import json
+
 def build_where_query(filter):
+    filter = json.loads(filter)
     sql_condition = []
     logical_operator = "AND"
-    for item in filter:
-        field = item["field"]
-        operator = item["condition"]
-        value = item["value"]
-        if (field == 'loai_san_pham' 
-            or field == 'don_vi_tinh'
-            or field == 'loai_giam_gia'
-            or field == 'thoi_gian_bao_hanh'
-        ):
-            field = f"{field}.ten" 
-        if operator == 'contains':
-            sql_condition.append(f""" {field} LIKE '%{value}%' """)
-        elif operator == 'notcontains':
-            sql_condition.append(f""" {field} NOT LIKE '%{value}' """)
-        elif operator == 'startswith':
-            sql_condition.append(f""" {field} LIKE '{value}%' """)
-        elif operator == 'endswith':
-            sql_condition.append(f""" {field} LIKE '%{value}' """)
-        elif operator == '=':
-            sql_condition.append(f""" {field} = '{value}' """)
-        elif operator == '<>':
-            sql_condition.append(f""" {field} <> '{value}' """)
-        elif operator == '<':
-            sql_condition.append(f""" {field} < {value} """)
-        elif operator == '>':
-            sql_condition.append(f""" {field} > {value} """)
-        if operator == '<=':
-            sql_condition.append(f""" {field} <= {value} """)
-        if operator == '>=':
-            sql_condition.append(f""" {field} >= {value} """)
+    if len(filter) > 0:
+        for item in filter:
+            field = item["field"]
+            operator = item["condition"]
+            value = item["value"]
+            if (field == 'loai_san_pham' 
+                or field == 'don_vi_tinh'
+                or field == 'loai_giam_gia'
+                or field == 'thoi_gian_bao_hanh'
+            ):
+                field = f"{field}.ten" 
+            if operator == 'contains':
+                sql_condition.append(f""" {field} LIKE '%{value}%' """)
+            elif operator == 'notcontains':
+                sql_condition.append(f""" {field} NOT LIKE '%{value}' """)
+            elif operator == 'startswith':
+                sql_condition.append(f""" {field} LIKE '{value}%' """)
+            elif operator == 'endswith':
+                sql_condition.append(f""" {field} LIKE '%{value}' """)
+            elif operator == '=':
+                sql_condition.append(f""" {field} = '{value}' """)
+            elif operator == '<>':
+                sql_condition.append(f""" {field} <> '{value}' """)
+            elif operator == '<':
+                sql_condition.append(f""" {field} < {value} """)
+            elif operator == '>':
+                sql_condition.append(f""" {field} > {value} """)
+            if operator == '<=':
+                sql_condition.append(f""" {field} <= {value} """)
+            if operator == '>=':
+                sql_condition.append(f""" {field} >= {value} """)
     if not sql_condition:
-        return "" 
+        return "WHERE deleted_at IS NULL" 
     print("logical_operator:", logical_operator)
     print("sql_condition:", sql_condition)
-    return " WHERE " + f" {logical_operator} ".join(sql_condition)
+    return " WHERE " + f" {logical_operator} ".join(sql_condition) + " AND deleted_at IS NULL"
 
 # view-nhan-vien -> view 
 def get_word_before_dash(str):

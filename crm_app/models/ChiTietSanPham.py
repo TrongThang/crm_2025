@@ -1,5 +1,6 @@
 from crm_app.models.BaseModel import BaseModel
 from sqlalchemy import DateTime, String, Column, Float, TIMESTAMP, INT, BOOLEAN
+from sqlalchemy.orm import relationship 
 from datetime import datetime
 
 class ChiTietSanPham(BaseModel):
@@ -12,6 +13,8 @@ class ChiTietSanPham(BaseModel):
     so_luong = Column(INT, default=0)
     trang_thai = Column(BOOLEAN, default=True)
     khong_phan_loai = Column(BOOLEAN, default=False)
+
+    chi_tiet_hoa_don_nhap_khos = relationship("ChiTietNhapKho", back_populates="chi_tiet_san_pham")
 
     def __str__(self):
         return str(self.id)

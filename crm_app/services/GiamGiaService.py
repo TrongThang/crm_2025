@@ -1,42 +1,18 @@
-from flask import jsonify
+from flask import jsonify, make_response
 from crm_app.docs.containts import ERROR_CODES, MESSAGES
 from crm_app.services.utils import *
 from crm_app.services.helpers import *
+from crm_app.services.dbService import *
 from crm_app.models.GiamGia import GiamGia
 from crm_app import db
 from sqlalchemy import text
 import math
 
 def get_giam_gia (limit, page, filter, order, sort):
-    build_where = build_where_query(filter=filter)
-    limit = limit if limit else 10
-    page = page if page else 1
-    skip = limit * (page - 1)
-    opt_order = f" {order.upper()} " if order else "" 
-    build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
-
-    query = text(f"""
-                SELECT id, ten, gia_tri, created_at, updated_at, deleted_at 
-                FROM loai_giam_gia
-                {build_where}
-                {build_sort}
-                LIMIT {limit}
-                OFFSET {skip}
-                """)
-    data = db.session.execute(query).fetchall()
-    total_page = math.ceil(len(data)/limit)
-
-    result = [{
-        'ID': row.id,
-        'ten': row.ten,
-        'gia_tri': row.gia_tri,
-        'CreatedAt': row.created_at,
-        'UpdatedAt': row.updated_at,
-        'DeletedAt': row.deleted_at,
-    }
-    for row in data
-    ]
-    response_data = {"data": result, "total_page": total_page}
+    get_table = 'don_vi_tinh'
+    get_attr = 'ten, gia_tri'
+    
+    response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order)
 
     return get_error_response(error_code=ERROR_CODES.SUCCESS,result=response_data)
 

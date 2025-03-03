@@ -2,6 +2,7 @@ from crm_app.models.BaseModel import BaseModel
 from sqlalchemy import TIMESTAMP, String, Column, INT, Float, TEXT, BOOLEAN, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from crm_app.models.SanPhamNhaPhanPhoi import SanPhamNhaPhanPhoi
 
 class SanPham(BaseModel):
     __tablename__ = 'san_pham'
@@ -21,7 +22,9 @@ class SanPham(BaseModel):
     loai_giam_gia = relationship("GiamGia", back_populates="san_phams")
     thoi_gian_bao_hanh = relationship("BaoHanh", back_populates="san_phams") 
 
-
+    san_pham_nha_phan_phois = relationship("SanPhamNhaPhanPhoi", back_populates="san_pham")
+    nha_phan_phois = relationship("NhaPhanPhoi", secondary="san_pham_nha_phan_phoi", back_populates="san_phams")
+    chi_tiet_hoa_don_nhap_khos = relationship("ChiTietNhapKho", back_populates="san_pham")
     def __str__(self):
         return str(self.id)
     
