@@ -2,7 +2,7 @@ from flasgger import swag_from
 from flask import request, jsonify
 from flask_restful import Resource
 from crm_app.services.LoaiSanPhamService import *
-
+from crm_app import app
 class LoaiSanPhamController(Resource):
     @swag_from('../docs/swaggers/loai_san_pham/get_loai_san_pham.yaml')
     def get(self):
@@ -49,10 +49,7 @@ class LoaiSanPhamController(Resource):
         return result
 
     @swag_from('../docs/swaggers/loai_san_pham/delete_loai_san_pham.yaml')
-    def delete(self):
-        # data = request.get_json()
-        data = request.args
-        id = data.get('id')
-        print("id:", id)
+    @app.route('/api/loai-san-pham/<int:id>', methods=['DELETE'])
+    def delete_loai_sp(id):
         result = delete_loai_sp(id=id)
         return result

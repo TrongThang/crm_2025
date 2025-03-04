@@ -67,7 +67,7 @@ def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_i
     sku = create_sku(upc=upc, ct_san_pham_id=ctsp_id, date_str=ngay_nhap, counter=counter)
     # 1 - (20/100) => 1 - 0.2
     thanh_tien = gia_nhap * so_luong * (1 - chiet_khau/100)
-    ct_nhap_kho = ChiTietNhapKho(hoa_don_id=hoa_don_id, san_pham_id=san_pham_id, ctsp_id=ctsp_id, sku=sku, so_luong=so_luong, don_vi_tinh=don_vi_tinh, ke=ke, gia_nhap=gia_ban, gia_ban=gia_ban, chiet_khau=chiet_khau, thanh_tien=thanh_tien, la_qua_tang=la_qua_tang)
+    ct_nhap_kho = ChiTietNhapKho(hoa_don_id=hoa_don_id, san_pham_id=san_pham_id, ctsp_id=ctsp_id, sku=sku, so_luong=so_luong, don_vi_tinh=don_vi_tinh, ke=ke, gia_nhap=gia_nhap, gia_ban=gia_ban, chiet_khau=chiet_khau, thanh_tien=thanh_tien, la_qua_tang=la_qua_tang)
 
     db.session.add(ct_nhap_kho)
     print("ctsp_id:", ctsp_id)

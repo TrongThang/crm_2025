@@ -10,24 +10,14 @@ from crm_app import db
 from sqlalchemy import text
 import json
 from crm_app.services.helpers import *
-
+from crm_app.services.dbService import *
 from crm_app.services.ChiTietSanPhamService import *
 import math 
-def to_dict_test(self):
-    result = {}
-    for key, value in self.__dict__.items():
-        if isinstance(value, bytes):
-            result[key] = value.decode("utf-8", errors="replace")
-        elif isinstance(value, datetime):
-            result[key] = value.strftime('%Y-%m-%d %H:%M:%S')
-        else:
-            result[key] = value
-    return result
 
 def to_dict(result_set):
     result_list = [
         {
-            "id": row["id"],
+            "ID": row["ID"],
             "ten": row["ten"],
             "upc": row["upc"],
             "hinh_anh": row["hinh_anh"],
@@ -37,7 +27,7 @@ def to_dict(result_set):
                 if isinstance(row["mo_ta"], bytes)
                 else row["mo_ta"]
             ),
-            "trang_thai": row["trang_thai"],
+            "trang_thai": 'active' if row["trang_thai"] == 1 else 'inactive',
             "loai_san_pham_id": row["loai_san_pham_id"],
             "loai_san_pham": row["loai_san_pham"],
             "don_vi_tinh_id": row["don_vi_tinh_id"],
@@ -47,9 +37,9 @@ def to_dict(result_set):
             "thoi_gian_bao_hanh_id": row["thoi_gian_bao_hanh_id"],
             "thoi_gian_bao_hanh": row["thoi_gian_bao_hanh"],
 
-            "created_at": str(row["created_at"]),
-            "updated_at": str(row["updated_at"]),
-            "deleted_at": str(row["deleted_at"]) if row["deleted_at"] else None
+            "CreatedAt": str(row["CreatedAt"]),
+            "UpdatedAt": str(row["UpdatedAt"]),
+            "DeletedAt": str(row["DeletedAt"]) if row["DeletedAt"] else None
         }
         for row in result_set
     ]
@@ -57,20 +47,21 @@ def to_dict(result_set):
     return result_list
 
 def get_san_pham (limit, page, sort, order, filter):
-    build_where = build_where_query(filter=filter) if filter else ''
-    limit = limit if limit else 10
-    page = page if page else 1
-    skip = limit * (page - 1)
+    build_where = build_where_query(filter=filter, table='san_pham') if filter else ''
     opt_order = f" {order.upper()} " if order else "" 
     build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
 
-    query = text(f"""
-    SELECT 
-        san_pham.id as id, san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, vat, mo_ta as mo_ta, trang_thai, 
+    limit = int(limit) if limit else None
+    page = int(page) if page else None
+    skip = int(limit) * (int(page) - 1) if limit and page else 0
+
+    get_attr = f""""
+        san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, vat, mo_ta as mo_ta, trang_thai, 
         loai_san_pham.id as loai_san_pham_id, loai_san_pham.ten as loai_san_pham, don_vi_tinh.id as don_vi_tinh_id, don_vi_tinh.ten as don_vi_tinh, 
-        loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh, 
-        san_pham.created_at, san_pham.updated_at, san_pham.deleted_at 
-    FROM san_pham 
+        loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh
+    """
+    get_table = "san_pham"
+    query_join = """
         LEFT JOIN 
             loai_san_pham ON loai_san_pham.id = san_pham.loai_san_pham_id
         LEFT JOIN   
@@ -79,17 +70,13 @@ def get_san_pham (limit, page, sort, order, filter):
             loai_giam_gia ON loai_giam_gia.id = san_pham.loai_giam_gia_id
         LEFT JOIN
             thoi_gian_bao_hanh ON thoi_gian_bao_hanh.id = san_pham.thoi_gian_bao_hanh_id
-    {build_where} 
-    {build_sort} 
-    LIMIT {limit} 
-    OFFSET {skip} 
-                """)
-    result_set = db.session.execute(query).mappings().all()
+    """
+    # result_set = db.session.execute(query).mappings().all()
 
-    result_list = to_dict(result_set=result_set)
-    total_page = math.ceil(len(result_list)/limit)
+    # result_list = to_dict(result_set=result_set)
+    # total_page = math.ceil(len(result_list)/limit)
+    response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
 
-    response_data = {"data": result_list, "total_page": total_page}
     return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 
 def post_san_pham (ten, upc, vat, mo_ta, trang_thai, file, loai_id, dvt_id, gg_id, bh_id, 

@@ -1,6 +1,6 @@
 import json
 
-def build_where_query(filter):
+def build_where_query(filter, table = None):
     filter = json.loads(filter)
     sql_condition = []
     logical_operator = "AND"
@@ -28,18 +28,18 @@ def build_where_query(filter):
             elif operator == '<>':
                 sql_condition.append(f""" {field} <> '{value}' """)
             elif operator == '<':
-                sql_condition.append(f""" {field} < {value} """)
+                sql_condition.append(f""" {field} < {0 if value == '' else value} """)
             elif operator == '>':
-                sql_condition.append(f""" {field} > {value} """)
+                sql_condition.append(f""" {field} > {0 if value == '' else value} """)
             if operator == '<=':
-                sql_condition.append(f""" {field} <= {value} """)
+                sql_condition.append(f""" {field} <= {0 if value == '' else value} """)
             if operator == '>=':
-                sql_condition.append(f""" {field} >= {value} """)
+                sql_condition.append(f""" {field} >= {0 if value == '' else value} """)
     if not sql_condition:
-        return "WHERE deleted_at IS NULL" 
+        return f"WHERE {table+'.' if table else ''}deleted_at IS NULL" 
     print("logical_operator:", logical_operator)
     print("sql_condition:", sql_condition)
-    return " WHERE " + f" {logical_operator} ".join(sql_condition) + " AND deleted_at IS NULL"
+    return " WHERE " + f" {logical_operator} ".join(sql_condition) + f" AND {table+'.' if table else ''}deleted_at IS NULL"
 
 # view-nhan-vien -> view 
 def get_word_before_dash(str):

@@ -9,7 +9,7 @@ from sqlalchemy import text
 import math
 
 def get_giam_gia (limit, page, filter, order, sort):
-    get_table = 'don_vi_tinh'
+    get_table = 'loai_giam_gia'
     get_attr = 'ten, gia_tri'
     
     response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order)
@@ -17,7 +17,11 @@ def get_giam_gia (limit, page, filter, order, sort):
     return get_error_response(error_code=ERROR_CODES.SUCCESS,result=response_data)
 
 def post_giam_gia (ten, value):
-    error = validate_name(ten = ten, model=GiamGia)
+    value = int(value) if isinstance(int(value), int) else None
+    if value == None:
+        return make_response(get_error_response(ERROR_CODES.NOT_NUMBER), 401)
+    
+    error = validate_name(name = ten, model=GiamGia)
     if error:
         return error
     
@@ -33,6 +37,7 @@ def post_giam_gia (ten, value):
     return get_error_response(ERROR_CODES.SUCCESS, result=result)
 
 def put_giam_gia (id, name, value):
+    
     giam_gia = GiamGia.query.get(id)
     
     if giam_gia is None:
@@ -49,9 +54,9 @@ def put_giam_gia (id, name, value):
         giam_gia.ten = name
 
     if value is not None:
-        error = validate_number(number=value, model=GiamGia)
-        if error:
-            return error
+        value = int(value) if isinstance(int(value), int) else None
+        if value == None:
+            return make_response(get_error_response(ERROR_CODES.NOT_NUMBER), 401)
         
         if value > 90:
             return get_error_response(ERROR_CODES.GIAM_GIA_INVALID_PERCENT)

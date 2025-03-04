@@ -85,7 +85,7 @@ def save_uploaded_file(file, upload_folder, filename = None, prefix="", suffix="
         #     # result = delete_file(upload_folder=upload_folder, filename=filename)
         #     new_filename = filename
         
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         new_filename = f"{prefix}{timestamp}{suffix}.{ext}"
 
         file_path = os.path.join(full_upload_path, new_filename)

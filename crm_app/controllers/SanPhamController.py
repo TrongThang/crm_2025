@@ -3,18 +3,19 @@ from flask import request, jsonify
 from flask_restful import Resource
 from crm_app.services.SanPhamService import *
 from crm_app.services.helpers import *
+from crm_app import app
 
 class SanPhamController(Resource):
     @swag_from('../docs/swaggers/san_pham/get_san_pham.yaml')
     def get(self):
         data = request.args
-        skip = data.get('skip')
-        take = data.get('take')
+        limit = data.get('limit')
+        page = data.get('page')
         sort = data.get('sort')
         order = data.get('order')
         filter = data.get('filters')
 
-        result = get_san_pham(skip=skip, take=take, sort=sort, order=order, filter=filter)
+        result = get_san_pham(limit=limit, page=page, sort=sort, order=order, filter=filter)
         return result
     
     @swag_from('../docs/swaggers/san_pham/post_san_pham.yaml')
@@ -69,16 +70,18 @@ class SanPhamController(Resource):
         return result
 
     @swag_from('../docs/swaggers/san_pham/delete_san_pham.yaml')
-    def delete(self):
-        data = request.get_json()
-        id = data.get('id')
-        id_ct = data.get('id_ct')
-        id_pl = data.get('id_pl')
+    @app.route('/api/san-pham/<int:id>', methods=['DELETE'])
+    def delete_sp(id):
+        # id = data.get('id')
+        print('id:', id)
+        # data = request.get_json()
+        # id_ct = data.get('id_ct')
+        # id_pl = data.get('id_pl')
 
-        if id_ct or id_pl:
-            result = delete_chi_tiet_san_pham(id_ct=id_ct, id_pl=id_pl)
-        elif id:
-            result = delete_san_pham(id=id)
+        # if id_ct or id_pl:
+        #     result = delete_chi_tiet_san_pham(id_ct=id_ct, id_pl=id_pl)
+        # elif id:
+        result = delete_san_pham(id=id)
         return result
 
 class ChiTietSanPhamController(Resource):

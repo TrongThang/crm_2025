@@ -20,12 +20,13 @@ def excute_select_data(table: str, str_get_column :str, filter, limit, page, sor
     query = text(f"""
                 SELECT {table+'.' if query_join else '' }id as ID, {str_get_column}, {query_get_time}
                 FROM {table}
-                {query_join}
+                {'' if query_join is None else query_join}
                 {build_where}
                 {build_sort}
                 {build_limit}
                 {build_offset}
             """)
+    print("query:",query)
     data = [dict(row) for row in db.session.execute(query).mappings().fetchall()]
     print("data:", data)
     total_count_query = text(f"SELECT COUNT(*) AS total FROM {table} {build_where}")

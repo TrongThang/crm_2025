@@ -15,6 +15,7 @@ class ChiTietSanPham(BaseModel):
     khong_phan_loai = Column(BOOLEAN, default=False)
 
     chi_tiet_hoa_don_nhap_khos = relationship("ChiTietNhapKho", back_populates="chi_tiet_san_pham")
+    chi_tiet_hoa_don_xuat_khos = relationship("ChiTietXuatKho", back_populates="chi_tiet_san_pham")
 
     def __str__(self):
         return str(self.id)

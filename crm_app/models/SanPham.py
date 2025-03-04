@@ -25,6 +25,7 @@ class SanPham(BaseModel):
     san_pham_nha_phan_phois = relationship("SanPhamNhaPhanPhoi", back_populates="san_pham")
     nha_phan_phois = relationship("NhaPhanPhoi", secondary="san_pham_nha_phan_phoi", back_populates="san_phams")
     chi_tiet_hoa_don_nhap_khos = relationship("ChiTietNhapKho", back_populates="san_pham")
+    chi_tiet_hoa_don_xuat_khos = relationship("ChiTietXuatKho", back_populates="san_pham")
     def __str__(self):
         return str(self.id)
     

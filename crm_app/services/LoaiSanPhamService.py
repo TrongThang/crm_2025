@@ -41,7 +41,7 @@ def put_loai_sp (id, name, file):
     if loai_sp is None:
         return get_error_response(ERROR_CODES.LOAI_SP_NOT_FOUND)
     if name is not None:
-        error = validate_name(name=name, model=LoaiSanPham, is_unique=False)
+        error = validate_name(name=name, model=LoaiSanPham, is_unique=False, existing_id=id)
         if error:
             return error
         loai_sp.ten = name

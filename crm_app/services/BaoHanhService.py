@@ -9,15 +9,15 @@ import math
 
 def get_bao_hanh (filter, limit, page, sort, order):
     get_table = 'thoi_gian_bao_hanh'
-    get_attr = 'ten, hinh_anh'
+    get_attr = 'ten'
 
     response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order)
     
     return get_error_response(error_code=ERROR_CODES.SUCCESS,result=response_data)
 
 def post_bao_hanh (name):
-    error = validate_number(
-        number= name,
+    error = validate_name(
+        name= name,
         model=BaoHanh,
     )
     if error:
@@ -32,9 +32,11 @@ def post_bao_hanh (name):
     return make_response(get_error_response(error_code=ERROR_CODES.SUCCESS, result=response_data), 200)
 
 def put_bao_hanh (id, name):
-    error = validate_number(
-        number = name,
-        model=BaoHanh
+    error = validate_name(
+        name = name,
+        model=BaoHanh,
+        existing_id=id,
+        is_unique=True
     )
     if error:
         return error

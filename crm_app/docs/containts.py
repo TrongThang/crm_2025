@@ -20,6 +20,9 @@ class ERROR_CODES(Enum):
     NAME_REQUIRED = 12 
     NAME_LENGTH = 13
     DATETIME_INVALID = 14
+    PREPAID_INVALID = 15
+    QUANTITY_NOT_ENOUGH = 16
+    NOT_NUMBER = 17
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
@@ -99,6 +102,9 @@ class MESSAGES(Enum):
     NUMBER_INVALID = "Số không hợp lệ!"
     NAME_REQUIRED = "Yêu cầu nhập tên!"
     DATETIME_INVALID = "Ngày giờ không hợp lệ!"
+    PREPAID_INVALID = "Giá trị trả trước không hợp lệ!"
+    QUANTITY_NOT_ENOUGH = "Số lượng sản phẩm trong lô hàng không đủ đáp ứng"
+    NOT_NUMBER = "Không phải số"
 
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"

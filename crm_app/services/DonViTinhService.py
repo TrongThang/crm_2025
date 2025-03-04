@@ -28,7 +28,7 @@ def post_don_vi_tinh (ten):
     db.session.commit()
 
     result = newDVT.to_dict()
-
+    
     return get_error_response(error_code=ERROR_CODES.SUCCESS,result=result)
 
 def put_don_vi_tinh (id, name):
@@ -36,7 +36,8 @@ def put_don_vi_tinh (id, name):
     error = validate_name(
         name = name,
         model=DonViTinh,
-        is_unique=True
+        is_unique=True,
+        existing_id=id
     )
     if error:
         return error
