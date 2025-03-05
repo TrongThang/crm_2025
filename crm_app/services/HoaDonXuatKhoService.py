@@ -51,6 +51,9 @@ def post_hoa_don_xuat_kho(khach_hang_id, nv_giao_hang_id, nv_sale_id, ngay_xuat,
 
     hoa_don_id = new_hoa_don.id
     total_money = 0
+    if not ds_san_pham_xuat or len(ds_san_pham_xuat) == 0:
+        return make_response(get_error_response(ERROR_CODES.NO_PRODUCT_SELECTED), 400)
+
     for item in ds_san_pham_xuat:
         gia_ban = item.get("gia_ban")
         chiet_khau = item.get("chiet_khau")
@@ -73,10 +76,12 @@ def add_ct_hoa_don_xuat(sku, hoa_don_id, san_pham_id, ctsp_id, so_luong, don_vi_
     if hd_nhap_kho is None:
         return make_response(get_error_response(ERROR_CODES.NOT_FOUND), 401)
     
-    if hd_nhap_kho.so_luong > so_luong:
+    if hd_nhap_kho.so_luong < so_luong:
         return make_response(get_error_response(ERROR_CODES.QUANTITY_NOT_ENOUGH), 401)
-
+    if chiet_khau < 0 and chiet_khau > 100:
+        return make_response(get_error_response(ERROR_CODES.CHIET_KHAU_INVALID), 401)
     # 1 - (20/100) => 1 - 0.2
+    chiet_khau = chiet_khau if chiet_khau else 0 
     thanh_tien = gia_ban * so_luong * (1 - chiet_khau/100)
 
     ct_xuat_kho = ChiTietXuatKho(hoa_don_id=hoa_don_id, san_pham_id=san_pham_id, ctsp_id=ctsp_id, lo=sku,so_luong=so_luong, don_vi_tinh=don_vi_tinh, gia_ban=gia_ban, chiet_khau=chiet_khau, thanh_tien=thanh_tien, la_qua_tang=la_qua_tang)
@@ -85,7 +90,7 @@ def add_ct_hoa_don_xuat(sku, hoa_don_id, san_pham_id, ctsp_id, so_luong, don_vi_
     print("ctsp_id:", ctsp_id)
     ctsp = ChiTietSanPham.query.get(ctsp_id)
 
-    ctsp.so_luong = int(ctsp.so_luong) if ctsp.so_luong else 0 - int(so_luong) 
+    ctsp.so_luong = (int(ctsp.so_luong) if ctsp.so_luong else 0) - int(so_luong) 
     
     
 

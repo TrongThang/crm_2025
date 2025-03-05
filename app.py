@@ -15,6 +15,7 @@ api.add_resource(GiamGiaController.GiamGiaController, "/api/loai-giam-gia")
 api.add_resource(BaoHanhController.BaoHanhController, "/api/thoi-gian-bao-hanh")
 api.add_resource(LoaiSanPhamController.LoaiSanPhamController, "/api/loai-san-pham")
 api.add_resource(SanPhamController.SanPhamController, "/api/san-pham")
+api.add_resource(SanPhamController.ChiTietSanPhamController, "/api/san-pham/chi-tiet")
 api.add_resource(LoginController, "/api/login")
 api.add_resource(RegisterController, "/api/register")
 

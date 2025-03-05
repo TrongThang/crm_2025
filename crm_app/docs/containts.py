@@ -23,12 +23,15 @@ class ERROR_CODES(Enum):
     PREPAID_INVALID = 15
     QUANTITY_NOT_ENOUGH = 16
     NOT_NUMBER = 17
+    NO_PRODUCT_SELECTED = 18
+    CHIET_KHAU_INVALID = 19
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
     SAN_PHAM_NAME_REQUIRED = 1002
     SAN_PHAM_NAME_LENGTH = 1003
     SAN_PHAM_NAME_EXISTED = 1004
+    SAN_PHAM_UPC_EXISTED = 1004
     SAN_PHAM_INVALID_ID = 1005
 
     #LOAI_SAN_PHAM - 2xxx
@@ -105,13 +108,16 @@ class MESSAGES(Enum):
     PREPAID_INVALID = "Giá trị trả trước không hợp lệ!"
     QUANTITY_NOT_ENOUGH = "Số lượng sản phẩm trong lô hàng không đủ đáp ứng"
     NOT_NUMBER = "Không phải số"
-
+    NO_PRODUCT_SELECTED = "Không có sản phẩm nào được chọn!"
+    CHIET_KHAU_INVALID = "Chiết khấu phải từ 0 đến 99%"
+    
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
     SAN_PHAM_NAME_REQUIRED = "Tên sản phẩm là bắt buộc"
     SAN_PHAM_NAME_LENGTH = "Tên sản phẩm quá dài"
     SAN_PHAM_NAME_EXISTED = "Tên sản phẩm đã tồn tại"
     SAN_PHAM_INVALID_ID = "ID sản phẩm không hợp lệ"
+    SAN_PHAM_UPC_EXISTED = "UPC của sản phẩm đã tồn tại!"
 
     # LOAI_SAN_PHAM - 2xxx
     LOAI_SP_NOT_FOUND = "Không tìm thấy loại sản phẩm"

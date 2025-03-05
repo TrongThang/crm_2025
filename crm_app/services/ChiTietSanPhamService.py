@@ -1,24 +1,20 @@
 from crm_app.models.ChiTietSanPham import ChiTietSanPham
+from crm_app.models.SanPham import SanPham
 from crm_app.services.utils import *
+from crm_app.services.dbService import excute_select_data
 from crm_app import db
 
-def add_chi_tiet_san_pham(san_pham_id, ten_phan_loai, file_phan_loai, gia_nhap, gia_ban, so_luong, trang_thai_pl):
+def get_chi_tiet_san_pham_by_san_pham(san_pham_id):
+    get_attr = "san_pham_id, ten_phan_loai, hinh_anh, trang_thai, khong_phan_loai"
+    get_table = "chi_tiet_san_pham"
+
+    filter = '[{"field": "san_pham_id", "condition": "=", "value": ' + str(san_pham_id) + '}]'
+    lst_ctsp = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter)
+
+    return get_error_response(ERROR_CODES.SUCCESS, result=lst_ctsp)
+
+def add_chi_tiet_san_pham(san_pham_id, ten_phan_loai, file_phan_loai, trang_thai_pl):
     error = validate_name(name=ten_phan_loai, model=ChiTietSanPham)
-    if error:
-        return error
-    
-    error = validate_number(number=gia_ban, model=ChiTietSanPham)
-    if error:
-        return error
-    
-    error = validate_number(number=gia_nhap, model=ChiTietSanPham)
-    if error:
-        return error
-    
-    if gia_nhap > gia_ban:
-        return get_error_response(ERROR_CODES.COST_PRICE_GREATER_SELL_PRICE)
-    
-    error = validate_number(number=so_luong, model=ChiTietSanPham)
     if error:
         return error
     
@@ -35,7 +31,7 @@ def add_chi_tiet_san_pham(san_pham_id, ten_phan_loai, file_phan_loai, gia_nhap, 
     else:
         return get_error_response(upload['errorCode'])
 
-    chi_tiet = ChiTietSanPham(san_pham_id=san_pham_id, ten_phan_loai=ten_phan_loai, hinh_anh=filename, gia_nhap=gia_nhap, gia_ban=gia_ban, so_luong=so_luong, trang_thai=trang_thai_pl, khong_phan_loai=khong_phan_loai)
+    chi_tiet = ChiTietSanPham(san_pham_id=san_pham_id, ten_phan_loai=ten_phan_loai, hinh_anh=filename, trang_thai=trang_thai_pl, khong_phan_loai=khong_phan_loai)
 
     db.session.add(chi_tiet)
     db.session.commit()

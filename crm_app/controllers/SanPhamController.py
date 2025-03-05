@@ -4,7 +4,7 @@ from flask_restful import Resource
 from crm_app.services.SanPhamService import *
 from crm_app.services.helpers import *
 from crm_app import app
-
+from crm_app.services.ChiTietSanPhamService import *
 class SanPhamController(Resource):
     @swag_from('../docs/swaggers/san_pham/get_san_pham.yaml')
     def get(self):
@@ -87,7 +87,12 @@ class SanPhamController(Resource):
 class ChiTietSanPhamController(Resource):
     # @swag_from('')
     def get(self):
-        pass
+        data = request.args
+        san_pham_id = data.get('san_pham_id')
+
+        result = get_chi_tiet_san_pham_by_san_pham(san_pham_id)
+
+        return result
     
     def post(self):
         pass

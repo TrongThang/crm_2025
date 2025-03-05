@@ -47,21 +47,13 @@ def to_dict(result_set):
     return result_list
 
 def get_san_pham (limit, page, sort, order, filter):
-    build_where = build_where_query(filter=filter, table='san_pham') if filter else ''
-    opt_order = f" {order.upper()} " if order else "" 
-    build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
-
-    limit = int(limit) if limit else None
-    page = int(page) if page else None
-    skip = int(limit) * (int(page) - 1) if limit and page else 0
-
-    get_attr = f""""
-        san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, vat, mo_ta as mo_ta, trang_thai, 
+    get_attr = text(f"""
+        san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, CAST(mo_ta AS CHAR) AS mo_ta, vat, trang_thai, 
         loai_san_pham.id as loai_san_pham_id, loai_san_pham.ten as loai_san_pham, don_vi_tinh.id as don_vi_tinh_id, don_vi_tinh.ten as don_vi_tinh, 
         loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh
-    """
+    """)
     get_table = "san_pham"
-    query_join = """
+    query_join = text("""
         LEFT JOIN 
             loai_san_pham ON loai_san_pham.id = san_pham.loai_san_pham_id
         LEFT JOIN   
@@ -70,17 +62,17 @@ def get_san_pham (limit, page, sort, order, filter):
             loai_giam_gia ON loai_giam_gia.id = san_pham.loai_giam_gia_id
         LEFT JOIN
             thoi_gian_bao_hanh ON thoi_gian_bao_hanh.id = san_pham.thoi_gian_bao_hanh_id
-    """
+    """)
     # result_set = db.session.execute(query).mappings().all()
 
     # result_list = to_dict(result_set=result_set)
     # total_page = math.ceil(len(result_list)/limit)
     response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
-
+    print("response_data:", response_data)
     return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 
 def post_san_pham (ten, upc, vat, mo_ta, trang_thai, file, loai_id, dvt_id, gg_id, bh_id, 
-ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl):
+ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl, chi_tiet_san_pham):
     error = validate_name(name=ten, model=SanPham)
     if error:
         return error
@@ -89,9 +81,12 @@ ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl):
     if error:
         return error
     
+    upc_existed = SanPham.query.filter_by(upc=upc).first()
+    if upc_existed:
+        return make_response(get_error_response(ERROR_CODES.SAN_PHAM_UPC_EXISTED), 401)
+    
     error = validate_number(number=vat, model=SanPham)
-    if error:
-        return error
+    if error:        return error
     
     upload = save_uploaded_file(file, "san_pham", prefix='san_pham_')
     if upload['errorCode'] == ERROR_CODES.SUCCESS:
@@ -105,19 +100,20 @@ ten_pl, file_pl, gia_nhap, gia_ban, so_luong, trang_thai_pl):
 
     db.session.add(san_pham)
     db.session.flush()
-    for ten_ct, file_ct, nhap, ban, soluong in zip(ten_pl, file_pl, gia_nhap, gia_ban, so_luong):
+    for item in chi_tiet_san_pham:
         result_ct = add_chi_tiet_san_pham(
-            san_pham_id=san_pham.id, 
-            ten_phan_loai=ten_ct,  
-            file_phan_loai=file_ct,  
-            gia_nhap=nhap,  
-            gia_ban=ban,  
-            so_luong=soluong,  
-            trang_thai_pl=san_pham.trang_thai
+            san_pham_id=item.san_pham_id, 
+            ten_phan_loai=item.te_phan_loai,  
+            file_phan_loai=item.hinh_anh,  
+            # gia_nhap=item.nhap,  
+            # gia_ban=item.ban,  
+            # so_luong=item.soluong,  
+            trang_thai=item.trang_thai
         )
 
         if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS:  
             return result_ct
+        
         
     db.session.commit()
 
@@ -212,7 +208,7 @@ def delete_san_pham(id):
     result_ct = delete_many_chi_tiet_san_pham(san_pham_id=id)
 
     # if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS: 
-    delete_file(upload_folder="san_pham",filename=sp_delete.hinh_anh)
+    # delete_file(upload_folder="san_pham",filename=sp_delete.hinh_anh)
     sp_delete.soft_delete()
     db.session.commit()
 
