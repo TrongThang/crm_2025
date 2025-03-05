@@ -26,7 +26,7 @@ def validate_name(name, model,existing_id = None,max_length = 255, is_unique = T
         
     return None
 
-def validate_number(number, model):
+def validate_number(number):
     if number is None:
         print('is None')
         return get_error_response(ERROR_CODES.NUMBER_INVALID)
@@ -37,7 +37,7 @@ def validate_number(number, model):
         print('is not Number')
         return get_error_response(ERROR_CODES.PRICE_INVALID) 
     
-    if number <= 0:
+    if number < 0:
         return get_error_response(ERROR_CODES.PRICE_LESSER_ZERO) 
     
     return None

@@ -22,9 +22,12 @@ class HoaDonNhapKhoController(Resource):
         nha_phan_phoi_id = data.get('nha_phan_phoi_id')
         kho_id = data.get('kho_id')
         ngay_nhap = data.get('ngay_nhap')
+        tong_tien = data.get('tong_tien')
+        tra_truoc = data.get('tra_truoc')
+        ghi_chu = data.get('ghi_chu')
         ds_san_pham_nhap = data.get('ds_san_pham_nhap')
 
-        result = post_hoa_don_nhap_kho(nha_phan_phoi_id=nha_phan_phoi_id, kho_id=kho_id, ngay_nhap=ngay_nhap, ds_san_pham_nhap=ds_san_pham_nhap)
+        result = post_hoa_don_nhap_kho(nha_phan_phoi_id=nha_phan_phoi_id, kho_id=kho_id, ngay_nhap=ngay_nhap, tong_tien=tong_tien, tra_truoc=tra_truoc, ghi_chu=ghi_chu, ds_san_pham_nhap=ds_san_pham_nhap)
         return result
 
     # @swag_from('../docs/swaggers/hd_nhap_kho/put_hd_nhap_kho.yaml')

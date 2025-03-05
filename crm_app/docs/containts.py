@@ -85,6 +85,12 @@ class ERROR_CODES(Enum):
     #KHO - 9xxx
     KHO_NOT_FOUND = 9001
 
+    #HOA_DON_NHAP - 11xx
+    HOA_DON_NHAP_PREPAID_LESS_ZERO = 1101
+    HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = 1102
+    HOA_DON_NHAP_PREPAID_NOT_SAME = 1103
+    HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = 1104
+
 
 class MESSAGES(Enum):
     SUCCESS = "Thành công"
@@ -173,10 +179,18 @@ class MESSAGES(Enum):
 
     KHO_NOT_FOUND = "Không tìm thấy kho hợp lệ"
 
+    #NHAP_KHO - 9xxx
+    # NHAP_KHO_WRONG_TONG_TIEN = "Tổng tiền gửi về không khớp so vơi"
+
+    HOA_DON_NHAP_PREPAID_LESS_ZERO = "Số tiền trả trước phải lớn hơn 0!"
+    HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = "Số tiền trả trước lớn hơn tổng tiền thanh toán!"
+    HOA_DON_NHAP_PREPAID_NOT_SAME = "Số tiền trả trước gửi về không giống nhau!"
+    HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
     
-def get_error_response(error_code: ERROR_CODES, result = None):
+def get_error_response(error_code: ERROR_CODES, result = None, field_error = None):
     """Trả về response JSON chứa errorCode và message tương ứng"""
-    message = MESSAGES[error_code.name].value if error_code.name in MESSAGES.__members__ else "Lỗi không xác định"
+    field_error_message = field_error if field_error else ''
+    message = field_error_message + (MESSAGES[error_code.name].value if error_code.name in MESSAGES.__members__ else "Lỗi không xác định")
 
     return jsonify({
         "error": error_code.value,
