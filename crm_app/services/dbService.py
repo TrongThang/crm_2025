@@ -2,10 +2,12 @@ from crm_app.services.helpers import *
 from crm_app import db
 from sqlalchemy import text
 import math
+from crm_app import redis_client
+from crm_app.docs.containts import get_error_response, ERROR_CODES
 
 def excute_select_data(table: str, str_get_column :str, filter = None, limit = None, page = None, sort = None, order = None, query_join:str = None):
 
-    build_where = build_where_query(filter=filter, table=table) if filter else ''
+    build_where = build_where_query(filter=filter, table=table) if filter else f"WHERE {table}.deleted_at IS NULL"
     limit = int(limit) if limit else None
     page = int(page) if page else None
     skip = int(limit) * (int(page) - 1) if limit and page else 0
@@ -28,7 +30,6 @@ def excute_select_data(table: str, str_get_column :str, filter = None, limit = N
             """)
     print("query:",query)
     data = [dict(row) for row in db.session.execute(query).mappings().fetchall()]
-    print("data:", data)
 
     total_count_query = text(f"SELECT COUNT(*) AS total FROM {table} {'' if query_join is None else query_join} {build_where}")
     total_count = db.session.execute(total_count_query).scalar()
@@ -36,3 +37,8 @@ def excute_select_data(table: str, str_get_column :str, filter = None, limit = N
 
     response_data = {"data": data, "total_page": total_page}
     return response_data
+
+def check_reference_existence(model, column_name, value, error_code):
+    if model.query.filter_by(**{column_name: value}, deleted_at=None).first():
+        return get_error_response(error_code)
+    return None

@@ -3,11 +3,13 @@ from crm_app.docs.containts import ERROR_CODES, MESSAGES, get_error_response
 import os
 from datetime import datetime
 import re
-
+from crm_app.docs.formatContaints import FORMAT_DATE
+from crm_app import db
+from sqlalchemy import text
 
 def validate_name(name, model,existing_id = None,max_length = 255, is_unique = True):
-    if name is None:
-        return make_response(get_error_response(ERROR_CODES.NAME_REQUIRED), 401)
+    # if name is None:
+    #     return make_response(get_error_response(ERROR_CODES.NAME_REQUIRED), 401)
     if len(name) > max_length:
         return make_response(get_error_response(ERROR_CODES.NAME_LENGTH), 401)
     
@@ -58,7 +60,7 @@ def validate_phone(phone):
     
     return None
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'webp', 'ico'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -126,11 +128,23 @@ def validate_datetime(datetime_check):
         return True
     return False
 
-def create_sku(upc, ct_san_pham_id, date_str, counter):
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+def create_sku(upc,ct_san_pham_id, date_str, model = None):
+    date_obj = datetime.strptime(date_str, FORMAT_DATE.MYSQL_DATE_ONLY)
 
-    formatted_date = date_obj.strftime("%m%d%Y")
-
+    formatted_date = date_obj.strftime("%d%m%Y")
+    # formatted_date = date_obj.strftime("%m%d%Y")
+    date_str = date_obj.strftime("%Y-%m-%d")
+    query = text(f"""
+                    SELECT COUNT(*) 
+                    FROM chi_tiet_hoa_don_nhap_kho 
+                        LEFT JOIN hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.hoa_don_id = hoa_don_nhap_kho.id
+                    WHERE chi_tiet_hoa_don_nhap_kho.ctsp_id = {ct_san_pham_id}
+                        AND DATE(hoa_don_nhap_kho.ngay_nhap) = '2025-02-12' 
+                    FOR UPDATE
+                """)
+    counter = db.session.execute(query).scalar()
+    print(query)
+    print("counter:", counter)
     sku = f"{upc}-{ct_san_pham_id}-{formatted_date}-{counter:03}"
 
     return sku

@@ -8,7 +8,7 @@ class SanPham(BaseModel):
     __tablename__ = 'san_pham'
     ten = Column(String(255), nullable= False)
     upc = Column(String(255))
-    hinh_anh = Column(String(255))
+    hinh_anh = Column(String(max))
     vat = Column(Float)
     mo_ta = Column(TEXT)
     trang_thai = Column(BOOLEAN, default=True)
@@ -28,5 +28,10 @@ class SanPham(BaseModel):
     chi_tiet_hoa_don_xuat_khos = relationship("ChiTietXuatKho", back_populates="san_pham")
     def __str__(self):
         return str(self.id)
+    
+
+    def delete():
+        
+        pass
     
     

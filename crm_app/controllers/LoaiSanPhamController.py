@@ -30,19 +30,19 @@ class LoaiSanPhamController(Resource):
     
     @swag_from('../docs/swaggers/loai_san_pham/post_loai_san_pham.yaml')
     def post(self):
-        data = request.form
+        data = request.get_json()
         name = data.get('ten')
-        file = request.files.get('hinh_anh')
+        file = data.get('hinh_anh')
         result = post_loai_sp(name=name, file=file)
 
         return result
 
     @swag_from('../docs/swaggers/loai_san_pham/put_loai_san_pham.yaml')
     def put(self):
-        data = request.form
+        data = request.get_json()
         id = data.get('id')
         name = data.get('ten')
-        file = request.files.get('hinh_anh')
+        file = data.get('hinh_anh')
         print(id, name, file)
         result = put_loai_sp(id=id, name=name, file=file)
 

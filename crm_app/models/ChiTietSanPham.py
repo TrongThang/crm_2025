@@ -7,7 +7,7 @@ class ChiTietSanPham(BaseModel):
     __tablename__ = 'chi_tiet_san_pham'
     san_pham_id = Column(INT)
     ten_phan_loai = Column(String(255), nullable= False, unique=True)
-    hinh_anh = Column(String(255), nullable= False)
+    hinh_anh = Column(String(max), nullable= False)
     gia_nhap = Column(Float)
     gia_ban = Column(String(255))
     so_luong = Column(INT, default=0)

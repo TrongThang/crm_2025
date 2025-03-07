@@ -1,31 +1,16 @@
-from crm_app import *
-from flask_restful import Api
-from crm_app.controllers import DonViTinhController, GiamGiaController, BaoHanhController, LoaiSanPhamController, SanPhamController
-from crm_app.controllers.AcountController import LoginController, RegisterController 
-from crm_app.controllers.QuyenChucVuController import QuyenChucVuController
-from crm_app.controllers.HoaDonNhapKhoController import HoaDonNhapKhoController
-from crm_app.controllers.HoaDonXuatKhoController import HoaDonXuatKhoController, ChiTietXuatKhoController
-from crm_app.controllers.NhaPhanPhoiController import NhaPhanPhoiController
-from crm_app.controllers.KhachHangController import KhachHangController
+from crm_app import app
+from crm_app.helpers.redis import init_permissions_role_to_redis, init_role_employee_to_redis
+from crm_app.helpers.redis import redis_client
+from crm_app.routes.routes import register_routes, api_blueprint  
+from crm_app.middlewares.check_permission import check_permission
 
-api = Api(app)
+with app.app_context():
+    init_permissions_role_to_redis()
+    init_role_employee_to_redis()
+    redis_client.set("is_restart", 1)
 
-api.add_resource(DonViTinhController.DonViTinhController, "/api/don-vi-tinh")
-api.add_resource(GiamGiaController.GiamGiaController, "/api/loai-giam-gia")
-api.add_resource(BaoHanhController.BaoHanhController, "/api/thoi-gian-bao-hanh")
-api.add_resource(LoaiSanPhamController.LoaiSanPhamController, "/api/loai-san-pham")
-api.add_resource(SanPhamController.SanPhamController, "/api/san-pham")
-api.add_resource(SanPhamController.ChiTietSanPhamController, "/api/san-pham/chi-tiet")
-api.add_resource(LoginController, "/api/login")
-api.add_resource(RegisterController, "/api/register")
-
-
-api.add_resource(NhaPhanPhoiController, "/api/nha-phan-phoi")
-api.add_resource(KhachHangController, "/api/khach-hang")
-api.add_resource(QuyenChucVuController, "/api/quyen-han")
-api.add_resource(HoaDonNhapKhoController, "/api/nhap-kho")
-api.add_resource(HoaDonXuatKhoController, "/api/xuat-kho")
-api.add_resource(ChiTietXuatKhoController, "/api/xuat-kho/chi-tiet")
+app.before_request(check_permission)
+api = register_routes(app)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5007, threaded=True)

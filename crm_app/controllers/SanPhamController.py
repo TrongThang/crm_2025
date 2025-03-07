@@ -20,52 +20,41 @@ class SanPhamController(Resource):
     
     @swag_from('../docs/swaggers/san_pham/post_san_pham.yaml')
     def post(self):
-        file = request.files.get('file')
-        data = request.form
+        data = request.get_json()
+        hinh_anh = data.get('hinh_anh')
         ten = data.get('ten')
         upc = data.get('upc')
         vat = data.get('vat')
         mo_ta = data.get('mo_ta')
         trang_thai = data.get('trang_thai')
-        loai_id = data.get('loai_id')
-        dvt_id = data.get('dvt_id')
-        gg_id = data.get('gg_id')
-        bh_id = data.get('bh_id')
+        loai_id = data.get('loai_san_pham_id')
+        dvt_id = data.get('don_vi_tinh_id')
+        gg_id = data.get('giam_gia_id')
+        bh_id = data.get('bao_hanh_id')
+        print("form:", request.form)
+        chi_tiet_san_pham = data.get('chi_tiet_san_pham')
 
-        ten_pl = data.getlist('ten_pl')
-        file_pl = request.files.getlist('file_pl')
-        gia_nhap = data.getlist('gia_nhap')
-        gia_ban = data.getlist('gia_ban')
-        so_luong = data.getlist('so_luong')
-        trang_thai_pl = data.getlist('trang_thai_pl')
-
-        result = post_san_pham(ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, file=file, loai_id=loai_id, dvt_id=dvt_id, gg_id=gg_id, bh_id=bh_id, ten_pl=ten_pl, file_pl=file_pl, gia_nhap=gia_nhap, gia_ban=gia_ban, so_luong=so_luong, trang_thai_pl=trang_thai_pl)
+        result = post_san_pham(ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, hinh_anh=hinh_anh, loai_id=loai_id, dvt_id=dvt_id, gg_id=gg_id, bh_id=bh_id, chi_tiet_san_pham=chi_tiet_san_pham)
         return result 
 
     @swag_from('../docs/swaggers/san_pham/put_san_pham.yaml')
     def put(self):
-        file = request.files.get('file')
-        data = request.form
+        data = request.get_json()
+        hinh_anh = data.get('hinh_anh')
         id = data.get('id')
         ten = data.get('ten')
         upc = data.get('upc')
         vat = data.get('vat')
         mo_ta = data.get('mo_ta')
         trang_thai = data.get('trang_thai')
-        loai_id = data.get('loai_id')
-        dvt_id = data.get('dvt_id')
-        gg_id = data.get('gg_id')
-        bh_id = data.get('bh_id')
+        loai_id = data.get('loai_san_pham_id')
+        dvt_id = data.get('don_vi_tinh_id')
+        gg_id = data.get('giam_gia_id')
+        bh_id = data.get('bao_hanh_id')
         
-        id_pl = data.getlist('id_pl')
-        ten_pl = data.getlist('ten_pl')
-        file_pl = request.files.getlist('file_pl')
-        gia_nhap = data.getlist('gia_nhap')
-        gia_ban = data.getlist('gia_ban')
-        so_luong = data.getlist('so_luong')
-        trang_thai_pl = data.getlist('trang_thai_pl')
+        chi_tiet_san_pham = data.get('chi_tiet_san_pham')
 
-        result = put_san_pham(id=id, ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, file=file, loai_id=loai_id, dvt_id=dvt_id, gg_id=gg_id, bh_id=bh_id, id_pl=id_pl, ten_pl=ten_pl, file_pl=file_pl, gia_nhap=gia_nhap, gia_ban=gia_ban, so_luong=so_luong, trang_thai_pl=trang_thai_pl)
+        result = put_san_pham(id=id, ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, hinh_anh=hinh_anh, loai_id=loai_id, dvt_id=dvt_id, gg_id=gg_id, bh_id=bh_id, chi_tiet_san_pham = chi_tiet_san_pham)
 
         return result
 
@@ -86,11 +75,10 @@ class SanPhamController(Resource):
 
 class ChiTietSanPhamController(Resource):
     # @swag_from('')
-    def get(self):
-        data = request.args
-        san_pham_id = data.get('san_pham_id')
+    @app.route('/api/chi-tiet-san-pham/<int:id>', methods=['GET'])
+    def get(id):
 
-        result = get_chi_tiet_san_pham_by_san_pham(san_pham_id)
+        result = get_chi_tiet_san_pham_by_san_pham(san_pham_id=id)
 
         return result
     

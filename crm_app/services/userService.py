@@ -2,21 +2,18 @@
 import datetime
 from flask import request, jsonify, make_response
 from crm_app import app,db
-from functools import wraps
 from crm_app.models.NhanVien import NhanVien
-from crm_app.docs.containts import ERROR_CODES
-from crm_app.services.utils import validate_name
+from crm_app.docs.containts import ERROR_CODES, get_error_response
 import bcrypt
 import jwt
 import hashlib
-import redis
+from crm_app import redis_client
 
-redis_client = redis.StrictRedis(host='localhost', port=6379)
-
-def create_token(username):
+def create_token(username, chuc_vu_id):
     token = jwt.encode(
         {
             'username': username,
+            'chuc_vu_id': chuc_vu_id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)  # Token hết hạn sau 30 phút
         },
         app.config['SECRET_KEY'],
@@ -27,29 +24,22 @@ def create_token(username):
 def login(username, password):
     print('login', username, password)
     if password is None:
-        return make_response(jsonify({'message': 'Tài khoản hoặc mật khẩu không chinnh xác', 'errorCode': 1}), 401)
+        return make_response(get_error_response(ERROR_CODES.ACCOUNT_INVALID), 401)
 
-    user = NhanVien.query.filter_by(ten_dang_nhap=username).first()
+    user = NhanVien.query.filter_by(ten_dang_nhap=username, deleted_at=None).first()
 
-    print('users:', user)
     if not username or not user:
-        return make_response(jsonify({'message': 'Không tìm thấy tên tài khoản người dùng', 'errorCode': 1}), 401)
-    
-    # error = validate_name(name=username, model=NhanVien, max_length=50)
-    # if error:
-    #     return error
-    
-    # error = validate_name(name=password, model=NhanVien, max_length=50)
-    # if error:
-    #     return error
-    
-    if hashlib.md5(password.encode()).hexdigest() == user.mat_khau:
+        return make_response(get_error_response(ERROR_CODES.ACCOUNT_INVALID), 401)
+
+    if hashlib.md5(str(password).encode()).hexdigest() == user.mat_khau:
     # if bcrypt.checkpw(password.encode('utf-8'), user.mat_khau.encode('utf-8')):
-        token = create_token(username)
-        redis_client.setex(f"auth:{token}", 3600, ",".join())
+        chuc_vu_id = user.chuc_vu_id
+        
+        token = create_token(username=username, chuc_vu_id=chuc_vu_id)
+        
         return jsonify({'token': token, 'success': True})
     else:
-        return make_response(jsonify({'message':'Mật khẩu không chính xác', 'errorCode': 1}), 401)
+        return make_response(get_error_response(ERROR_CODES.ACCOUNT_INVALID), 401)
 
 def register(username, password):
     if password is None:

@@ -25,7 +25,7 @@ def post_giam_gia (ten, value):
     if error:
         return error
     
-    error = validate_number(number=value, model=GiamGia)
+    error = validate_number(number=value)
     if error:
         return error
 

@@ -25,6 +25,8 @@ class ERROR_CODES(Enum):
     NOT_NUMBER = 17
     NO_PRODUCT_SELECTED = 18
     CHIET_KHAU_INVALID = 19
+    SAN_PHAM_OF_NHA_PHAN_PHOI_EXISTED = 20
+
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
@@ -33,13 +35,21 @@ class ERROR_CODES(Enum):
     SAN_PHAM_NAME_EXISTED = 1004
     SAN_PHAM_UPC_EXISTED = 1004
     SAN_PHAM_INVALID_ID = 1005
+    SAN_PHAM_NOT_FOUND_TRANG_THAI = 1006
 
+    SAN_PHAM_REFERENCE_NHA_PHAN_PHOI = 1008
+    SAN_PHAM_REFERENCE_CTSP = 1007
+    SAN_PHAM_REFERENCE_CHI_TIET_NHAP_HD = 1010
+    SAN_PHAM_REFERENCE_CHI_TIET_XUAT_HD = 1009
+    SAN_PHAM_REFERENCE_TON_KHO = 1011
+    
     #LOAI_SAN_PHAM - 2xxx
     LOAI_SP_NOT_FOUND = 2001
     LOAI_SP_NAME_REQUIRED = 2002
     LOAI_SP_NAME_LENGTH = 2003
     LOAI_SP_NAME_EXISTED = 2004
     LOAI_SP_INVALID_ID = 2005
+    SAN_PHAM_OF_LSP_EXITED = 2006
     
     #DON_VI_TINH - 3xxx
     DVT_NOT_FOUND = 3001
@@ -47,6 +57,8 @@ class ERROR_CODES(Enum):
     DVT_NAME_LENGTH = 3003
     DVT_NAME_EXISTED = 3004
     DVT_INVALID_ID = 3005
+    DVT_REFERENCE_SAN_PHAM = 8003
+
 
     #CHI TIET SAN PHAM - 4xxx
     CTSP_NOT_FOUND = 4001
@@ -54,7 +66,10 @@ class ERROR_CODES(Enum):
     CTSP_NAME_LENGTH = 4003
     CTSP_NAME_EXISTED = 4004
     CTSP_INVALID_ID = 4005
-
+    CTSP_REFERENCE_CHI_TIET_NHAP_HD = 4006
+    CTSP_REFERENCE_CHI_TIET_XUAT_HD = 4007
+    CTSP_REFERENCE_TON_KHO = 4008
+    
     #BAO_HANH - 5xxx
     BAO_HANH_NOT_FOUND = 5001
     BAO_HANH_NAME_REQUIRED = 5002
@@ -81,6 +96,8 @@ class ERROR_CODES(Enum):
     #NHA_PHAN_PHOI - 8xxx
     NHA_PHAN_PHOI_NOT_FOUND = 8001
     NHA_PHAN_PHOI_NAME_LRNGTH = 8002
+    NHA_PHAN_PHOI_REFERENCE_SAN_PHAM = 8003
+    NHA_PHAN_PHOI_REFERENCE_HOA_DON_NHAP = 8004
 
     #KHO - 9xxx
     KHO_NOT_FOUND = 9001
@@ -90,6 +107,13 @@ class ERROR_CODES(Enum):
     HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = 1102
     HOA_DON_NHAP_PREPAID_NOT_SAME = 1103
     HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = 1104
+
+    #CHUC_VU- 12xx
+    CHUC_VU_NOT_FOUND = 1201
+    CHUC_NANG_NOT_FOUND = 1201
+    
+    #HOA DON XUAT - 13xx
+    HOA_DON_XUAT_NOT_STATUS = 1301
 
 
 class MESSAGES(Enum):
@@ -116,6 +140,7 @@ class MESSAGES(Enum):
     NOT_NUMBER = "Không phải số"
     NO_PRODUCT_SELECTED = "Không có sản phẩm nào được chọn!"
     CHIET_KHAU_INVALID = "Chiết khấu phải từ 0 đến 99%"
+    SAN_PHAM_OF_NHA_PHAN_PHOI_EXISTED = "Đã tồn tại sản phẩm này trong nhà phân phối!"
     
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
@@ -124,6 +149,14 @@ class MESSAGES(Enum):
     SAN_PHAM_NAME_EXISTED = "Tên sản phẩm đã tồn tại"
     SAN_PHAM_INVALID_ID = "ID sản phẩm không hợp lệ"
     SAN_PHAM_UPC_EXISTED = "UPC của sản phẩm đã tồn tại!"
+    SAN_PHAM_NOT_FOUND_TRANG_THAI = "Trạng thái của sản phẩm không tồn tại!"
+
+    SAN_PHAM_REFERENCE_CTSP = "Sản phẩm này có tham chiếu đến chi tiết sản phẩm đang còn hoạt động!"
+    SAN_PHAM_REFERENCE_NHA_PHAN_PHOI = "Sản phẩm này có tham chiếu đến nhà phân phối đang còn hoạt động!"
+    SAN_PHAM_REFERENCE_CHI_TIET_XUAT_HD = "Sản phẩm này có tham chiếu đến hoá đơn xuất hàng!"
+    SAN_PHAM_REFERENCE_CHI_TIET_NHAP_HD = "Sản phẩm này có tham chiếu đến hoá đơn nhập hàng!"
+    SAN_PHAM_REFERENCE_TON_KHO = "Sản phẩm này vẫn còn trong kho và chưa bị xoá!"
+
 
     # LOAI_SAN_PHAM - 2xxx
     LOAI_SP_NOT_FOUND = "Không tìm thấy loại sản phẩm"
@@ -131,6 +164,7 @@ class MESSAGES(Enum):
     LOAI_SP_NAME_LENGTH = "Tên loại sản phẩm quá dài"
     LOAI_SP_NAME_EXISTED = "Tên loại sản phẩm đã tồn tại"
     LOAI_SP_INVALID_ID = "ID loại sản phẩm không hợp lệ"
+    SAN_PHAM_OF_LSP_EXITED = "Có sản phẩm thuộc loại sản phẩm vẫn tồn tại!, không cho phép xoá!"
 
     # DON_VI_TINH - 3xxx
     DVT_NOT_FOUND = "Không tìm thấy đơn vị tính"
@@ -138,6 +172,7 @@ class MESSAGES(Enum):
     DVT_NAME_LENGTH = "Tên đơn vị tính quá dài"
     DVT_NAME_EXISTED = "Tên đơn vị tính đã tồn tại"
     DVT_INVALID_ID = "ID đơn vị tính không hợp lệ"
+    DVT_REFERENCE_SAN_PHAM = "Có sản phẩm đang sử dụng đơn vị tính này!"
 
     # CHI_TIET_SAN_PHAM - 4xxx
     CTSP_NOT_FOUND = "Không tìm thấy chi tiết sản phẩm"
@@ -147,6 +182,9 @@ class MESSAGES(Enum):
     CTSP_INVALID_ID = "ID chi tiết sản phẩm không hợp lệ"
     CTSP_PRICE_GRETER_ZERO = "Giá sản phẩm phải lớn hơn 0"
     CTSP_PRICE_LESSER_ZERO = "Giá sản phẩm không thể nhỏ hơn 0"
+    CTSP_REFERENCE_CHI_TIET_XUAT_HD = "Chi tiết sản phẩm này có tham chiếu đến hoá đơn xuất hàng!"
+    CTSP_REFERENCE_CHI_TIET_NHAP_HD = "Chi tiết sản phẩm này có tham chiếu đến hoá đơn nhập hàng!"
+    CTSP_REFERENCE_TON_KHO = "Chi tiết sản phẩm này vẫn còn trong kho và chưa bị xoá!"
 
     # BAO_HANH - 5xxx
     BAO_HANH_NOT_FOUND = "Không tìm thấy thông tin bảo hành"
@@ -164,7 +202,7 @@ class MESSAGES(Enum):
     GIAM_GIA_INVALID_PERCENT = "Mức giá giảm không được lớn hơn 90%"
 
     # NHAN_VIEN - 7xxx
-    ACCOUNT_INVALID = "Tài khoản không hợp lệ"
+    ACCOUNT_INVALID = "Tài khoản hoặc mật khẩu khôg chính xác!"
     USERNAME_LENGTH = "Tên đăng nhập quá dài hoặc quá ngắn"
     PASSWORD_LENGTH = "Mật khẩu quá dài hoặc quá ngắn"
     NHAN_VIEN_NAME_LENGTH = "Họ tên từ 1 đến 255 ký tự"
@@ -176,6 +214,8 @@ class MESSAGES(Enum):
 
     NHA_PHAN_PHOI_NOT_FOUND = "Không tìm thấy nhà phân phối hợp lệ"
     NHA_PHAN_PHOI_NAME_LENGTH = "Tên nhà phân phối từ 1 đến 255 ký tự"
+    NHA_PHAN_PHOI_REFERENCE_SAN_PHAM = "Nhà phân phối này còn cung cấp cho các sản phẩm còn kinh doanh"
+    NHA_PHAN_PHOI_REFERENCE_HOA_DON_NHAP = "Nhà phân phối này đã từng cung cấp nhập kho!"
 
     KHO_NOT_FOUND = "Không tìm thấy kho hợp lệ"
 
@@ -186,6 +226,12 @@ class MESSAGES(Enum):
     HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = "Số tiền trả trước lớn hơn tổng tiền thanh toán!"
     HOA_DON_NHAP_PREPAID_NOT_SAME = "Số tiền trả trước gửi về không giống nhau!"
     HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
+
+    #CHUC_VU - 11xx
+    # CHUC_VU_NOT_FOUND = "Không tìm thấy chức vụ!"
+    # CHUC_NANG_NOT_FOUND = "Không tìm thấy chức năng!"
+
+    HOA_DON_XUAT_NOT_STATUS = ""
     
 def get_error_response(error_code: ERROR_CODES, result = None, field_error = None):
     """Trả về response JSON chứa errorCode và message tương ứng"""

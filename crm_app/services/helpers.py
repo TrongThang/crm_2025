@@ -59,7 +59,9 @@ def build_where_query(filter, table = None):
                 sql_condition.append(f""" {field} <= {0 if value == '' else value} """)
             if operator == '>=':
                 sql_condition.append(f""" {field} >= {0 if value == '' else value} """)
+    print('sql_condition:', sql_condition)
     if not sql_condition:
+        print('sql_condition')
         return f"WHERE {table+'.'}deleted_at IS NULL" 
     print("logical_operator:", logical_operator)
     print("sql_condition:", sql_condition)

@@ -3,9 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from flask_cors import CORS
 import os 
+import redis
 
 app = Flask(__name__)
 CORS(app)
+
+redis_client = redis.Redis(host='172.23.182.206', port=6379)
+
 UPLOAD_FOLDER = 'uploads'
 app.secret_key = '@@#*&Y()P2T@@#*@#$#$%^&*('
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/crm_2025?charset=utf8mb4'

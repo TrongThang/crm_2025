@@ -24,5 +24,3 @@ else:
     print("Không tìm thấy redis")
 
 time.sleep(2)
-
-print(r.get("Germany"))

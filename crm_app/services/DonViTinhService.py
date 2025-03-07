@@ -3,6 +3,7 @@ from crm_app.docs.containts import ERROR_CODES, MESSAGES
 from crm_app.services.utils import *
 from crm_app.services.dbService import *
 from crm_app.models.DonViTinh import DonViTinh
+from crm_app.models.SanPham import SanPham
 from crm_app import db
 from sqlalchemy import text
 import math
@@ -55,6 +56,9 @@ def put_don_vi_tinh (id, name):
 
 def delete_don_vi_tinh(id):
     don_vi_tinh = DonViTinh.query.get(id)
+    error_response = check_reference_existence(model=SanPham, column_name="don_vi_tinh_id", value=id, error_code=ERROR_CODES.DVT_REFERENCE_SAN_PHAM)
+    if error_response:
+        return error_response
 
     don_vi_tinh.soft_delete()
 

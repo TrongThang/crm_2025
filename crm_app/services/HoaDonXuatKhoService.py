@@ -28,7 +28,7 @@ def get_hoa_don_xuat_kho(filter, limit, page, sort, order):
     response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
     return get_error_response(ERROR_CODES.SUCCESS, result=response_data) 
 
-def post_hoa_don_xuat_kho(khach_hang_id, nv_giao_hang_id, nv_sale_id, ngay_xuat, thanh_tien, tra_truoc, ghi_chu, ds_san_pham_xuat):
+def post_hoa_don_xuat_kho(khach_hang_id, nv_giao_hang_id, nv_sale_id, ngay_xuat, thanh_tien, tra_truoc, ghi_chu, da_giao_hang,ds_san_pham_xuat):
     print(ds_san_pham_xuat)
     # if validate_datetime(datetime_check=ngay_nhap) is False:
     #     return make_response(get_error_response(ERROR_CODES.DATETIME_INVALID), 401)
@@ -41,6 +41,10 @@ def post_hoa_don_xuat_kho(khach_hang_id, nv_giao_hang_id, nv_sale_id, ngay_xuat,
     if isExist_nv_giao_hang is False and isExist_nv_sale is False:
         return make_response(get_error_response(ERROR_CODES.NHA_PHAN_PHOI_NOT_FOUND), 401)
     
+    # da_giao_hang = get_status_by_object(da_giao_hang)
+    #     if not da_giao_hang:
+    #         return make_response(get_error_response(ERROR_CODES.), 401)
+
     if tra_truoc < 0 or tra_truoc > thanh_tien:
         return make_response(get_error_response(ERROR_CODES.PREPAID_INVALID), 401)
     
