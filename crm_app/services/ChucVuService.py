@@ -1,44 +1,21 @@
 from crm_app.services.utils import *
 from crm_app.services.helpers import build_where_query
+from crm_app.services.dbService import excute_select_data
 from crm_app.models.ChucVu import ChucVu
 from crm_app import db
 
-def get_chuc_vu(filter):
-    build_where = build_where_query(filter=filter) if filter else ''
+def get_chuc_vu(filter=[]):
+    get_attr = "chuc_vu.ten as ten"
+    get_table = "chuc_vu"
 
-    query = text(f"""
-                    SELECT chuc_vu.id, chuc_vu.ten as ten, created_at, updated_at, deleted_at, chuc_nang.ten as ten_quyen
-                    FROM chuc_vu
-                        LEFT JOIN 
-                            quyen ON quyen.chuc_vu_id = chuc_vu.id
-                        LEFT JOIN
-                            chuc_nang ON quyen.chuc_nang_id = chuc_nang.id
-                    {build_where}
-                """)
-    data = db.session.execute(query).fetchall()
-    chuc_vu_dict = {}
+    response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter)
 
-    for row in data:
-        id_chuc_vu = row.id
-        if id_chuc_vu not in chuc_vu_dict:
-            chuc_vu_dict[id_chuc_vu] = {
-                'ID': row.id,
-                'ten': row.ten, 
-                'ten_quyen': [],
-                'CreatedAt': row.created_at,
-                'UpdatedAt': row.updated_at,
-                'DeletedAt': row.deleted_at,
-            }
-            if row.ten_quyen:
-                chuc_vu_dict[id_chuc_vu]["ten_quyen"].append(row.ten_quyen)
 
-    result = list(chuc_vu_dict.values())
-
-    return result
+    return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 
 def post_chuc_vu(ten):
     error = validate_name(name=ten)
-    if error:
+    if error:   
         return error
     
     chuc_vu = ChucVu(ten=ten)

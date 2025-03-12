@@ -1,0 +1,64 @@
+tags:
+  - Nhân Viên
+summary: Xóa nhân viên
+description: API để xóa nhân viên khỏi hệ thống.
+parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+    description: ID của nhân viên cần xóa
+responses:
+  "200":
+    description: Xóa nhân viên thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: "Xóa nhân viên thành công"
+  "401":
+    description: Không thể xóa nhân viên do có tham chiếu đến hóa đơn xuất kho
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: "Nhân viên có liên kết với hóa đơn xuất kho, không thể xóa"
+  "404":
+    description: Nhân viên không tồn tại
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: "Nhân viên không tồn tại"
+  "500":
+    description: Lỗi hệ thống
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: "Lỗi hệ thống xảy ra"

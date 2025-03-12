@@ -1,0 +1,103 @@
+tags:
+  - Hóa Đơn Nhập Kho
+
+summary: Lấy danh sách hóa đơn nhập kho
+description: Lấy danh sách hóa đơn nhập kho với phân trang, lọc và sắp xếp tùy chọn
+produces:
+  - application/json
+
+parameters:
+  - name: filters
+    in: query
+    type: string
+    required: false
+    description: Bộ lọc dữ liệu (định dạng tùy thuộc vào backend, ví dụ JSON string)
+    example: '{"nha_phan_phoi_id": 1}'
+  - name: limit
+    in: query
+    type: integer
+    required: false
+    description: Số lượng bản ghi tối đa trên mỗi trang
+    example: 10
+  - name: page
+    in: query
+    type: integer
+    required: false
+    description: Số trang (bắt đầu từ 1)
+    example: 1
+  - name: sort
+    in: query
+    type: string
+    required: false
+    description: Tên cột để sắp xếp (ví dụ so_hoa_don, ngay_nhap)
+    example: "ngay_nhap"
+  - name: order
+    in: query
+    type: string
+    required: false
+    enum: [asc, desc]
+    description: Thứ tự sắp xếp (tăng dần hoặc giảm dần)
+    example: "desc"
+responses:
+  200:
+    description: Lấy danh sách hóa đơn nhập kho thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+        result:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  so_hoa_don:
+                    type: string
+                    example: "HDNK001"
+                  ma_hoa_don:
+                    type: string
+                    example: "HDNK20230310"
+                  nha_phan_phoi:
+                    type: string
+                    example: "Công ty ABC"
+                  nha_phan_phoi_id:
+                    type: integer
+                    example: 1
+                  kho:
+                    type: string
+                    example: "Kho Hà Nội"
+                  kho_id:
+                    type: integer
+                    example: 1
+                  ngay_nhap:
+                    type: string
+                    format: date
+                    example: "2023-03-10"
+                  tong_tien:
+                    type: number
+                    example: 10000000
+                  tra_truoc:
+                    type: number
+                    example: 5000000
+                  con_lai:
+                    type: number
+                    example: 5000000
+                  ghi_chu:
+                    type: string
+                    example: "Nhập lô hàng tháng 3"
+            total:
+              type: integer
+              example: 50
+            page:
+              type: integer
+              example: 1
+            limit:
+              type: integer
+              example: 10

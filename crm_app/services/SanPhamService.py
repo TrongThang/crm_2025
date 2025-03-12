@@ -55,13 +55,17 @@ def to_dict(result_set):
 
     return result_list
 
-def get_san_pham (limit, page, sort, order, filter):
-    get_attr = text(f"""
-        san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, CAST(mo_ta AS CHAR) AS mo_ta, vat, trang_thai, 
-        loai_san_pham.id as loai_san_pham_id, loai_san_pham.ten as loai_san_pham, don_vi_tinh.id as don_vi_tinh_id, don_vi_tinh.ten as don_vi_tinh, 
-        loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh
-    """)
-    get_table = "san_pham"
+def get_san_pham (limit, page, sort, order, filter, get_attr = None, get_table = None):
+    if get_attr is None:
+        get_attr = text(f"""
+            san_pham.ten as ten, upc, san_pham.hinh_anh as hinh_anh, CAST(mo_ta AS CHAR) AS mo_ta, vat, trang_thai, 
+            loai_san_pham.id as loai_san_pham_id, loai_san_pham.ten as loai_san_pham, don_vi_tinh.id as don_vi_tinh_id, don_vi_tinh.ten as don_vi_tinh, 
+            loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh
+        """)
+
+    if get_table is None:
+        get_table = "san_pham"
+
     query_join = text("""
         LEFT JOIN 
             loai_san_pham ON loai_san_pham.id = san_pham.loai_san_pham_id
@@ -69,13 +73,9 @@ def get_san_pham (limit, page, sort, order, filter):
             don_vi_tinh ON don_vi_tinh.id = san_pham.don_vi_tinh_id
         LEFT JOIN 
             loai_giam_gia ON loai_giam_gia.id = san_pham.loai_giam_gia_id
-        LEFT JOIN
+        LEFT JOIN   
             thoi_gian_bao_hanh ON thoi_gian_bao_hanh.id = san_pham.thoi_gian_bao_hanh_id
     """)
-    # result_set = db.session.execute(query).mappings().all()
-
-    # result_list = to_dict(result_set=result_set)
-    # total_page = math.ceil(len(result_list)/limit)
     response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
     return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 

@@ -26,6 +26,10 @@ class ERROR_CODES(Enum):
     NO_PRODUCT_SELECTED = 18
     CHIET_KHAU_INVALID = 19
     SAN_PHAM_OF_NHA_PHAN_PHOI_EXISTED = 20
+    VAT_INVALID = 21
+    TOTAL_MONEY_INVALID = 22
+    TOTAL_AMOUNT_INVALID = 23
+    TOTAL_COST_INVALID = 24
 
 
     #SAN_PHAM - 1xxx
@@ -57,7 +61,7 @@ class ERROR_CODES(Enum):
     DVT_NAME_LENGTH = 3003
     DVT_NAME_EXISTED = 3004
     DVT_INVALID_ID = 3005
-    DVT_REFERENCE_SAN_PHAM = 8003
+    DVT_REFERENCE_SAN_PHAM = 3003
 
 
     #CHI TIET SAN PHAM - 4xxx
@@ -88,10 +92,12 @@ class ERROR_CODES(Enum):
     #NHAN_VIEN - 7xxx
     ACCOUNT_INVALID = 7001
     USERNAME_LENGTH = 7002
+    USERNAME_EXISTED = 7003
     PASSWORD_LENGTH = 7003
     NHAN_VIEN_NAME_REQUIRED = 7004
     NHAN_VIEN_NOT_FOUND = 7005
     NHAN_VIEN_NAME_LENGTH = 7006
+    NHAN_VIEN_REFERENCE_HOA_DON_XUAT = 7007
 
     #NHA_PHAN_PHOI - 8xxx
     NHA_PHAN_PHOI_NOT_FOUND = 8001
@@ -101,19 +107,30 @@ class ERROR_CODES(Enum):
 
     #KHO - 9xxx
     KHO_NOT_FOUND = 9001
+    KHO_REFERENCE_HOA_DON_NHAP = 9002
+    KHO_REFERENCE_HOA_DON_XUAT = 9003
 
     #HOA_DON_NHAP - 11xx
     HOA_DON_NHAP_PREPAID_LESS_ZERO = 1101
     HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = 1102
     HOA_DON_NHAP_PREPAID_NOT_SAME = 1103
     HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = 1104
-
+    HOA_DON_XUAT_TOTAL_MONEY_NOT_SAME = 1105
+    INVALID_GIFT_FLAG =  1106
+    
     #CHUC_VU- 12xx
     CHUC_VU_NOT_FOUND = 1201
     CHUC_NANG_NOT_FOUND = 1201
     
     #HOA DON XUAT - 13xx
     HOA_DON_XUAT_NOT_STATUS = 1301
+
+    #QUYEN HAN - 14xx
+    POWERLESS = 1401
+
+    #KHACH HANG - 15xx
+    KHACH_HANG_NOT_FOUND = 1501
+    KHACH_HANG_REFERENCE_HOA_DON_XUAT = 1502
 
 
 class MESSAGES(Enum):
@@ -141,7 +158,10 @@ class MESSAGES(Enum):
     NO_PRODUCT_SELECTED = "Không có sản phẩm nào được chọn!"
     CHIET_KHAU_INVALID = "Chiết khấu phải từ 0 đến 99%"
     SAN_PHAM_OF_NHA_PHAN_PHOI_EXISTED = "Đã tồn tại sản phẩm này trong nhà phân phối!"
-    
+    TOTAL_MONEY_INVALID = "Tổng tiền không giống với thông tin khách hàng gửi về!"
+    TOTAL_AMOUNT_INVALID = "Thành tiền không giống với thông tin khách hàng gửi về!"
+    TOTAL_COST_INVALID = "Tổng giá nhập không giống với thông tin khách hàng gửi về!"
+
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
     SAN_PHAM_NAME_REQUIRED = "Tên sản phẩm là bắt buộc"
@@ -202,13 +222,16 @@ class MESSAGES(Enum):
     GIAM_GIA_INVALID_PERCENT = "Mức giá giảm không được lớn hơn 90%"
 
     # NHAN_VIEN - 7xxx
-    ACCOUNT_INVALID = "Tài khoản hoặc mật khẩu khôg chính xác!"
+    ACCOUNT_INVALID = "Tài khoản hoặc mật khẩu không chính xác!"
     USERNAME_LENGTH = "Tên đăng nhập quá dài hoặc quá ngắn"
+    USERNAME_EXISTED = "Tên đăng nhập đã tổn tại!"
     PASSWORD_LENGTH = "Mật khẩu quá dài hoặc quá ngắn"
     NHAN_VIEN_NAME_LENGTH = "Họ tên từ 1 đến 255 ký tự"
+    NHAN_VIEN_NOT_FOUND = "Không có nhân viên nào hợp lệ!"
+    NHAN_VIEN_REFERENCE_HOA_DON_XUAT = "Nhân viên có tham chiếu đến hoá đơn xuất kho"
 
     #CHUC_VU - 8xxx
-    CHUC_VU_NOT_FOUND = "Kh"
+    CHUC_VU_NOT_FOUND = "Không có chức vụ này"
     CHUC_VU_NAME_LENGTH = ""
     CHUC_VU_NAME_REQUIRED = ""
 
@@ -218,6 +241,8 @@ class MESSAGES(Enum):
     NHA_PHAN_PHOI_REFERENCE_HOA_DON_NHAP = "Nhà phân phối này đã từng cung cấp nhập kho!"
 
     KHO_NOT_FOUND = "Không tìm thấy kho hợp lệ"
+    KHO_REFERENCE_HOA_DON_NHAP = "Kho có tham chiếu đến hoá đơn nhập kho"
+    KHO_REFERENCE_HOA_DON_XUAT = "Kho có tham chiếu đến hoá đơn xuất kho"
 
     #NHAP_KHO - 9xxx
     # NHAP_KHO_WRONG_TONG_TIEN = "Tổng tiền gửi về không khớp so vơi"
@@ -226,12 +251,21 @@ class MESSAGES(Enum):
     HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = "Số tiền trả trước lớn hơn tổng tiền thanh toán!"
     HOA_DON_NHAP_PREPAID_NOT_SAME = "Số tiền trả trước gửi về không giống nhau!"
     HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
+    HOA_DON_XUAT_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
+    INVALID_GIFT_FLAG = "Giá trị 'là quà tặng không hợp lệ!'"
 
     #CHUC_VU - 11xx
     # CHUC_VU_NOT_FOUND = "Không tìm thấy chức vụ!"
     # CHUC_NANG_NOT_FOUND = "Không tìm thấy chức năng!"
 
     HOA_DON_XUAT_NOT_STATUS = ""
+
+    #QUYEN HAN
+    POWERLESS = "Không có quyền hạn để sử dụng chức năng này!"
+
+    #KHACH HANG - 15xx
+    KHACH_HANG_NOT_FOUND = "Không tìm thấy khách hàng này!"
+    KHACH_HANG_REFERENCE_HOA_DON_XUAT = "Khách hàng này có tham chiếu đến một hoá đơn xuất kho!"
     
 def get_error_response(error_code: ERROR_CODES, result = None, field_error = None):
     """Trả về response JSON chứa errorCode và message tương ứng"""

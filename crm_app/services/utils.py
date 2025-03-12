@@ -128,23 +128,12 @@ def validate_datetime(datetime_check):
         return True
     return False
 
-def create_sku(upc,ct_san_pham_id, date_str, model = None):
+def create_sku(upc,ct_san_pham_id, date_str, counter_detail_product_in_date: int, model = None):
     date_obj = datetime.strptime(date_str, FORMAT_DATE.MYSQL_DATE_ONLY)
 
     formatted_date = date_obj.strftime("%d%m%Y")
-    # formatted_date = date_obj.strftime("%m%d%Y")
-    date_str = date_obj.strftime("%Y-%m-%d")
-    query = text(f"""
-                    SELECT COUNT(*) 
-                    FROM chi_tiet_hoa_don_nhap_kho 
-                        LEFT JOIN hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.hoa_don_id = hoa_don_nhap_kho.id
-                    WHERE chi_tiet_hoa_don_nhap_kho.ctsp_id = {ct_san_pham_id}
-                        AND DATE(hoa_don_nhap_kho.ngay_nhap) = '2025-02-12' 
-                    FOR UPDATE
-                """)
-    counter = db.session.execute(query).scalar()
-    print(query)
-    print("counter:", counter)
-    sku = f"{upc}-{ct_san_pham_id}-{formatted_date}-{counter:03}"
+    
+    print("counter_detail_product_in_date:", counter_detail_product_in_date)
+    sku = f"{upc}-{ct_san_pham_id}-{formatted_date}-{counter_detail_product_in_date:03}"
 
     return sku

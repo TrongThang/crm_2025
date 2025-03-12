@@ -1,0 +1,84 @@
+tags:
+  - Nhân Viên
+summary: Cập nhật thông tin nhân viên
+description: API để cập nhật thông tin nhân viên theo ID.
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: integer
+    description: ID của nhân viên cần cập nhật
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        ho_ten:
+          type: string
+          example: "Nguyen Van B"
+        ten_dang_nhap:
+          type: string
+          example: "nguyenvanb"
+        email:
+          type: string
+          format: email
+          example: "nguyenvanb@example.com"
+        dien_thoai:
+          type: string
+          example: "0987123456"
+        dia_chi:
+          type: string
+          example: "456 Đường XYZ, Quận 2, TP.HCM"
+        avatar:
+          type: string
+          format: uri
+          example: "https://example.com/avatar_b.jpg"
+        chuc_vu_id:
+          type: integer
+          example: 2
+responses:
+  "200":
+    description: Cập nhật nhân viên thành công
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Cập nhật nhân viên thành công"
+  "401":
+    description: Dữ liệu không hợp lệ hoặc chức vụ không tồn tại
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Tên đăng nhập đã tồn tại hoặc chức vụ không hợp lệ"
+  "404":
+    description: Không tìm thấy nhân viên
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Không tìm thấy nhân viên"
+  "500":
+    description: Lỗi hệ thống
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: "Lỗi hệ thống xảy ra"

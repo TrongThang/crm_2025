@@ -1,0 +1,178 @@
+summary: Tạo hóa đơn xuất kho mới
+description: Tạo một hóa đơn xuất kho với thông tin cơ bản và danh sách sản phẩm xuất
+tags:
+  - Hóa Đơn Xuất Kho
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - khach_hang_id
+        - ngay_xuat
+        - tong_tien
+        - thanh_tien
+        - tra_truoc
+        - vat
+        - tong_gia_nhap
+        - loi_nhuan
+        - ds_san_pham_xuat
+      properties:
+        khach_hang_id:
+          type: integer
+          description: ID của khách hàng
+          example: 1
+        nhan_vien_giao_hang_id:
+          type: integer
+          description: ID của nhân viên giao hàng (tùy chọn, nhưng phải có ít nhất một trong nhan_vien_giao_hang_id hoặc nhan_vien_sale_id)
+          example: 1
+        nhan_vien_sale_id:
+          type: integer
+          description: ID của nhân viên sale (tùy chọn, nhưng phải có ít nhất một trong nhan_vien_giao_hang_id hoặc nhan_vien_sale_id)
+          example: 2
+        ngay_xuat:
+          type: string
+          format: date
+          description: Ngày xuất kho (định dạng YYYY-MM-DD)
+          example: "2023-03-10"
+        tong_tien:
+          type: number
+          description: Tổng tiền trước VAT
+          example: 10000000
+        thanh_tien:
+          type: number
+          description: Thành tiền sau VAT (tổng tiền thực tế khách hàng cần thanh toán)
+          example: 10800000
+        tra_truoc:
+          type: number
+          description: Số tiền trả trước
+          example: 5000000
+        vat:
+          type: number
+          description: Thuế VAT phần trăm
+          example: 8
+        tong_gia_nhap:
+          type: number
+          description: Tổng giá nhập của các sản phẩm
+          example: 8000000
+        loi_nhuan:
+          type: number
+          description: Tổng lợi nhuận (thành tiền - tổng giá nhập)
+          example: 2800000
+        ghi_chu:
+          type: string
+          description: Ghi chú (tùy chọn)
+          example: "Xuất lô hàng tháng 3"
+        da_giao_hang:
+          type: boolean
+          description: Trạng thái giao hàng (true nếu đã giao, false nếu chưa)
+          example: false
+        loai_chiet_khau:
+          type: integer
+          description: Loại chiết khấu (1- bán, 0- tặng)
+          example: 1
+        gia_tri_chiet_khau:
+          type: number
+          description: Giá trị chiết khấu (tùy chọn, mặc định 0 nếu không có)
+          example: 0
+        ds_san_pham_xuat:
+          type: array
+          description: Danh sách sản phẩm xuất kho
+          items:
+            type: object
+            required:
+              - san_pham_id
+              - ctsp_id
+              - sku
+              - so_luong_ban
+              - don_vi_tinh
+              - gia_ban
+              - gia_nhap
+            properties:
+              san_pham_id:
+                type: integer
+                description: ID của sản phẩm
+                example: 1
+              ctsp_id:
+                type: integer
+                description: ID của chi tiết sản phẩm
+                example: 1
+              sku:
+                type: string
+                description: Mã SKU của lô hàng
+                example: "SKU123456"
+              so_luong_ban:
+                type: integer
+                description: Số lượng bán
+                example: 50
+              don_vi_tinh:
+                type: string
+                description: Đơn vị tính
+                example: "Cái"
+              gia_ban:
+                type: number
+                description: Giá bán (0 nếu là quà tặng)
+                example: 200000
+              gia_nhap:
+                type: number
+                description: Giá nhập
+                example: 150000
+              chiet_khau:
+                type: number
+                description: Chiết khấu phần trăm (tùy chọn, mặc định 0 nếu không có)
+                example: 10
+              la_qua_tang:
+                type: boolean
+                description: Là quà tặng hay không (nếu true, giá bán và chiết khấu = 0)
+                example: false
+responses:
+  200:
+    description: Tạo hóa đơn xuất kho thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+        result:
+          type: object
+          nullable: true
+          example: null
+  400:
+    description: Không có sản phẩm xuất kho được chọn
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "No product selected"
+        result:
+          type: object
+          nullable: true
+          example: null
+  401:
+    description: Lỗi validation hoặc dữ liệu không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Khach hang not found"
+        result:
+          type: object
+          nullable: true
+          example: null

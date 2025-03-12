@@ -1,6 +1,7 @@
 from crm_app.services.helpers import *
 from crm_app import db
 from sqlalchemy import text
+from flask import make_response
 import math
 from crm_app import redis_client
 from crm_app.docs.containts import get_error_response, ERROR_CODES
@@ -13,7 +14,7 @@ def excute_select_data(table: str, str_get_column :str, filter = None, limit = N
     skip = int(limit) * (int(page) - 1) if limit and page else 0
     
     opt_order = f" {order.upper()} " if order else "" 
-    build_sort = f" ORDER BY {sort} {opt_order} " if sort else ""
+    build_sort = f" ORDER BY {table}.{sort} {opt_order} " if sort else ""
     build_limit = f" LIMIT {limit}" if limit else ""
     build_offset = f" OFFSET {skip}" if limit and page else ""
 
@@ -40,5 +41,5 @@ def excute_select_data(table: str, str_get_column :str, filter = None, limit = N
 
 def check_reference_existence(model, column_name, value, error_code):
     if model.query.filter_by(**{column_name: value}, deleted_at=None).first():
-        return get_error_response(error_code)
+        return make_response(get_error_response(error_code), 401)
     return None

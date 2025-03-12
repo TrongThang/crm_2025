@@ -15,7 +15,7 @@ app.secret_key = '@@#*&Y()P2T@@#*@#$#$%^&*('
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/crm_2025?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SWAGGER'] = {
-    'title': "API To Do App",
+    'title': "API CRM APP 2025",
     'uiversion': 3
 }
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

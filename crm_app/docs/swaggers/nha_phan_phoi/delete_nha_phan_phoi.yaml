@@ -1,0 +1,46 @@
+tags:
+  - Nhà Phân Phối
+
+summary: Xóa nhà phân phối
+description: Xóa mềm nhà phân phối theo ID, kiểm tra tham chiếu trong hóa đơn nhập kho và sản phẩm nhà phân phối
+
+produces:
+  - application/json
+parameters:
+  - name: id
+    in: path
+    required: true
+    type: integer
+    description: ID của nhà phân phối cần xóa
+    example: 1
+responses:
+  200:
+    description: Xóa nhà phân phối thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+        result:
+          type: object
+          nullable: true
+          example: null
+  401:
+    description: Nhà phân phối không tồn tại hoặc có tham chiếu trong dữ liệu khác
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Nha phan phoi not found"
+        result:
+          type: object
+          nullable: true
+          example: null

@@ -1,0 +1,81 @@
+tags:
+  - Nhà Phân Phối
+  
+summary: Lấy danh sách nhà phân phối
+description: Trả về danh sách các nhà phân phối có thể lọc, phân trang và sắp xếp
+
+parameters:
+  - name: filters
+    in: query
+    description: Điều kiện lọc dữ liệu
+    required: false
+    schema:
+      type: string
+  - name: limit
+    in: query
+    description: Số lượng bản ghi trả về mỗi trang
+    required: false
+    schema:
+      type: integer
+      example: 10
+  - name: page
+    in: query
+    description: Trang hiện tại của dữ liệu
+    required: false
+    schema:
+      type: integer
+      example: 1
+  - name: sort
+    in: query
+    description: Trường để sắp xếp
+    required: false
+    schema:
+      type: string
+      example: ten
+  - name: order
+    in: query
+    description: Thứ tự sắp xếp (asc hoặc desc)
+    required: false
+    schema:
+      type: string
+      enum: [asc, desc]
+      example: asc
+responses:
+  '200':
+    description: Thành công, trả về danh sách nhà phân phối
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              ten:
+                type: string
+                example: "Công ty A"
+              dia_chi:
+                type: string
+                example: "123 Đường ABC, TP HCM"
+              dien_thoai:
+                type: string
+                example: "0123456789"
+              email:
+                type: string
+                example: "contact@congtya.com"
+              CreatedAt:
+                type: string
+                format: date-time
+              UpdatedAt:
+                type: string
+                format: date-time
+              DeletedAt:
+                type: string
+                format: date-time
+  '400':
+    description: Yêu cầu không hợp lệ
+  '500':
+    description: Lỗi máy chủ

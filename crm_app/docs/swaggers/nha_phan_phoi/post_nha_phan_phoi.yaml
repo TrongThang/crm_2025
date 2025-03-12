@@ -1,0 +1,93 @@
+tags:
+  - Nhà Phân Phối
+
+summary: Thêm mới một nhà phân phối
+description: Tạo một nhà phân phối mới với thông tin cơ bản và danh sách sản phẩm (nếu có)
+
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: payload
+    required: true
+    schema:
+      type: object
+      required:
+        - ten
+        - email
+        - dien_thoai
+        - dia_chi
+      properties:
+        ten:
+          type: string
+          description: Tên nhà phân phối
+          example: "Công ty ABC"
+        email:
+          type: string
+          description: Địa chỉ email của nhà phân phối
+          example: "contact@abc.com"
+        dien_thoai:
+          type: string
+          description: Số điện thoại nhà phân phối
+          example: "0909123456"
+        dia_chi:
+          type: string
+          description: Địa chỉ nhà phân phối
+          example: "123 Đường ABC, Quận 1, TP.HCM"
+        ds_san_pham:
+          type: array
+          description: Danh sách sản phẩm (tùy chọn)
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID của sản phẩm
+                example: 1
+responses:
+  200:
+    description: Thêm nhà phân phối thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+        result:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            ten:
+              type: string
+              example: "Công ty ABC"
+            email:
+              type: string
+              example: "contact@abc.com"
+            dien_thoai:
+              type: string
+              example: "0909123456"
+            dia_chi:
+              type: string
+              example: "123 Đường ABC, Quận 1, TP.HCM"
+  401:
+    description: Lỗi validation (tên, số điện thoại hoặc email không hợp lệ)
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Invalid phone number"
+        result:
+          type: object
+          nullable: true
+          example: null

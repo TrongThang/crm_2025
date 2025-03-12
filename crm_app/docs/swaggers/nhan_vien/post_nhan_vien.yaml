@@ -1,0 +1,74 @@
+tags:
+  - Nhân Viên
+summary: Thêm nhân viên mới
+description: API để thêm nhân viên mới vào hệ thống.
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        ho_ten:
+          type: string
+          example: "Nguyen Van A"
+        ten_dang_nhap:
+          type: string
+          example: "nguyenvana"
+        email:
+          type: string
+          format: email
+          example: "nguyenvana@example.com"
+        dien_thoai:
+          type: string
+          example: "0987654321"
+        dia_chi:
+          type: string
+          example: "123 Đường ABC, Quận 1, TP.HCM"
+        avatar:
+          type: string
+          format: uri
+          example: "string:base64"
+        chuc_vu_id:
+          type: integer
+          example: 1
+responses:
+  "200":
+    description: Thêm nhân viên thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: "Thêm nhân viên thành công"
+  "401":
+    description: Dữ liệu không hợp lệ hoặc chức vụ không tồn tại
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: "Tên đăng nhập đã tồn tại hoặc chức vụ không hợp lệ"
+  "500":
+    description: Lỗi hệ thống
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: "Lỗi hệ thống xảy ra"

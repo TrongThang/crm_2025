@@ -1,5 +1,5 @@
 from crm_app.models.BaseModel import BaseModel
-from sqlalchemy import Column, INT, DateTime, Float, ForeignKey, TEXT
+from sqlalchemy import Column, INT, DateTime, Float, ForeignKey, TEXT, BOOLEAN
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -18,6 +18,7 @@ class HoaDonXuatKho(BaseModel):
     thanh_tien = Column(Float, default=0)
     tong_gia_nhap = Column(Float, default=0)
     loi_nhuan = Column(Float, default=0)
+    da_giao_hang = Column(BOOLEAN, default=False)
     loai_chiet_khau = Column(TEXT, default='')
     gia_tri_chiet_khau = Column(TEXT, default='')
     ghi_chu = Column(TEXT, default='')

@@ -1,0 +1,134 @@
+summary: Tạo hóa đơn nhập kho mới
+description: Tạo một hóa đơn nhập kho với thông tin cơ bản và danh sách sản phẩm nhập
+tags:
+  - Hóa Đơn Nhập Kho
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - nha_phan_phoi_id
+        - kho_id
+        - ngay_nhap
+        - tong_tien
+        - tra_truoc
+        - ds_san_pham_nhap
+      properties:
+        nha_phan_phoi_id:
+          type: integer
+          description: ID của nhà phân phối
+          example: 5
+        kho_id:
+          type: integer
+          description: ID của kho
+          example: 1
+        ngay_nhap:
+          type: string
+          format: date
+          description: Ngày nhập kho (định dạng YYYY-MM-DD)
+          example: "2023-03-10"
+        tong_tien:
+          type: number
+          description: Tổng tiền của hóa đơn
+          example: 450000
+        tra_truoc:
+          type: number
+          description: Số tiền trả trước
+          example: 200000
+        ghi_chu:
+          type: string
+          description: Ghi chú (tùy chọn)
+          example: "Nhập lô hàng tháng 3"
+        ds_san_pham_nhap:
+          type: array
+          description: Danh sách sản phẩm nhập kho
+          items:
+            type: object
+            required:
+              - san_pham_id
+              - ctsp_id
+              - so_luong
+              - don_vi_tinh
+            properties:
+              san_pham_id:
+                type: integer
+                description: ID của sản phẩm
+                example: 47
+              ctsp_id:
+                type: integer
+                description: ID của chi tiết sản phẩm
+                example: 51
+              upc:
+                type: string
+                description: Mã UPC của sản phẩm (tùy chọn)
+                example: "123456789012"
+              so_luong:
+                type: integer
+                description: Số lượng nhập
+                example: 10
+              don_vi_tinh:
+                type: string
+                description: Đơn vị tính
+                example: "Cái"
+              ke:
+                type: string
+                description: Vị trí kệ (tùy chọn)
+                example: "A1"
+              gia_nhap:
+                type: number
+                description: Giá nhập (mặc định 0 nếu là quà tặng)
+                example: 50000
+              gia_ban:
+                type: number
+                description: Giá bán (mặc định 0 nếu là quà tặng)
+                example: 60000
+              chiet_khau:
+                type: number
+                description: Chiết khấu phần trăm (mặc định 0 nếu là quà tặng)
+                example: 10
+              la_qua_tang:
+                type: boolean
+                description: Là quà tặng hay không (nếu true, giá nhập/bán/chiết khấu = 0)
+                example: false
+responses:
+  200:
+    description: Tạo hóa đơn nhập kho thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+        result:
+          type: object
+          nullable: true
+          example: null
+  401:
+    description: Lỗi validation hoặc dữ liệu không hợp lệ
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Nha phan phoi not found"
+        result:
+          type: object
+          nullable: true
+          example: null
+  500:
+    description: Lỗi server
+    schema:
+      type: string
+      example: "Internal server error"

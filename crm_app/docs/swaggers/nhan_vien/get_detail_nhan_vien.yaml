@@ -1,0 +1,42 @@
+tags:
+  - Nhân Viên
+  
+summary: Lấy thông tin chi tiết của nhân viên
+parameters:
+  - name: ten_dang_nhap
+    in: query
+    required: true
+    schema:
+      type: string
+    description: Tên đăng nhập của nhân viên
+responses:
+  '200':
+    description: Thông tin chi tiết của nhân viên
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                ten_dang_nhap:
+                  type: string
+                ho_ten:
+                  type: string
+                email:
+                  type: string
+                dien_thoai:
+                  type: string
+                dia_chi:
+                  type: string
+                avatar:
+                  type: string
+                chuc_vu:
+                  type: string
+                chuc_vu_id:
+                  type: integer
+  '400':
+    description: Lỗi request không hợp lệ
+  '500':
+    description: Lỗi server nội bộ

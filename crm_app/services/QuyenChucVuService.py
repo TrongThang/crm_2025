@@ -84,9 +84,11 @@ def get_all_permission_role():
     with current_app.app_context():
         query = text(
         """
-            SELECT chuc_vu_id, chuc_nang_id
+            SELECT chuc_vu_id, code
             FROM quyen
-            WHERE deleted_at IS NULL
+                LEFT JOIN chuc_nang ON chuc_nang.id = quyen.chuc_nang_id
+            WHERE chuc_nang.deleted_at IS NULL 
+                AND quyen.deleted_at IS NULL
         """
         )
 
@@ -95,12 +97,36 @@ def get_all_permission_role():
         
         chuc_vu_quyen_dict = defaultdict(list)
         for row in result_chuc_vu:
-            chuc_vu_quyen_dict[row["chuc_vu_id"]].append(row["chuc_nang_id"])
+            chuc_vu_quyen_dict[row["chuc_vu_id"]].append(row["code"])
 
-    # Output: {5: [1, 2], 6: [2], ...}
+    # Output: {5: ['view-san-pham', 'create-san-pham', 'create-nhan-vien'], 6: ['view-ton-kho'], ...}
     return chuc_vu_quyen_dict
 
 def get_quyen_chuc_vu(chuc_vu_id):
+    if not chuc_vu_id:
+        with current_app.app_context():
+            query = text(
+            """
+                SELECT chuc_vu_id, code, chuc_nang.ten as ten_chuc_nang
+                FROM quyen
+                    LEFT JOIN chuc_nang ON chuc_nang.id = quyen.chuc_nang_id
+                WHERE chuc_nang.deleted_at IS NULL 
+                    AND quyen.deleted_at IS NULL
+            """
+            )
+
+            result_chuc_vu = db.session.execute(query).mappings().fetchall()
+
+            
+            chuc_vu_quyen_dict = defaultdict(list)
+            permissions_list = []
+            for row in result_chuc_vu:
+                permissions_list.append({
+                    "code": row["code"],
+                    "ten_chuc_nang": row["ten_chuc_nang"]
+                })
+
+            return permissions_list
     if chuc_vu_id:      
         query = text(f"""
                     SELECT chuc_nang.id, code, ten, type, show_in_menu, quyen.created_at, quyen.updated_at, quyen.deleted_at
@@ -120,16 +146,11 @@ def get_quyen_chuc_vu(chuc_vu_id):
         print(quyen_all)
         result = config_data_quyen_chuc_vu(chuc_vu_quyen=chuc_vu_quyen, quyen_all=quyen_all)
         return result
-
-def check_action(chuc_vu_id, chuc_nang_id):
-    query = text(""" SELECT id FROM quyen WHERE chuc_vu_id = :chuc_vu_id AND chuc_nang_id = :chuc_nang_id AND deleted_at IS NULL """)
-
-    id = db.session.execute(query, {chuc_nang_id: chuc_vu_id, chuc_nang_id: chuc_nang_id}).scalar()
-
-    if id:
-        return True
-
-    return False
+    
+def get_all_quyen_chuc_vu():
+    get_table = "chuc_vu"
+    get_attr = "chuc_vu.ten, "
+    pass
 
 
 def modify_quyen_chuc_vu(chuc_vu_id, list_quyen):
@@ -138,10 +159,12 @@ def modify_quyen_chuc_vu(chuc_vu_id, list_quyen):
         [
             {
                 "id": 3,
+                "code": "",
                 "active": 0
             }, 
             {
                 "id": 4,
+                "code": "",
                 "active": 1
             }, 
         ]
@@ -151,11 +174,11 @@ def modify_quyen_chuc_vu(chuc_vu_id, list_quyen):
         return make_response(get_error_response(ERROR_CODES.CHUC_VU_NOT_FOUND), 401)
     
     query = text(f"""
-                    SELECT quyen.id as id_quyen, chuc_nang.id as chuc_nang_id
+                    SELECT quyen.id as id_quyen, chuc_nang.id as chuc_nang_id, code
                     FROM quyen
                         LEFT JOIN chuc_nang ON quyen.chuc_nang_id = chuc_nang.id
                     WHERE
-                        chuc_vu_id = :chuc_vu_id
+                        chuc_vu_id = :chuc_vu_id AND quyen.deleted_at IS NULL
                     ORDER BY chuc_nang_id 
                 """)
     result = db.session.execute(query, {'chuc_vu_id': chuc_vu_id}).mappings().fetchall()
@@ -167,44 +190,58 @@ def modify_quyen_chuc_vu(chuc_vu_id, list_quyen):
         # Nếu = 0 
         #   + Có quyền đó trong danh sách =>  upset deleted_at = datetime.now() -> Đã xoá
         #   + Không có => thêm mới một quyền vào
+        lst_new_quyen = set({})
+        lst_deleted_quyen = set({})
         for item in list_quyen:
-            chuc_nang_id = item["id"] 
-            
+            chuc_nang_id = item["id"]
+            code = item["code"]
             if not isExistId(id=chuc_nang_id, model=ChucNang):
                 return make_response(get_error_response(ERROR_CODES.CHUC_NANG_NOT_FOUND), 401)
             
             id_quyen = chuc_nang_to_id_quyen.get(chuc_nang_id)
-            print("id quyền trước kiểm tra:", id_quyen)
             if id_quyen:
                 quyen = Quyen(id = id_quyen, chuc_vu_id=chuc_vu_id, chuc_nang_id=chuc_nang_id, deleted_at = None)
                 if item["active"] == 0:
                     quyen.deleted_at = datetime.now()
-                else:
-                    quyen.deleted_at = None
+                    lst_deleted_quyen.add(code)
                 db.session.merge(quyen)
             else:
                 new_quyen = Quyen(chuc_vu_id=chuc_vu_id, chuc_nang_id=chuc_nang_id, deleted_at = None)
                 db.session.add(new_quyen)
+                db.session.flush()
+
+                lst_new_quyen.add(code)
+
         db.session.commit()
-
-        updated_query = text("""
-                SELECT chuc_nang_id
-                FROM quyen
-                WHERE chuc_vu_id = :chuc_vu_id AND deleted_at IS NULL
-            """)
+        print('danh sách quyền xoá',lst_deleted_quyen)
+        for item in lst_deleted_quyen:
+            print(item)
+        print('danh sách quyền thêm',lst_new_quyen)
+        for item in lst_new_quyen:
+            print(item)
+        # Cập nhật vào redis thay đổi các quyền của chức vụ
+        result = update_permission_in_redis(chuc_vu_id=chuc_vu_id, lst_add_permission=lst_new_quyen, lst_remove_permission=lst_deleted_quyen)
         
-        updated_result = db.session.execute(updated_query, {'chuc_vu_id': chuc_vu_id}).mappings().fetchall()
+        if isinstance(result, tuple):
+            return make_response(get_error_response(ERROR_CODES.SUCCESS), 200)
 
-        quyen_list = [row['chuc_nang_id'] for row in updated_result]
+def update_permission_in_redis(chuc_vu_id, lst_add_permission = None, lst_remove_permission = None):
+    redis_key = f"quyen:{chuc_vu_id}"
+    # Xóa quyền không còn sử dụng
+    if lst_remove_permission:
+        for remove_permission_code in lst_remove_permission:
+            redis_client.srem(redis_key, remove_permission_code)
+            print(f"Xoá quyền: {remove_permission_code}")
 
-        # Lưu vào Redis (ví dụ: key theo dạng "quyen:{chuc_vu_id}")
-        redis_key = f"quyen:{chuc_vu_id}"
-        redis_client.smembers(redis_key, json.dumps(quyen_list))
+    # Thêm quyền mới
+    if lst_add_permission:
+        for add_permission_code in lst_add_permission:
+            redis_client.sadd(redis_key, add_permission_code)
+            print(f"Thêm quyền: {add_permission_code}")
 
-        redis_data = redis_client.get(redis_key)
-        quyen_list_from_redis = json.loads(redis_data) if redis_data else []
+    # Kiểm tra lại danh sách quyền trong Redis
+    updated_permissions = redis_client.smembers(redis_key)
+    updated_permissions = {p.decode("utf-8") for p in updated_permissions}
+    print("Danh sách quyền sau khi cập nhật:", updated_permissions)
 
-        print("Redis được lưu:", redis_data)  # In ra dạng bytes
-        print("Danh sách quyền từ Redis:", quyen_list_from_redis)
-        
-        return make_response(get_error_response(ERROR_CODES.SUCCESS), 200)
+    return (updated_permissions, True)

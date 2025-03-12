@@ -1,0 +1,75 @@
+summary: Cập nhật thông tin nhà phân phối
+description: Cập nhật thông tin nhà phân phối theo ID, bao gồm thông tin cơ bản và danh sách sản phẩm
+tags:
+  - Nhà Phân Phối
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: ID của nhà phân phối cần cập nhật
+          example: 1
+        ten:
+          type: string
+          description: Tên nhà phân phối (tùy chọn)
+          example: "Công ty XYZ"
+        email:
+          type: string
+          description: Địa chỉ email của nhà phân phối (tùy chọn)
+          example: "contact@xyz.com"
+        dien_thoai:
+          type: string
+          description: Số điện thoại nhà phân phối (tùy chọn)
+          example: "0909123456"
+        dia_chi:
+          type: string
+          description: Địa chỉ nhà phân phối (tùy chọn)
+          example: "456 Đường XYZ, Quận 2, TP.HCM"
+        ds_san_pham:
+          type: array
+          description: Danh sách ID sản phẩm cần gắn với nhà phân phối (tùy chọn). Sản phẩm không có trong danh sách sẽ bị xóa mềm.
+          items:
+            type: integer
+            description: ID của sản phẩm
+            example: 1
+responses:
+  200:
+    description: Cập nhật nhà phân phối thành công
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+        result:
+          type: object
+          nullable: true
+          example: null
+  401:
+    description: Lỗi validation, nhà phân phối không tồn tại, hoặc sản phẩm không tồn tại
+    schema:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Nha phan phoi not found"
+        result:
+          type: object
+          nullable: true
+          example: null

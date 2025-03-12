@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource
 from crm_app.services.KhachHangService import *
+from crm_app import app
 
 class KhachHangController (Resource):
     def get(self):
@@ -36,10 +37,7 @@ class KhachHangController (Resource):
         result = put_khach_hang(id=id, name=ho_ten, address=dia_chi, phone=dien_thoai)
 
         return result
-    
-    def delete(self):
-        data = request.get_json()
-        id = data.get('id')
-
+    @app.route('/api/khach-hang/<int:id>', methods=['DELETE'])
+    def delete_khach_hang(id):
         result = delete_khach_hang(id=id)
         return result

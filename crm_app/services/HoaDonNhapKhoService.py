@@ -75,7 +75,7 @@ def post_hoa_don_nhap_kho(nha_phan_phoi_id, kho_id, ngay_nhap, tong_tien, tra_tr
                 gia_nhap    = 0
                 gia_ban     = 0
                 chiet_khau  = 0
-
+            print('ct sản phẩm:', item.get("ctsp_id"))
             result = add_ct_hoa_don_nhap(upc=upc, ngay_nhap=ngay_nhap, counter=counter, hoa_don_id=hoa_don_id, san_pham_id=item.get("san_pham_id"), ctsp_id=item.get("ctsp_id"), so_luong=item.get("so_luong"), don_vi_tinh=item.get("don_vi_tinh"), ke=item.get("ke"), gia_nhap=gia_nhap, gia_ban=gia_ban, chiet_khau=chiet_khau, la_qua_tang=item.get("la_qua_tang"))
 
             if not isinstance(result, float):
@@ -121,8 +121,9 @@ def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_i
         error       = validate_number(number=value)
         if error:
             return make_response(get_error_response(ERROR_CODES.NUMBER_INVALID, 401, f"Lỗi tại {field_name}"))
-
-    sku             = create_sku(upc=upc, ct_san_pham_id=ctsp_id, date_str=ngay_nhap)
+        
+    counter_in_date = get_counter_detail_product_in_day(ngay_nhap=ngay_nhap, ctsp_id=ctsp_id)
+    sku             = create_sku(upc=upc, ct_san_pham_id=ctsp_id, counter_detail_product_in_date=counter_in_date,date_str=ngay_nhap)
 
 
     # 1 - (20/100) => 1 - 0.2
@@ -167,6 +168,23 @@ def get_last_record_number_bill(model):
     else:
         return 1
     
-def create_bill_code(number_bill, type:str):
+
+def get_counter_detail_product_in_day(ngay_nhap, ctsp_id):
+    print('ngay_nhap:', ngay_nhap)
+    # ngay_nhap_obj = datetime.strptime(ngay_nhap, FORMAT_DATE.MYSQL_DATE_ONLY)
+
+    #SELECT count(*) FROM hoa_don_nhap_kho WHERE DATE(created_at) = {curr_day}
+    query = text(f"""
+                SELECT count(*) 
+                FROM hoa_don_nhap_kho 
+                LEFT JOIN 
+                    chi_tiet_hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.hoa_don_id = hoa_don_nhap_kho.id
+                WHERE DATE(ngay_nhap) = :ngay_nhap
+                    AND chi_tiet_hoa_don_nhap_kho.ctsp_id = :ctsp_id
+                """)    
+    count = db.session.execute(query, {"ngay_nhap": ngay_nhap, "ctsp_id": ctsp_id}).scalar()
+    return count
+    
+def create_bill_code(number_bill:int, type:str):
     bill_code = f"{type}-{number_bill:06}"
     return bill_code

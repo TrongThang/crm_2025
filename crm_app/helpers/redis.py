@@ -24,6 +24,7 @@ def init_role_employee_to_redis():
     if not is_restart:
         nhan_vien_list = get_all_employee_role()
         for nhan_vien in nhan_vien_list:
+            print('nhan-vien-list:', nhan_vien_list)
             nhan_vien_id = nhan_vien.get("id")
             chuc_vu_id = nhan_vien.get("chuc_vu_id")
             save_employee_roles_to_redis(nhan_vien_id=nhan_vien_id, chuc_vu_id=chuc_vu_id)
@@ -45,9 +46,9 @@ def save_permissions_to_redis(chuc_vu_id, quyen_list):
 def save_employee_roles_to_redis(nhan_vien_id, chuc_vu_id):
     """
         Lưu chức vụ cho nhân viên
-        Ví dụ: chuc_vu_nhan_vien: 5 -> 1 (1 là mã chức vụ)
+        Ví dụ: nhan_vien: 5 -> 1 (1 là mã chức vụ)
     """
-    redis_key = f"chuc_vu_nhan_vien: {nhan_vien_id}"
+    redis_key = f"nhan_vien:{nhan_vien_id}"
 
     redis_client.delete(redis_key)
 
@@ -72,6 +73,7 @@ def get_role_by_employee(nhan_vien_id):
         params: nhan_vien_id: mã nhân viên
         output: '3'
     """
-    redis_key = f"chuc_vu_nhan_vien:{nhan_vien_id}"
+    redis_key = f"nhan_vien:{nhan_vien_id}"
 
-    return redis_client.get(redis_key)
+    chuc_vu_id = redis_client.get(redis_key)
+    return chuc_vu_id

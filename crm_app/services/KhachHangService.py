@@ -3,6 +3,7 @@ from crm_app.docs.containts import ERROR_CODES
 from crm_app.services.utils import *
 from crm_app.services.dbService import *
 from crm_app.models.KhachHang import KhachHang 
+from crm_app.models.HoaDonXuatKho import HoaDonXuatKho 
 from crm_app import db
 
 def get_khach_hang(filter, limit, page, sort, order):
@@ -59,7 +60,10 @@ def delete_khach_hang(id):
     khach_hang = KhachHang.query.get(id)
 
     if khach_hang is None:
-        return make_response(get_error_response(ERROR_CODES.NOT_FOUND), 401)
+        return make_response(get_error_response(ERROR_CODES.KHACH_HANG_NOT_FOUND), 401)
+    
+    if HoaDonXuatKho.query.filter_by(khach_hang_id=id, deleted_at=None).first():
+        return make_response(get_error_response(ERROR_CODES.KHACH_HANG_REFERENCE_HOA_DON_XUAT), 401)
     
     khach_hang.soft_delete()
 

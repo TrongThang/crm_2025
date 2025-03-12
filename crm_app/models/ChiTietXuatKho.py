@@ -12,6 +12,7 @@ class ChiTietXuatKho(BaseModel):
     so_luong_ban = Column(INT, default=0)
     don_vi_tinh = Column(String(255))
     gia_ban = Column(Float, default=0)
+    gia_nhap = Column(Float, default=0)
     chiet_khau = Column(Float, default=0)
     thanh_tien = Column(Float, default=0)
     loi_nhuan = Column(Float, default=0)

@@ -1,0 +1,68 @@
+tags:
+  - Nhân Viên
+summary: Lấy danh sách nhân viên
+
+parameters:
+  - name: filters
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Bộ lọc dữ liệu
+  - name: limit
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: Giới hạn số lượng kết quả trả về
+  - name: page
+    in: query
+    required: false
+    schema:
+      type: integer
+    description: Trang số bao nhiêu
+  - name: order
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Kiểu sắp xếp (asc/desc)
+  - name: sort
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Trường cần sắp xếp
+responses:
+  '200':
+    description: Danh sách nhân viên
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  ten_dang_nhap:
+                    type: string
+                  ho_ten:
+                    type: string
+                  email:
+                    type: string
+                  dien_thoai:
+                    type: string
+                  dia_chi:
+                    type: string
+                  avatar:
+                    type: string
+                  chuc_vu:
+                    type: string
+                  chuc_vu_id:
+                    type: integer
+  '400':
+    description: Lỗi request không hợp lệ
+  '500':
+    description: Lỗi server nội bộ

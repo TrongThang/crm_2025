@@ -16,6 +16,9 @@ def build_where_query(filter, table = None):
                 or field == 'don_vi_tinh'
                 or field == 'loai_giam_gia'
                 or field == 'thoi_gian_bao_hanh'
+                or field == 'nha_phan_phoi'
+                or field == 'kho'
+                or field == 'chuc_vu'
             ):
                 field = f"{field}.ten" 
 

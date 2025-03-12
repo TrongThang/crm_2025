@@ -75,7 +75,7 @@ def delete_one_chi_tiet_san_pham (id = None):
     if chi_tiet is None:
         return make_response(get_error_response(ERROR_CODES.CTSP_INVALID_ID), 401)
     
-    result = check_detail_product_reference(ctsp_id=ct.id)
+    result = check_detail_product_reference(ctsp_id=chi_tiet.id)
 
     if result is True:
         chi_tiet.soft_delete()

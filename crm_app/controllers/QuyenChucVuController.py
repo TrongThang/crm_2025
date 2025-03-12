@@ -19,4 +19,3 @@ class QuyenChucVuController(Resource):
         result = modify_quyen_chuc_vu(chuc_vu_id=chuc_vu_id, list_quyen=list_quyen)
 
         return result
-    

@@ -7,12 +7,15 @@ from crm_app.controllers import (
     LoaiSanPhamController,
     SanPhamController,
 )
-from crm_app.controllers.AcountController import LoginController, RegisterController
+from crm_app.controllers.AcountController import LoginController, RegisterController, GetMeController
 from crm_app.controllers.QuyenChucVuController import QuyenChucVuController
+from crm_app.controllers.ChucVuController import ChucVuController 
+from crm_app.controllers.KhoController import KhoController
 from crm_app.controllers.HoaDonNhapKhoController import HoaDonNhapKhoController
 from crm_app.controllers.HoaDonXuatKhoController import HoaDonXuatKhoController, ChiTietXuatKhoController
 from crm_app.controllers.NhaPhanPhoiController import NhaPhanPhoiController
 from crm_app.controllers.KhachHangController import KhachHangController
+from crm_app.controllers.NhanVienController import NhanVienController
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)
@@ -28,11 +31,15 @@ def register_routes(app):
         (SanPhamController.SanPhamController, "/san-pham"),
         (SanPhamController.ChiTietSanPhamController, "/san-pham/chi-tiet"),
         (LoginController, "/dang-nhap"),
+        (GetMeController, "/thong-tin-dang-nhap"),
         (RegisterController, "/dang-ki"),
         (NhaPhanPhoiController, "/nha-phan-phoi"),
+        (NhanVienController, "/nhan-vien"),
         (KhachHangController, "/khach-hang"),
         (QuyenChucVuController, "/quyen-han"),
+        (ChucVuController, "/chuc-vu"),
         (HoaDonNhapKhoController, "/nhap-kho"),
+        (KhoController, "/kho"),
         (HoaDonXuatKhoController, "/xuat-kho"),
         (ChiTietXuatKhoController, "/xuat-kho/chi-tiet"),
     ]
