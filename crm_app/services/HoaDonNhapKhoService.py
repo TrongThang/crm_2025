@@ -1,6 +1,6 @@
-from flask import make_response
+from flask import make_response, Response
 from datetime import datetime
-from crm_app.services.utils import validate_datetime, isExistId, create_sku
+from crm_app.services.utils import convert_datetime, isExistId, create_sku
 from crm_app.services.utils import *
 from crm_app.docs.containts import ERROR_CODES, get_error_response  
 from crm_app.services.dbService import excute_select_data
@@ -12,27 +12,105 @@ from crm_app.models.ChiTietSanPham import ChiTietSanPham
 from crm_app.models.SanPham import SanPham
 from crm_app.models.TonKho import TonKho
 from crm_app import db
+from collections import defaultdict
+import math
+
+def config_data_response(raw_data):
+    # Dictionary để nhóm hóa đơn nhập kho
+    grouped_data = defaultdict(lambda: {
+        "hoa_don_id": None,
+        "so_hoa_don": None,
+        "ma_hoa_don": None,
+        "nha_phan_phoi": None,
+        "nha_phan_phoi_id": None,
+        "kho": None,
+        "kho_id": None,
+        "ngay_nhap": None,
+        "tong_tien": None,
+        "tra_truoc": None,
+        "con_lai": None,
+        "ghi_chu": None,
+        "ds_san_pham_nhap": []
+    })
+
+    # Nhóm dữ liệu
+    for row in raw_data:
+        hoa_don_id = row["ID"]
+        
+        # Nếu hóa đơn chưa được thêm vào dictionary, thêm thông tin chung
+        if grouped_data[hoa_don_id]["hoa_don_id"] is None:
+            grouped_data[hoa_don_id].update({
+                "ID": hoa_don_id,
+                "so_hoa_don": row["so_hoa_don"],
+                "ma_hoa_don": row["ma_hoa_don"],
+                "nha_phan_phoi": row["nha_phan_phoi"],
+                "nha_phan_phoi_id": row["nha_phan_phoi_id"],
+                "kho": row["kho"],
+                "kho_id": row["kho_id"],
+                "ngay_nhap": row["ngay_nhap"],
+                "tong_tien": row["tong_tien"],
+                "tra_truoc": row["tra_truoc"],
+                "con_lai": row["con_lai"],
+                "ghi_chu": row["ghi_chu"],
+                "CreatedAt": row["CreatedAt"],
+                "UpdatedAt": row["UpdatedAt"],
+                "DeletedAt": row["DeletedAt"],
+            })
+        
+        # Thêm chi tiết hóa đơn vào danh sách
+        grouped_data[hoa_don_id]["ds_san_pham_nhap"].append({
+            "san_pham_id": row["san_pham_id"],
+            "ctsp_id": row["ctsp_id"],
+            "ctsp_ten": row["ctsp_ten"],
+            "san_pham_ten": row["san_pham_ten"],
+            "sku": row["sku"],
+            "han_su_dung": row["han_su_dung"],
+            "so_luong": row["so_luong"],
+            "don_vi_tinh": row["don_vi_tinh"],
+            "ke": row["ke"],
+            "gia_nhap": row["gia_nhap"],
+            "gia_ban": row["gia_ban"],
+            "thanh_tien": row["thanh_tien"],
+            "chiet_khau": row["chiet_khau"],
+            "la_qua_tang": row["la_qua_tang"],
+        })
+
+    return list(grouped_data.values())
 
 def get_hoa_don_nhap_kho(filter, limit, page, sort, order):
     get_table = 'hoa_don_nhap_kho'
     get_attr = """
         so_hoa_don, ma_hoa_don, nha_phan_phoi.ten as nha_phan_phoi, nha_phan_phoi.id as nha_phan_phoi_id, 
         kho.ten as kho, kho.id as kho_id, ngay_nhap, 
-        tong_tien, tra_truoc, con_lai, ghi_chu
+        tong_tien, tra_truoc, con_lai, ghi_chu,
+        chi_tiet_hoa_don_nhap_kho.san_pham_id, chi_tiet_hoa_don_nhap_kho.ctsp_id, chi_tiet_hoa_don_nhap_kho.sku, chi_tiet_hoa_don_nhap_kho.han_su_dung , chi_tiet_hoa_don_nhap_kho.so_luong, chi_tiet_hoa_don_nhap_kho.don_vi_tinh, chi_tiet_hoa_don_nhap_kho.ke, chi_tiet_hoa_don_nhap_kho.gia_nhap, chi_tiet_hoa_don_nhap_kho.gia_ban, chi_tiet_hoa_don_nhap_kho.thanh_tien, chi_tiet_hoa_don_nhap_kho.chiet_khau, chi_tiet_san_pham.ten_phan_loai as ctsp_ten, chi_tiet_hoa_don_nhap_kho.la_qua_tang, san_pham.ten AS san_pham_ten
     """
     query_join = """
         LEFT JOIN nha_phan_phoi ON hoa_don_nhap_kho.nha_phan_phoi_id = nha_phan_phoi.id
         LEFT JOIN kho ON hoa_don_nhap_kho.kho_id = kho.id
+        LEFT JOIN chi_tiet_hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.hoa_don_id = hoa_don_nhap_kho.id
+        LEFT JOIN chi_tiet_san_pham ON chi_tiet_san_pham.id = chi_tiet_hoa_don_nhap_kho.ctsp_id
+        LEFT JOIN san_pham ON san_pham.id = chi_tiet_san_pham.san_pham_id
     """
     
-    response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
+    raw_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
+
+    query_total = text(f" SELECT COUNT(*) FROM hoa_don_nhap_kho WHERE hoa_don_nhap_kho.deleted_at IS NULL LIMIT {limit or 0}")
+    total_count = db.session.execute(query_total).scalar()
+    total_page = math.ceil(total_count / int(limit)) if limit else 1
+
+    response_data = {
+        "data": config_data_response(raw_data.get("data")), 
+        "total_page": total_page
+    }
 
     return get_error_response(ERROR_CODES.SUCCESS, result=response_data) 
 
 def post_hoa_don_nhap_kho(nha_phan_phoi_id, kho_id, ngay_nhap, tong_tien, tra_truoc, ghi_chu, ds_san_pham_nhap):
     print(ds_san_pham_nhap)
-    # if validate_datetime(datetime_check=ngay_nhap) is False:
-    #     return make_response(get_error_response(ERROR_CODES.DATETIME_INVALID), 401)
+    ngay_nhap = convert_datetime(ngay_nhap)
+    if ngay_nhap is False:
+        return make_response(get_error_response(ERROR_CODES.DATETIME_INVALID), 401)
     
     if not isExistId(nha_phan_phoi_id, NhaPhanPhoi):
         return make_response(get_error_response(ERROR_CODES.NHA_PHAN_PHOI_NOT_FOUND), 401)
@@ -64,7 +142,7 @@ def post_hoa_don_nhap_kho(nha_phan_phoi_id, kho_id, ngay_nhap, tong_tien, tra_tr
         hoa_don_id  = new_hoa_don.id
         counter     = 0
         total_money = 0
-
+        profit      = 0
         for item in ds_san_pham_nhap:
             gia_nhap    = item.get("gia_nhap")
             gia_ban     = item.get("gia_ban")
@@ -76,18 +154,17 @@ def post_hoa_don_nhap_kho(nha_phan_phoi_id, kho_id, ngay_nhap, tong_tien, tra_tr
                 gia_ban     = 0
                 chiet_khau  = 0
             print('ct sản phẩm:', item.get("ctsp_id"))
-            result = add_ct_hoa_don_nhap(upc=upc, ngay_nhap=ngay_nhap, counter=counter, hoa_don_id=hoa_don_id, san_pham_id=item.get("san_pham_id"), ctsp_id=item.get("ctsp_id"), so_luong=item.get("so_luong"), don_vi_tinh=item.get("don_vi_tinh"), ke=item.get("ke"), gia_nhap=gia_nhap, gia_ban=gia_ban, chiet_khau=chiet_khau, la_qua_tang=item.get("la_qua_tang"))
+            result = add_ct_hoa_don_nhap(upc=upc, ngay_nhap=ngay_nhap, counter=counter, hoa_don_id=hoa_don_id, san_pham_id=item.get("san_pham_id"), ctsp_id=item.get("ctsp_id"), so_luong=item.get("so_luong_ban"), don_vi_tinh=item.get("don_vi_tinh"), ke=item.get("ke"), gia_nhap=gia_nhap, gia_ban=gia_ban, chiet_khau=chiet_khau, thanh_tien=item.get("thanh_tien"),la_qua_tang=item.get("la_qua_tang"))
 
-            if not isinstance(result, float):
+            if isinstance(result, Response):
                 return result
             
             total_money = total_money + result
             counter     += 1
-
-        if tra_truoc > tong_tien:
-            return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY))
-        print("total_money:", total_money)
         print("tong_tien:", tong_tien)
+        if tra_truoc > tong_tien:
+            return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY), 401)
+        
         if total_money != tong_tien:
             return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME), 401)
 
@@ -110,14 +187,14 @@ def post_hoa_don_nhap_kho(nha_phan_phoi_id, kho_id, ngay_nhap, tong_tien, tra_tr
     finally:
         db.session.close()
 
-def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_id, so_luong, don_vi_tinh, ke, gia_nhap, gia_ban, chiet_khau, la_qua_tang):    
+def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_id, so_luong, don_vi_tinh, ke, gia_nhap, gia_ban, chiet_khau, thanh_tien, la_qua_tang):    
     if not isExistId(id=san_pham_id, model=SanPham):
         return make_response(get_error_response(ERROR_CODES.SAN_PHAM_NOT_FOUND), 401)
     if not isExistId(id=ctsp_id, model=ChiTietSanPham):
         return make_response(get_error_response(ERROR_CODES.CTSP_NOT_FOUND), 401)
 
 
-    for field_name, value in [("gia_nhap", gia_nhap), ("gia_nhap", gia_nhap), ("gia_ban", gia_ban), ("chiet_khau", chiet_khau)]:
+    for field_name, value in [("gia_nhap", gia_nhap), ("gia_nhap", gia_nhap), ("gia_ban", gia_ban), ("chiet_khau", chiet_khau), ("thanh_tien", thanh_tien)]:
         error       = validate_number(number=value)
         if error:
             return make_response(get_error_response(ERROR_CODES.NUMBER_INVALID, 401, f"Lỗi tại {field_name}"))
@@ -127,7 +204,11 @@ def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_i
 
 
     # 1 - (20/100) => 1 - 0.2
-    thanh_tien      = gia_nhap * so_luong * (1 - chiet_khau/100)
+    thanh_tien_caculate      = gia_nhap * so_luong * (1 - chiet_khau/100)
+    print(thanh_tien)
+    print(thanh_tien_caculate)
+    if thanh_tien != thanh_tien_caculate:
+        return make_response(get_error_response(error_code=ERROR_CODES.TOTAL_AMOUNT_INVALID), 401)
 
     ct_nhap_kho     = ChiTietNhapKho(hoa_don_id=hoa_don_id, san_pham_id=san_pham_id, ctsp_id=ctsp_id, sku=sku, so_luong=so_luong, don_vi_tinh=don_vi_tinh, ke=ke, gia_nhap=gia_nhap, gia_ban=gia_ban, chiet_khau=chiet_khau, thanh_tien=thanh_tien, la_qua_tang=la_qua_tang)
 
@@ -188,3 +269,61 @@ def get_counter_detail_product_in_day(ngay_nhap, ctsp_id):
 def create_bill_code(number_bill:int, type:str):
     bill_code = f"{type}-{number_bill:06}"
     return bill_code
+
+def tra_no_phan_phoi(hoa_don_id, tien_tra):
+    hoa_don = HoaDonNhapKho.query.get(hoa_don_id)
+
+    if not hoa_don:
+        return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_NOT_FOUND), 401)
+    
+    con_lai = hoa_don.con_lai
+    error = validate_number(number=tien_tra, start=0, end = con_lai)
+    if not error:
+        return error
+    
+    hoa_don.con_lai = con_lai - tien_tra
+    db.session.commit()
+    return get_error_response(ERROR_CODES.SUCCESS)
+
+def tra_hang_nhap_kho(hoa_don_id, ds_san_pham_tra):
+    try:
+        hoa_don = HoaDonNhapKho.query.get(hoa_don_id)
+
+        if not hoa_don:
+            return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_NOT_FOUND), 401)
+        
+        for row in ds_san_pham_tra:
+            id = row.get("id")
+            so_luong_tra = row.get("so_luong")
+            sku = row.get("sku")
+
+            ct_hoa_don_nhap = ChiTietNhapKho.query.get(id)
+            if not ct_hoa_don_nhap:
+                return make_response(get_error_response(ERROR_CODES.SAN_PHAM_NOT_FOUND), 401)
+            
+            if validate_number(so_luong_tra, 1):
+                return make_response(get_error_response(ERROR_CODES.SO_LUONG_TRA_GREATED_THAN_ZERO), 401)
+            
+            if so_luong_tra > ct_hoa_don_nhap.so_luong:
+                return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE), 401)
+
+            ton_kho = TonKho.query.filter_by(sku = sku, deleted_at = None).first()
+
+            if not ton_kho:
+                return make_response(get_error_response(ERROR_CODES.KHO_NOT_EXISTED_SKU), 401)
+            
+            if so_luong_tra > ton_kho.so_luong_ton:
+                return make_response(get_error_response(ERROR_CODES.KHO_NOT_QUANTITY_FOR_RETURNS), 401)
+            
+            ct_hoa_don_nhap.so_luong = int(ct_hoa_don_nhap.so_luong) - int(so_luong_tra)
+
+            if ct_hoa_don_nhap.so_luong == 0:
+                ct_hoa_don_nhap.soft_delete()
+
+            db.session.commit()
+        return get_error_response(ERROR_CODES.SUCCESS)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+    finally:
+        db.session.close()

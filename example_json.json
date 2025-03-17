@@ -1,0 +1,58 @@
+{
+    "khach_hang_id": 1,
+    "nhan_vien_giao_hang_id": 1,
+    "nhan_vien_sale_id": 8,
+    "ngay_xuat": "2025-03-10T10:00:00",
+    "tong_tien": 360000,
+    "vat": 10,
+    "thanh_tien": 360000,
+    "tra_truoc": 200000,
+    "tong_gia_nhap": 180000,
+    "loi_nhuan": 180000,
+    "ghi_chu": "Xuất kho đơn hàng #155",
+    "da_giao_hang": true,
+    "loai_chiet_khau": 1,
+    "gia_tri_chiet_khau": 10,
+    "ds_san_pham_xuat": [
+        {
+            "hoa_don_id": 155,
+            "ds_sku": [{
+                    "sku": "masp13-57-12022025-014",
+                    "so_luong_ban": 2
+                },
+                {
+                    "sku": "masp12-57-12022025-016",
+                    "so_luong_ban": 2
+                }
+            ],
+            "san_pham_id": 48,
+            "ctsp_id": 57,
+            "so_luong_ban": 2,
+            "don_vi_tinh": "cái",
+            "gia_nhap": 100000,
+            "gia_ban": 200000,
+            "chiet_khau": 10,
+            "la_qua_tang": false
+        },
+        {
+            "hoa_don_id": 155,
+            "ds_sku": [{
+                    "sku": "masp13-57-12022025-014",
+                    "so_luong_ban": 2
+                },
+                {
+                    "sku": "masp12-57-12022025-016",
+                    "so_luong_ban": 2
+                }
+            ],
+            "san_pham_id": 48,
+            "ctsp_id": 60,
+            "so_luong_ban": 2,
+            "don_vi_tinh": "cái",
+            "gia_nhap": 100000,
+            "gia_ban": 200000,
+            "chiet_khau": 5,
+            "la_qua_tang": true
+        }
+    ]
+}

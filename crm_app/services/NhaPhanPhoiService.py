@@ -33,7 +33,8 @@ def config_data_nha_phan_phoi(data):
         merged_data[key]["ds_san_pham"].append({
             "ID": item.get("san_pham_id"),
             "upc": item.get("upc"),
-            "ten": item.get("san_pham")
+            "ten": item.get("san_pham"),
+            "don_vi_tinh": item.get("don_vi_tinh")
         })
         # merged_data[key]["san_pham"].append(item.get("upc"))
 
@@ -43,10 +44,11 @@ def config_data_nha_phan_phoi(data):
 
 def get_nha_phan_phoi(filter, limit, page, sort, order):
     get_table = 'nha_phan_phoi'
-    get_attr = 'nha_phan_phoi.ten, dia_chi, dien_thoai, email, san_pham.upc, san_pham.ten as san_pham, san_pham.id as san_pham_id'
+    get_attr = 'nha_phan_phoi.ten, dia_chi, dien_thoai, email, san_pham.upc, san_pham.ten as san_pham, san_pham.id as san_pham_id, don_vi_tinh.ten as don_vi_tinh'
     query_join = """
         LEFT JOIN san_pham_nha_phan_phoi ON san_pham_nha_phan_phoi.nha_phan_phoi_id = nha_phan_phoi.id AND san_pham_nha_phan_phoi.deleted_at IS NULL
         LEFT JOIN san_pham ON san_pham_nha_phan_phoi.san_pham_id = san_pham.id
+        LEFT JOIN don_vi_tinh ON don_vi_tinh.id = san_pham.don_vi_tinh_id
     """
     
     result = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order,query_join=query_join)
@@ -71,7 +73,7 @@ def post_nha_phan_phoi(name, address, phone, email, ds_san_pham = None):
     
     new_nha_phan_phoi = NhaPhanPhoi(ten=name, dia_chi=address, dien_thoai=phone, email=email)
     db.session.add(new_nha_phan_phoi)
-    db.session.flush()
+
     if ds_san_pham:
         db.session.flush()
         for san_pham_id in ds_san_pham:
@@ -97,7 +99,6 @@ def put_nha_phan_phoi(id, name, address, phone, email, ds_san_pham):
         nha_phan_phoi.ten = name
     
     if address is not None:
-        print("address:", address)
         error = validate_name(name=name, model=NhaPhanPhoi, is_unique=False)
         if error:
             return make_response(error, 401)
@@ -117,6 +118,8 @@ def put_nha_phan_phoi(id, name, address, phone, email, ds_san_pham):
 
     if ds_san_pham is not None:
         list_sp_npp = SanPhamNhaPhanPhoi.query.filter_by(nha_phan_phoi_id = id, deleted_at = None).all()
+        
+        # [1, 3, 4, 6, 8]
         san_pham_ids = [sp_npp.san_pham_id for sp_npp in list_sp_npp]
 
         for san_pham_id in ds_san_pham:
@@ -127,8 +130,10 @@ def put_nha_phan_phoi(id, name, address, phone, email, ds_san_pham):
                 result = add_san_pham_nha_phan_phoi(nha_phan_phoi_id=id, san_pham_id=san_pham_id)
                 if result is not True:
                     return result
-                san_pham_ids.append(san_pham_id)
-
+                san_pham_ids.append(san_pham_id) # [1, 3, 4, 6, 8, 9]
+        # Ban đầu [1, 3, 4, 6, 8] -> Client gửi về -> 3 5 9 ->  Mất 1, 4, 6, 8 
+        # MỚI 3 5 -> [3, 5, 9]
+        # [1, 3, 4, 6, 8, 9] - [3, 5, 9] = [1, 4, 6, 8] (những thằng bị xoá)
         san_pham_delete = san_pham_ids - ds_san_pham
 
         for san_pham_id in san_pham_delete:
@@ -139,6 +144,21 @@ def put_nha_phan_phoi(id, name, address, phone, email, ds_san_pham):
 
     db.session.commit()
     return get_error_response(ERROR_CODES.SUCCESS)
+
+def add_san_pham_nha_phan_phoi(nha_phan_phoi_id, san_pham_id):
+    if isExistId(id=san_pham_id, model=SanPham):
+        sp_npp = SanPhamNhaPhanPhoi.query.filter_by(nha_phan_phoi_id=nha_phan_phoi_id, san_pham_id=san_pham_id, deleted_at=None).first()
+                        
+        # if not sp_npp:
+        #     return make_response(get_error_response(ERROR_CODES.SAN_PHAM_OF_NHA_PHAN_PHOI_EXISTED),401)
+
+        san_pham_nha_phan_phoi = SanPhamNhaPhanPhoi(nha_phan_phoi_id=nha_phan_phoi_id, san_pham_id=san_pham_id)
+
+        db.session.add(san_pham_nha_phan_phoi)
+        return True
+    
+    print('đã có sản phẩm')
+    return make_response(get_error_response(ERROR_CODES.SAN_PHAM_NOT_FOUND),401)
 
 def delete_nha_phan_phoi(id):
     nha_phan_phoi = NhaPhanPhoi.query.get(id)
@@ -163,20 +183,6 @@ def delete_nha_phan_phoi(id):
     return get_error_response(ERROR_CODES.SUCCESS)
 
 
-def add_san_pham_nha_phan_phoi(nha_phan_phoi_id, san_pham_id):
-    if isExistId(id=san_pham_id, model=SanPham):
-        sp_npp = SanPhamNhaPhanPhoi.query.filter_by(nha_phan_phoi_id=nha_phan_phoi_id, san_pham_id=san_pham_id, deleted_at=None).first()
-                        
-        if sp_npp:
-            return make_response(get_error_response(ERROR_CODES.SAN_PHAM_OF_NHA_PHAN_PHOI_EXISTED),401)
-
-        san_pham_nha_phan_phoi = SanPhamNhaPhanPhoi(nha_phan_phoi_id=nha_phan_phoi_id, san_pham_id=san_pham_id)
-
-        db.session.add(san_pham_nha_phan_phoi)
-        return True
-    
-    print('đã có sản phẩm')
-    return make_response(get_error_response(ERROR_CODES.SAN_PHAM_NOT_FOUND),401)
 
 def delete_san_pham_by_nha_phan_phoi(nha_phan_phoi_id):
     san_phams = SanPhamNhaPhanPhoi.query.filter_by(nha_phan_phoi_id=nha_phan_phoi_id, deleted_at = None).all()

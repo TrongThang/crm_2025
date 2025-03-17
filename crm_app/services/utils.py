@@ -28,7 +28,7 @@ def validate_name(name, model,existing_id = None,max_length = 255, is_unique = T
         
     return None
 
-def validate_number(number):
+def validate_number(number, start = 0, end = None, error_code_over_end = None):
     if number is None:
         print('is None')
         return get_error_response(ERROR_CODES.NUMBER_INVALID)
@@ -37,10 +37,13 @@ def validate_number(number):
         number = float(number)
     except ValueError:
         print('is not Number')
-        return get_error_response(ERROR_CODES.PRICE_INVALID) 
+        return make_response(get_error_response(ERROR_CODES.PRICE_INVALID), 401) 
     
-    if number < 0:
-        return get_error_response(ERROR_CODES.PRICE_LESSER_ZERO) 
+    if number < start:
+        return make_response(get_error_response(ERROR_CODES.PRICE_LESSER_ZERO), 401) 
+    
+    if end and number > end:
+        return make_response(get_error_response(error_code_over_end), 401)
     
     return None
 
@@ -122,11 +125,14 @@ def isExistId(id, model):
         
     return False
 
-def validate_datetime(datetime_check):
-    # datetime.strptime(datetime_check, format)
-    if isinstance(datetime_check, datetime):
-        return True
-    return False
+def convert_datetime(date_str):
+    try:
+        # Chuyển đổi chuỗi thành đối tượng datetime
+        dt_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+        # Định dạng lại thành YYYY-MM-DD
+        return dt_obj.strftime("%Y-%m-%d")
+    except ValueError as e:
+        return  False #f"Lỗi chuyển đổi: {e}"}
 
 def create_sku(upc,ct_san_pham_id, date_str, counter_detail_product_in_date: int, model = None):
     date_obj = datetime.strptime(date_str, FORMAT_DATE.MYSQL_DATE_ONLY)

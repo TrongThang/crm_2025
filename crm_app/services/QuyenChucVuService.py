@@ -2,7 +2,6 @@ from crm_app.models.Quyen import Quyen
 from crm_app.models.ChucNang import ChucNang
 from crm_app.models.ChucVu import ChucVu
 from crm_app import db
-from crm_app.services.helpers import get_word_before_dash
 from sqlalchemy import text
 from flask import make_response, current_app
 from crm_app.docs.containts import *

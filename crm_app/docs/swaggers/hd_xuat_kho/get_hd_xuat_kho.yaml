@@ -60,7 +60,7 @@ responses:
                   khach_hang_id:
                     type: integer
                     example: 1
-                  ho_hoa_don:
+                  so_hoa_don:
                     type: string
                     example: "HDX-000001"
                   nhan_vien_giao_hang_id:

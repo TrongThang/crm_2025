@@ -22,14 +22,6 @@ def build_where_query(filter, table = None):
             ):
                 field = f"{field}.ten" 
 
-            # if operator == 'contains':
-            #     sql_condition.append(f""" {field} IS NOT NULL AND {field} LIKE '%{value}%' """)
-            # elif operator == 'notcontains':
-            #     sql_condition.append(f""" {field} IS NOT NULL AND {field} NOT LIKE '%{value}' """)
-            # elif operator == 'startswith':
-            #     sql_condition.append(f""" {field} IS NOT NULL AND {field} LIKE '{value}%' """)
-            # elif operator == 'endswith':
-            #     sql_condition.append(f""" {field} IS NOT NULL AND {field} LIKE '%{value}' """)
             if operator == 'contains':
                 if value:  # Nếu có giá trị tìm kiếm, thì loại bỏ NULL
                     sql_condition.append(f""" ({field} IS NOT NULL AND {field} LIKE '%{value}%') """)
@@ -66,16 +58,7 @@ def build_where_query(filter, table = None):
     if not sql_condition:
         print('sql_condition')
         return f"WHERE {table+'.'}deleted_at IS NULL" 
+    
     print("logical_operator:", logical_operator)
     print("sql_condition:", sql_condition)
     return " WHERE " + f" {logical_operator} ".join(sql_condition) + f" AND {table+'.'}deleted_at IS NULL"
-
-# view-nhan-vien -> view 
-def get_word_before_dash(str):
-    result = ''
-    for c in str:
-        if(c == '-'):
-            return result
-        result = result + c
-
-    return result

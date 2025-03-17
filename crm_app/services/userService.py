@@ -10,6 +10,8 @@ import jwt
 import hashlib
 from crm_app import redis_client
 
+REFRESH_SECRET_KEY = "IS@!(*RE(FRESH&*TOKEN))" 
+
 def create_token(username, nhan_vien_id):
     token = jwt.encode(
         {
@@ -21,6 +23,18 @@ def create_token(username, nhan_vien_id):
         algorithm='HS256'
     )
     return token
+
+def create_refresh_token(username, nhan_vien_id):
+    refresh_token = jwt.encode(
+        {
+            'username': username,
+            'nhan_vien_id': nhan_vien_id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)  # Hết hạn sau 7 ngày
+        },
+        REFRESH_SECRET_KEY,
+        algorithm='HS256'
+    )
+    return refresh_token
 
 def getMe(token):
     print("token:", token)
@@ -54,30 +68,58 @@ def login(username, password):
     if hashlib.md5(str(password).encode()).hexdigest() == user.mat_khau:
     # if bcrypt.checkpw(password.encode('utf-8'), user.mat_khau.encode('utf-8')):
         nhan_vien_id = user.id
-        print(123123)
         token = create_token(username=username, nhan_vien_id=nhan_vien_id)
-        print(8695)
-        return jsonify({'token': token, 'success': True})
+        refresh_token = create_refresh_token(username=username, nhan_vien_id=nhan_vien_id)
+
+        response_data = {"data" : {
+            'refresh_token': refresh_token,
+            # "access_token": token,
+            'token': token, 
+            'success': True
+        }}
+
+        return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
     else:
         return make_response(get_error_response(ERROR_CODES.ACCOUNT_INVALID), 402)
 
-def register(username, password):
+def refresh_token():
+    refresh_token = request.json.get("refresh_token")  # Nhận refresh token từ request
+    if not refresh_token:
+        return make_response(get_error_response(ERROR_CODES.TOKEN_INVALID), 401)
+
+    try:
+        # Giải mã Refresh Token
+        decoded = jwt.decode(refresh_token, REFRESH_SECRET_KEY, algorithms=['HS256'])
+
+        # Tạo Access Token mới
+        new_access_token = create_token(decoded["username"], decoded["nhan_vien_id"])
+        
+        return jsonify({
+            "access_token": new_access_token,
+            "success": True
+        })
+    except jwt.ExpiredSignatureError:
+        return make_response(get_error_response(ERROR_CODES.TOKEN_EXPIRED), 403)
+    except jwt.InvalidTokenError:
+        return make_response(get_error_response(ERROR_CODES.TOKEN_INVALID), 403)
+
+def change_password(username, password):
     if password is None:
-        return jsonify({'message':'Mật khẩu là bắt buộc', 'success': False})
+        return make_response(jsonify({'message': 'Mật khẩu là bắt buộc', 'success': False}), 401)
     if username is None or username == '':
-        return jsonify({'message':'Tên tài khoản là bắt buộc', 'success': False})
+        return make_response(jsonify({'message':'Tên tài khoản là bắt buộc', 'success': False}), 401)
     
-    user = NhanVien.query.get(username)
-    if user:
-        return jsonify({'message':'Tên tài khoản đã tồn tại!', 'success':False})
+    nhan_vien = NhanVien.query.get(username)
+    if nhan_vien:
+        return make_response(jsonify({'message': 'Tên tài khoản đã tồn tại!', 'success': False}), 401)
     else:
         salt = bcrypt.gensalt()  # Tạo salt (tự động chọn độ mạnh)
         password_hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-        newUser = NhanVien(username=username, password=password_hash.decode('utf-8'))
-        db.session.add(newUser)
+        nhan_vien.password = password_hash.decode('utf-8')
+        
         db.session.commit()
 
-        return jsonify({'message':'Tạo tài khoản thành công!', 'success':True})
+        return get_error_response(ERROR_CODES.SUCCESS)
 
 def logout():
     data = request.json

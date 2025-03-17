@@ -30,7 +30,7 @@ class ERROR_CODES(Enum):
     TOTAL_MONEY_INVALID = 22
     TOTAL_AMOUNT_INVALID = 23
     TOTAL_COST_INVALID = 24
-
+    SO_LUONG_TRA_GREATED_THAN_ZERO = 25
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
@@ -109,21 +109,31 @@ class ERROR_CODES(Enum):
     KHO_NOT_FOUND = 9001
     KHO_REFERENCE_HOA_DON_NHAP = 9002
     KHO_REFERENCE_HOA_DON_XUAT = 9003
+    KHO_NOT_EXISTED_SKU = 9004
+    KHO_NOT_QUANTITY_FOR_RETURNS = 9005
+    KHO_NOT_QUANTITY_FOR_SALE = 9006
 
     #HOA_DON_NHAP - 11xx
+    HOA_DON_NHAP_NOT_FOUND = 1107
     HOA_DON_NHAP_PREPAID_LESS_ZERO = 1101
     HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = 1102
     HOA_DON_NHAP_PREPAID_NOT_SAME = 1103
     HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = 1104
+    
     HOA_DON_XUAT_TOTAL_MONEY_NOT_SAME = 1105
     INVALID_GIFT_FLAG =  1106
+
+    HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = 1107
+    HOA_DON_XUAT_SO_LUONG_BAN_NOT_SAME = 1108
+
     
     #CHUC_VU- 12xx
     CHUC_VU_NOT_FOUND = 1201
     CHUC_NANG_NOT_FOUND = 1201
     
     #HOA DON XUAT - 13xx
-    HOA_DON_XUAT_NOT_STATUS = 1301
+    HOA_DON_XUAT_NOT_FOUND = 1301
+    HOA_DON_XUAT_NOT_STATUS = 1302
 
     #QUYEN HAN - 14xx
     POWERLESS = 1401
@@ -161,6 +171,7 @@ class MESSAGES(Enum):
     TOTAL_MONEY_INVALID = "Tổng tiền không giống với thông tin khách hàng gửi về!"
     TOTAL_AMOUNT_INVALID = "Thành tiền không giống với thông tin khách hàng gửi về!"
     TOTAL_COST_INVALID = "Tổng giá nhập không giống với thông tin khách hàng gửi về!"
+    SO_LUONG_TRA_GREATED_THAN_ZERO = "Số lượng trả của sản phẩm phải lớn hơn 0!"
 
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
@@ -243,7 +254,9 @@ class MESSAGES(Enum):
     KHO_NOT_FOUND = "Không tìm thấy kho hợp lệ"
     KHO_REFERENCE_HOA_DON_NHAP = "Kho có tham chiếu đến hoá đơn nhập kho"
     KHO_REFERENCE_HOA_DON_XUAT = "Kho có tham chiếu đến hoá đơn xuất kho"
-
+    KHO_NOT_QUANTITY_FOR_RETURNS = "Số lượng sản phẩm trả hàng vượt quá số lượng mua hàng!"
+    KHO_NOT_QUANTITY_FOR_SALE = "Lô hàng không đủ số lượng để bán cho sản phẩm!"
+    KHO_NOT_EXISTED_SKU = "Kho không tồn tại mã lô hàng!"
     #NHAP_KHO - 9xxx
     # NHAP_KHO_WRONG_TONG_TIEN = "Tổng tiền gửi về không khớp so vơi"
 
@@ -253,12 +266,14 @@ class MESSAGES(Enum):
     HOA_DON_NHAP_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
     HOA_DON_XUAT_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
     INVALID_GIFT_FLAG = "Giá trị 'là quà tặng không hợp lệ!'"
-
+    HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = "Số lượng trả của sản phẩm này lớn hơn số lượng mua!"
     #CHUC_VU - 11xx
     # CHUC_VU_NOT_FOUND = "Không tìm thấy chức vụ!"
     # CHUC_NANG_NOT_FOUND = "Không tìm thấy chức năng!"
 
-    HOA_DON_XUAT_NOT_STATUS = ""
+    HOA_DON_XUAT_NOT_FOUND = "Không tìm thấy hoá đơn xuất kho"
+    HOA_DON_XUAT_NOT_STATUS = "Không có trạng thái này"
+    HOA_DON_XUAT_SO_LUONG_BAN_NOT_SAME = "Số lượng bán gửi về không giống với tính toán!"
 
     #QUYEN HAN
     POWERLESS = "Không có quyền hạn để sử dụng chức năng này!"

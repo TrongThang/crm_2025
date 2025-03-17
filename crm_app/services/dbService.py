@@ -7,7 +7,6 @@ from crm_app import redis_client
 from crm_app.docs.containts import get_error_response, ERROR_CODES
 
 def excute_select_data(table: str, str_get_column :str, filter = None, limit = None, page = None, sort = None, order = None, query_join:str = None):
-
     build_where = build_where_query(filter=filter, table=table) if filter else f"WHERE {table}.deleted_at IS NULL"
     limit = int(limit) if limit else None
     page = int(page) if page else None
@@ -43,3 +42,4 @@ def check_reference_existence(model, column_name, value, error_code):
     if model.query.filter_by(**{column_name: value}, deleted_at=None).first():
         return make_response(get_error_response(error_code), 401)
     return None
+    

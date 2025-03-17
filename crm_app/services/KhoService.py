@@ -55,4 +55,3 @@ def delete_kho (id):
     
     kho.soft_delete()
     return get_error_response(ERROR_CODES.SUCCESS)
-    
