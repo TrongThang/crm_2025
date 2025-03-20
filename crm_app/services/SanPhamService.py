@@ -81,7 +81,6 @@ def get_san_pham (limit, page, sort, order, filter, get_attr = None, get_table =
 
 def post_san_pham (ten, upc, vat, mo_ta, trang_thai, hinh_anh, loai_id, dvt_id, gg_id, bh_id, chi_tiet_san_pham):
     try:
-        print('thêm sản phẩm 1')
         
         error = validate_name(name=ten, model=SanPham)
         if error:
@@ -101,13 +100,10 @@ def post_san_pham (ten, upc, vat, mo_ta, trang_thai, hinh_anh, loai_id, dvt_id, 
         
         error = validate_number(number=vat)
         if error:        return error
-        print('vượt qua kiểm tra')
         
         san_pham = SanPham(ten=ten, upc=upc, vat=vat, mo_ta=mo_ta, trang_thai=trang_thai, hinh_anh = hinh_anh, loai_san_pham_id=loai_id, don_vi_tinh_id=dvt_id, loai_giam_gia_id=gg_id, thoi_gian_bao_hanh_id=bh_id)
-        print('trước thêm sản phẩm')
 
         db.session.add(san_pham)
-        print('thêm sản phẩm thành công')
 
         db.session.flush()
 
@@ -126,10 +122,7 @@ def post_san_pham (ten, upc, vat, mo_ta, trang_thai, hinh_anh, loai_id, dvt_id, 
                 if isinstance(result_ct, dict) and result_ct.get('errorCode') != ERROR_CODES.SUCCESS:  
                     return result_ct
         else:
-            print("trước thêm sản phẩm 0 phân loại")
             res = add_chi_tiet_san_pham(san_pham_id=san_pham.id, ten_phan_loai=None, trang_thai_pl=trang_thai)
-            print("sau thêm sản phẩm 0 phân loại")
-        print(123123123123)
         db.session.commit()
     except Exception as e:
         # db.session.rollback() 

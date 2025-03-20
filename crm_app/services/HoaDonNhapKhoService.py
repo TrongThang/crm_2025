@@ -231,6 +231,53 @@ def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_i
 
     return thanh_tien
 
+def put_hoa_don_nhap_kho(hoa_don_id, kho_id, ngay_nhap, tong_tien, tra_truoc, ghi_chu, khoa_don):
+    try:
+        # if ngay_nhap is False:
+        #     return make_response(get_error_response(ERROR_CODES.DATETIME_INVALID), 401)
+        hoa_don = HoaDonNhapKho.query.get(hoa_don_id)
+        if not hoa_don:
+            return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_NOT_FOUND), 401)
+        if hoa_don.khoa_don is True:
+            return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_IS_LOCK), 401)
+        if not isExistId(kho_id, Kho):
+            return make_response(get_error_response(ERROR_CODES.KHO_NOT_FOUND), 401)
+        
+        error = validate_number(number=tra_truoc)
+        if error:
+            return make_response(get_error_response(ERROR_CODES.NUMBER_INVALID), 401)
+        
+        error = validate_number(number=tong_tien)
+        if error:
+            return make_response(get_error_response(ERROR_CODES.NUMBER_INVALID), 401)
+        
+        hoa_don.kho_id      = kho_id
+        hoa_don.ngay_nhap   = ngay_nhap
+        hoa_don.tra_truoc   = tra_truoc
+        hoa_don.ghi_chu     = ghi_chu
+        hoa_don.khoa_don    = khoa_don
+
+        hoa_don.con_lai     = hoa_don.tong_tien - hoa_don.tra_truoc
+        db.session.commit()
+        return get_error_response(ERROR_CODES.SUCCESS)
+    except Exception as e:
+        print(e)
+        return make_response(get_error_response(ERROR_CODES.SERVER_EROR), 401)
+
+def patch_lock(hoa_don_id, khoa_don):
+    try:
+        hoa_don = HoaDonNhapKho.query.get(hoa_don_id)
+
+        if not isinstance(khoa_don, bool):
+            return make_response(get_error_response(ERROR_CODES.LOCK_STATUS_INVALID))
+        
+        hoa_don.khoa_don = khoa_don
+        db.session.commit()
+        return get_error_response(ERROR_CODES.SUCCESS)
+    except Exception as e:
+        print(e)
+        return make_response(get_error_response(ERROR_CODES.SERVER_EROR), 401)
+
 def get_last_record_number_bill(model):
     #model: HoaDonNhapKho or HoaDonXuatKho
     curr_year   = datetime.now().year
@@ -265,7 +312,7 @@ def get_counter_detail_product_in_day(ngay_nhap, ctsp_id):
                 """)    
     count = db.session.execute(query, {"ngay_nhap": ngay_nhap, "ctsp_id": ctsp_id}).scalar()
     return count
-    
+
 def create_bill_code(number_bill:int, type:str):
     bill_code = f"{type}-{number_bill:06}"
     return bill_code
@@ -319,8 +366,10 @@ def tra_hang_nhap_kho(hoa_don_id, ds_san_pham_tra):
 
             if ct_hoa_don_nhap.so_luong == 0:
                 ct_hoa_don_nhap.soft_delete()
+            
+            ton_kho.so_luong_ton -= so_luong_tra
 
-            db.session.commit()
+        db.session.commit()
         return get_error_response(ERROR_CODES.SUCCESS)
     except Exception as e:
         print(e)

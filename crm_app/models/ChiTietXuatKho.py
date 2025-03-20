@@ -9,6 +9,7 @@ class ChiTietXuatKho(BaseModel):
     san_pham_id = Column(INT, ForeignKey("san_pham.id"), nullable=False)
     ctsp_id = Column(INT, ForeignKey("chi_tiet_san_pham.id"), nullable=False)
     sku = Column(String(255), unique=True)
+    sku_xuat = Column(String(255), unique=False)
     so_luong_ban = Column(INT, default=0)
     don_vi_tinh = Column(String(255))
     gia_ban = Column(Float, default=0)

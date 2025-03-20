@@ -1,0 +1,85 @@
+tags:
+  - Kho
+summary: Lấy thông tin tồn kho
+description: Truy vấn thông tin tồn kho của một chi tiết sản phẩm dựa trên ctsp_id.
+parameters:
+  - in: path
+    name: ctsp_id
+    required: true
+    schema:
+      type: integer
+    description: ID của chi tiết sản phẩm (ctsp_id) cần truy vấn tồn kho
+responses:
+  '200':
+    description: Lấy thông tin tồn kho thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  ctsp_id:
+                    type: integer
+                    description: ID của chi tiết sản phẩm
+                  san_pham_id:
+                    type: integer
+                    description: ID của sản phẩm
+                  san_pham:
+                    type: string
+                    description: Tên sản phẩm
+                  upc:
+                    type: string
+                    description: Mã UPC của sản phẩm
+                  so_luong_ton:
+                    type: integer
+                    description: Số lượng tồn kho
+                  ctsp_ten:
+                    type: string
+                    description: Tên phân loại của chi tiết sản phẩm
+                  sku:
+                    type: string
+                    description: Mã SKU của chi tiết sản phẩm
+                  gia_ban:
+                    type: number
+                    description: Giá bán của chi tiết sản phẩm
+                  han_su_dung:
+                    type: string
+                    format: date-time
+                    description: Hạn sử dụng của chi tiết sản phẩm
+                  don_vi_tinh:
+                    type: string
+                    description: Đơn vị tính của chi tiết sản phẩm
+              example:
+                - ctsp_id: 1
+                  san_pham_id: 10
+                  san_pham: "Sữa tươi"
+                  upc: "123456789"
+                  so_luong_ton: 50
+                  ctsp_ten: "Hộp 1L"
+                  sku: "STH1L"
+                  gia_ban: 25000
+                  han_su_dung: "2025-12-31T00:00:00Z"
+                  don_vi_tinh: "Hộp"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

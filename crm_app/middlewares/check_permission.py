@@ -23,11 +23,8 @@ def check_permission():
         return  # Bỏ qua middleware cho route đăng nhập, đăng ký
     
     token = request.headers.get("Authorization")
-    print('token', token)
-    print(not token)
     if not token:
         return jsonify({"message": "Unauthorized"}), 401
-    print('bắt đầu lấy token')
     """
         Lấy action của người dùng {
             Kiểm tra: 
@@ -37,6 +34,7 @@ def check_permission():
                     + PUT -> update-{pathname[0]]}
                     + DELETE -> delete-{pathname[0]]}
                 - Nếu như có 2 hành động -> f"{pathname[1]}-{pathname[0]}"
+                    + PATCH -> 
                     + Sau đó kiểm tra xem action này có nằm trong list quyền của nhân viên đó hay không
         }
 
@@ -49,6 +47,17 @@ def check_permission():
             action += pathname[i]
             if i > 0:
                 action += '-'
+    
+    if len(pathname) > 2:
+        if method == "GET":
+            action = "view-" + action
+        elif method == "POST":
+            action = "create-" + action
+        elif method == "PUT":
+            action = "update-" + action
+        elif method == "DELETE":
+            action = "delete-" + action
+
     try:
         decoded = jwt.decode(token, app.secret_key, algorithms=["HS256"])
         request.user = decoded  # Lưu thông tin user vào request

@@ -10,6 +10,22 @@ from crm_app import db
 from sqlalchemy import text
 import math
 
+def get_ton_kho(ctsp_id):
+    filter = '[{"field": "chi_tiet_hoa_don_nhap_kho.ctsp_id", "condition": "=", "value":' + str(ctsp_id) + '}]'
+    get_table = 'ton_kho'
+    get_attr = """
+        ton_kho.ctsp_id AS ctsp_id, ton_kho.san_pham_id AS san_pham_id, san_pham.ten AS san_pham, upc, so_luong_ton,  chi_tiet_san_pham.ten_phan_loai AS ctsp_ten,ton_kho.sku, chi_tiet_hoa_don_nhap_kho.gia_ban, chi_tiet_hoa_don_nhap_kho.han_su_dung, chi_tiet_hoa_don_nhap_kho.don_vi_tinh
+    """
+    query_join = """
+        LEFT JOIN san_pham ON san_pham.id = ton_kho.san_pham_id
+        LEFT JOIN chi_tiet_san_pham ON chi_tiet_san_pham.id = ton_kho.ctsp_id
+        LEFT JOIN chi_tiet_hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.ctsp_id = chi_tiet_san_pham.id
+    """
+    
+    data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, query_join=query_join)
+
+    return get_error_response(ERROR_CODES.SUCCESS, result=data)
+
 def get_kho (filter, limit, page, sort, order):
     get_table = 'kho'
     get_attr = 'ten, dia_chi'

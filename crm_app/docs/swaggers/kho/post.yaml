@@ -1,0 +1,72 @@
+summary: Thêm một kho mới
+description: Tạo một kho mới với tên và địa chỉ được cung cấp.
+tags:
+  - Kho
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Tên của kho
+        address:
+          type: string
+          description: Địa chỉ của kho
+      required:
+        - name
+        - address
+responses:
+  '200':
+    description: Thêm kho thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+            result:
+              type: object
+              properties:
+                ten:
+                  type: string
+                  description: Tên kho
+                dia_chi:
+                  type: string
+                  description: Địa chỉ kho
+              example:
+                ten: "Kho Hà Nội"
+                dia_chi: "123 Đường Láng, Hà Nội"
+  '400':
+    description: Lỗi dữ liệu đầu vào không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1012
+            message:
+              type: string
+              example: "Tên kho không hợp lệ hoặc đã tồn tại"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

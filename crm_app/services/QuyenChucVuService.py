@@ -91,6 +91,14 @@ def get_all_permission_role():
         """
         )
 
+        query_all = text(
+        """
+            SELECT code
+            FROM chuc_nang
+            WHERE chuc_nang.deleted_at IS NULL
+        """
+        )
+
         result_chuc_vu = db.session.execute(query).mappings().fetchall()
 
         
@@ -98,6 +106,10 @@ def get_all_permission_role():
         for row in result_chuc_vu:
             chuc_vu_quyen_dict[row["chuc_vu_id"]].append(row["code"])
 
+        all_chuc_vu = db.session.execute(query_all).mappings().fetchall()
+        for row in all_chuc_vu:
+            chuc_vu_quyen_dict[1].append(row["code"])
+        print(all_chuc_vu)
     # Output: {5: ['view-san-pham', 'create-san-pham', 'create-nhan-vien'], 6: ['view-ton-kho'], ...}
     return chuc_vu_quyen_dict
 

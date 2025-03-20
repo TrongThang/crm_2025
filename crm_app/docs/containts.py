@@ -31,6 +31,8 @@ class ERROR_CODES(Enum):
     TOTAL_AMOUNT_INVALID = 23
     TOTAL_COST_INVALID = 24
     SO_LUONG_TRA_GREATED_THAN_ZERO = 25
+    INVALID_COST = 26
+    GIA_NHAP_INVALID = 27
 
     #SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = 1001
@@ -125,6 +127,9 @@ class ERROR_CODES(Enum):
 
     HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = 1107
     HOA_DON_XUAT_SO_LUONG_BAN_NOT_SAME = 1108
+    DELIVERED_STATUS_INVALID = 1109
+    LOCK_STATUS_INVALID = 1109
+    HOA_DON_NHAP_IS_LOCK = 1110
 
     
     #CHUC_VU- 12xx
@@ -172,7 +177,7 @@ class MESSAGES(Enum):
     TOTAL_AMOUNT_INVALID = "Thành tiền không giống với thông tin khách hàng gửi về!"
     TOTAL_COST_INVALID = "Tổng giá nhập không giống với thông tin khách hàng gửi về!"
     SO_LUONG_TRA_GREATED_THAN_ZERO = "Số lượng trả của sản phẩm phải lớn hơn 0!"
-
+    INVALID_COST = "Giá nhập không hợp lệ!"
     # SAN_PHAM - 1xxx
     SAN_PHAM_NOT_FOUND = "Không tìm thấy sản phẩm"
     SAN_PHAM_NAME_REQUIRED = "Tên sản phẩm là bắt buộc"
@@ -286,7 +291,7 @@ def get_error_response(error_code: ERROR_CODES, result = None, field_error = Non
     """Trả về response JSON chứa errorCode và message tương ứng"""
     field_error_message = field_error if field_error else ''
     message = field_error_message + (MESSAGES[error_code.name].value if error_code.name in MESSAGES.__members__ else "Lỗi không xác định")
-
+    
     return jsonify({
         "error": error_code.value,
         "message": message,

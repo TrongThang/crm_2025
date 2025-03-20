@@ -1,0 +1,75 @@
+tags:
+  - Hóa Đơn Nhập Kho
+summary: Cập nhật trạng thái khóa hóa đơn nhập kho
+description: Cập nhật trạng thái khóa (khoa_don) của một hóa đơn nhập kho dựa trên ID.
+parameters:
+  - in: path
+    name: hoa_don_id
+    required: true
+    schema:
+      type: integer
+    description: ID của hóa đơn nhập kho cần cập nhật trạng thái khóa
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        khoa_don:
+          type: boolean
+          description: Trạng thái khóa đơn (true - khóa, false - mở khóa)
+      required:
+        - khoa_don
+responses:
+  '200':
+    description: Cập nhật trạng thái khóa thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+  '400':
+    description: Lỗi dữ liệu đầu vào không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1008
+            message:
+              type: string
+              example: "Trạng thái khóa không hợp lệ"
+  '401':
+    description: Lỗi server hoặc hóa đơn không tồn tại
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"
+  '404':
+    description: Hóa đơn không tồn tại (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1001
+            message:
+              type: string
+              example: "Hóa đơn nhập kho không tồn tại"

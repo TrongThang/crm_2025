@@ -1,0 +1,89 @@
+summary: Cập nhật thông tin hóa đơn nhập kho
+description: Cập nhật thông tin của một hóa đơn nhập kho dựa trên ID hóa đơn.
+tags:
+  - Hóa Đơn Nhập Kho
+parameters:
+  - in: path
+    name: hoa_don_id
+    required: true
+    schema:
+      type: integer
+    description: ID của hóa đơn nhập kho cần cập nhật
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        kho_id:
+          type: integer
+          description: ID của kho hàng
+        ngay_nhap:
+          type: string
+          format: date-time
+          description: Ngày nhập kho (định dạng ISO 8601, ví dụ '2025-03-20T10:00:00Z')
+        tong_tien:
+          type: number
+          description: Tổng tiền của hóa đơn
+        tra_truoc:
+          type: number
+          description: Số tiền trả trước
+        ghi_chu:
+          type: string
+          description: Ghi chú cho hóa đơn
+        khoa_don:
+          type: boolean
+          description: Trạng thái khóa đơn (true - khóa, false - mở khóa)
+      required:
+        - kho_id
+        - ngay_nhap
+        - tong_tien
+        - tra_truoc
+        - khoa_don
+responses:
+  '200':
+    description: Cập nhật hóa đơn nhập kho thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+  '401':
+    description: Lỗi xác thực hoặc dữ liệu không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              enum: [1001, 1009, 1010, 5000]
+            message:
+              type: string
+          examples:
+            HOA_DON_NHAP_NOT_FOUND:
+              value:
+                code: 1001
+                message: "Hóa đơn nhập kho không tồn tại"
+            HOA_DON_NHAP_IS_LOCK:
+              value:
+                code: 1009
+                message: "Hóa đơn nhập kho đã bị khóa"
+            KHO_NOT_FOUND:
+              value:
+                code: 1010
+                message: "Kho không tồn tại"
+            NUMBER_INVALID:
+              value:
+                code: 1011
+                message: "Giá trị số không hợp lệ"
+            SERVER_EROR:
+              value:
+                code: 5000
+                message: "Lỗi server"

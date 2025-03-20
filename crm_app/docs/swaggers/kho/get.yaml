@@ -1,0 +1,82 @@
+summary: Lấy danh sách kho
+description: Truy vấn danh sách kho với các bộ lọc, phân trang và sắp xếp tùy chọn.
+tags:
+  - Kho
+parameters:
+  - in: query
+    name: filter
+    schema:
+      type: string
+    required: false
+    description: Bộ lọc dữ liệu (ví dụ 'ten=ABC' hoặc các điều kiện khác, tùy vào hàm excute_select_data)
+  - in: query
+    name: limit
+    schema:
+      type: integer
+      minimum: 1
+    required: false
+    description: Số lượng bản ghi tối đa trên mỗi trang
+  - in: query
+    name: page
+    schema:
+      type: integer
+      minimum: 1
+    required: false
+    description: Số trang (bắt đầu từ 1)
+  - in: query
+    name: sort
+    schema:
+      type: string
+      enum: [ten, dia_chi]
+    required: false
+    description: Cột để sắp xếp (ten hoặc dia_chi)
+  - in: query
+    name: order
+    schema:
+      type: string
+      enum: [asc, desc]
+    required: false
+    description: Thứ tự sắp xếp (asc - tăng dần, desc - giảm dần)
+responses:
+  '200':
+    description: Lấy danh sách kho thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  ten:
+                    type: string
+                    description: Tên kho
+                  dia_chi:
+                    type: string
+                    description: Địa chỉ kho
+              example:
+                - ten: "Kho Hà Nội"
+                  dia_chi: "123 Đường Láng, Hà Nội"
+                - ten: "Kho Sài Gòn"
+                  dia_chi: "456 Lê Lợi, TP.HCM"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

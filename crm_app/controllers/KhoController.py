@@ -2,8 +2,10 @@ from flask import request, jsonify
 from flask_restful import Resource
 from crm_app.services.KhoService import *
 from crm_app import app
+from flasgger import swag_from 
 
 class KhoController (Resource):
+    @swag_from('../docs/swaggers/kho/get.yaml')
     def get(self):
         data     = request.args
 
@@ -17,6 +19,7 @@ class KhoController (Resource):
 
         return result
 
+    @swag_from('../docs/swaggers/kho/post.yaml')
     def post(self):
         data    = request.get_json()
         ten     = data.get('ten')
@@ -25,6 +28,7 @@ class KhoController (Resource):
         result  = post_kho(name=ten, address=dia_chi)
         return result
 
+    @swag_from('../docs/swaggers/kho/put.yaml')
     def put(self):
         data    = request.get_json()
         id      = data.get('id')
@@ -34,6 +38,7 @@ class KhoController (Resource):
         result  = put_kho(id=id, name=ten, address=dia_chi)
         return result
 
+    @swag_from('../docs/swaggers/kho/delete.yaml')
     @app.route('/api/kho/<int:id>', methods=['DELETE'])
     def delete_kho(id):
         try:
@@ -44,3 +49,13 @@ class KhoController (Resource):
         except Exception as e:
             print("Lỗi:", e)
             return make_response(str(e), 500)
+        
+class TonKhoController(Resource):
+    @swag_from('../docs/swaggers/kho/get_ton_kho.yaml')
+    def get(seft):
+        data     = request.args
+
+        ctsp_id  = data.get("ctsp_id")
+        result   = get_ton_kho(ctsp_id=ctsp_id)
+
+        return result

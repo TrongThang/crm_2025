@@ -9,6 +9,7 @@ import bcrypt
 import jwt
 import hashlib
 from crm_app import redis_client
+from crm_app.helpers.redis import get_role_by_employee
 
 REFRESH_SECRET_KEY = "IS@!(*RE(FRESH&*TOKEN))" 
 
@@ -37,23 +38,23 @@ def create_refresh_token(username, nhan_vien_id):
     return refresh_token
 
 def getMe(token):
-    print("token:", token)
     if not token:
         return jsonify({"message": "Unauthorized"}), 401
     
     try:
-        print('token:', token)
+        print('chuẩn bị lấy thông tin nhân viên')
         decoded = jwt.decode(token, app.secret_key, algorithms=["HS256"])
         print('decoded:', decoded)
         g.user = decoded
-        
-        result = get_nhan_vien_by_username(decoded.get("username"))
-        return get_error_response(ERROR_CODES.SUCCESS, result= result)
+        chuc_vu_id = (get_role_by_employee(decoded.get("nhan_vien_id"))).decode('utf-8')
+        print("chuc_vu_id:", chuc_vu_id)
+        result = get_nhan_vien_by_username(username=decoded.get("username"), chuc_vu_id= chuc_vu_id)
+        return result
             
     except jwt.ExpiredSignatureError:
-        return jsonify({"message": "Token đã hết hạn!"}), 403
+        return make_response(jsonify({"message": "Token đã hết hạn!"}), 401)
     except jwt.InvalidTokenError:
-        return jsonify({"message": "Token không hợp lệ!"}), 403
+        return make_response(jsonify({"message": "Token không hợp lệ!"}), 401)
 
 def login(username, password):
     print('login', username, password)

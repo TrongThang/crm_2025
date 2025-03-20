@@ -1,0 +1,128 @@
+tags:
+  - Hóa Đơn Xuất Kho
+summary: Cập nhật thông tin hóa đơn xuất kho
+description: Cập nhật thông tin của một hóa đơn xuất kho dựa trên ID hóa đơn.
+parameters:
+  - in: path
+    name: hoa_don_id
+    required: true
+    schema:
+      type: integer
+    description: ID của hóa đơn xuất kho cần cập nhật
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        khach_hang_id:
+          type: integer
+          description: ID của khách hàng
+        nv_giao_hang_id:
+          type: integer
+          description: ID của nhân viên giao hàng
+        nv_sale_id:
+          type: integer
+          description: ID của nhân viên sale
+        ngay_xuat:
+          type: string
+          format: date-time
+          description: Ngày xuất hóa đơn (định dạng ISO 8601, ví dụ '2025-03-20T10:00:00Z')
+        vat:
+          type: number
+          description: Phần trăm VAT (0-100)
+        tra_truoc:
+          type: number
+          description: Số tiền trả trước
+        ghi_chu:
+          type: string
+          description: Ghi chú cho hóa đơn
+        da_giao_hang:
+          type: boolean
+          description: Trạng thái đã giao hàng (true/false)
+        loai_chiet_khau:
+          type: integer
+          enum: [0, 1]
+          description: Loại chiết khấu (0 - Tặng, 1 - Bán)
+        gia_tri_chiet_khau:
+          type: number
+          description: Giá trị chiết khấu
+        khoa_don:
+          type: boolean
+          description: Trạng thái khóa đơn (true/false)
+      required:
+        - khach_hang_id
+        - nv_giao_hang_id
+        - nv_sale_id
+        - ngay_xuat
+        - vat
+        - tra_truoc
+        - da_giao_hang
+        - loai_chiet_khau
+        - gia_tri_chiet_khau
+        - khoa_don
+responses:
+  '200':
+    description: Cập nhật hóa đơn thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+  '401':
+    description: Lỗi xác thực hoặc dữ liệu không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              enum: [1001, 1002, 1003, 1004, 1005, 1006]
+            message:
+              type: string
+          examples:
+            HOA_DON_XUAT_NOT_FOUND:
+              value:
+                code: 1001
+                message: "Hóa đơn xuất kho không tồn tại"
+            DATETIME_INVALID:
+              value:
+                code: 1002
+                message: "Định dạng ngày giờ không hợp lệ"
+            KHACH_HANG_NOT_FOUND:
+              value:
+                code: 1003
+                message: "Khách hàng không tồn tại"
+            NHAN_VIEN_NOT_FOUND:
+              value:
+                code: 1004
+                message: "Nhân viên không tồn tại"
+            DELIVERED_STATUS_INVALID:
+              value:
+                code: 1005
+                message: "Trạng thái giao hàng không hợp lệ"
+            PREPAID_INVALID:
+              value:
+                code: 1006
+                message: "Số tiền trả trước không hợp lệ"
+            CHIET_KHAU_INVALID:
+              value:
+                code: 1007
+                message: "Giá trị chiết khấu không hợp lệ"
+  '500':
+    description: Lỗi server
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Internal Server Error"

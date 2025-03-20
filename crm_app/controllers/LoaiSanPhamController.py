@@ -8,23 +8,12 @@ class LoaiSanPhamController(Resource):
     def get(self):
         data = request.args
         filter = data.getlist('filters')
-        print("filter:", filter)
-        filters = []
-        index = 0
-        while f'filters[{index}][field]' in data:
-            filters.append({
-                'field': data.get(f'filters[{index}][field]'),
-                'condition': data.get(f'filters[{index}][condition]'),
-                'value': data.get(f'filters[{index}][value]', '')
-            })
-            index += 1
-        print("filter:", filters)
 
         limit = data.get('limit')
         page = data.get('page')
         order = data.get('order')
         sort = data.get('sort')
-        result = get_loai_sp(filter=filters, limit=limit, page=page, sort=sort, order=order)
+        result = get_loai_sp(filter=filter, limit=limit, page=page, sort=sort, order=order)
 
         return result
     

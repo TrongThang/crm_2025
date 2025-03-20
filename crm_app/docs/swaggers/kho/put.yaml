@@ -1,0 +1,76 @@
+summary: Cập nhật thông tin kho
+description: Cập nhật tên và/hoặc địa chỉ của một kho dựa trên ID. Các trường không bắt buộc, chỉ cập nhật nếu được cung cấp.
+tags:
+  - Kho
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: integer
+    description: ID của kho cần cập nhật
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Tên mới của kho (không bắt buộc)
+        address:
+          type: string
+          description: Địa chỉ mới của kho (không bắt buộc)
+responses:
+  '200':
+    description: Cập nhật kho thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+  '400':
+    description: Lỗi dữ liệu đầu vào không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1012
+            message:
+              type: string
+              example: "Tên kho không hợp lệ hoặc đã tồn tại"
+  '404':
+    description: Kho không tồn tại
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1010
+            message:
+              type: string
+              example: "Kho không tồn tại"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

@@ -1,0 +1,59 @@
+summary: Xóa mềm một kho
+description: Thực hiện xóa mềm (soft delete) một kho dựa trên ID, chỉ khi kho không được tham chiếu bởi hóa đơn nhập kho.
+tags:
+  - Kho
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: integer
+    description: ID của kho cần xóa
+responses:
+  '200':
+    description: Xóa kho thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+  '401':
+    description: Lỗi không thể xóa kho
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              enum: [1010, 1013]
+            message:
+              type: string
+          examples:
+            KHO_NOT_FOUND:
+              value:
+                code: 1010
+                message: "Kho không tồn tại"
+            KHO_REFERENCE_HOA_DON_NHAP:
+              value:
+                code: 1013
+                message: "Kho đang được tham chiếu bởi hóa đơn nhập kho"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"
