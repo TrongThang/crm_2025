@@ -1,3 +1,13 @@
+securityDefinitions:
+  Token:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Nhập token trực tiếp (ví dụ -> 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
+
+security:
+  - Token: []
+
 summary: Lấy danh sách kho
 description: Truy vấn danh sách kho với các bộ lọc, phân trang và sắp xếp tùy chọn.
 tags:

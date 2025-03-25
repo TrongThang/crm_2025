@@ -1,0 +1,92 @@
+tags:
+  - Tài Khoản
+summary: Đăng nhập hệ thống
+description: Xác thực người dùng bằng tên đăng nhập và mật khẩu, trả về token và refresh token nếu thành công.
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        ten_dang_nhap:
+          type: string
+          description: Tên đăng nhập của nhân viên
+        mat_khau:
+          type: string
+          description: Mật khẩu của nhân viên
+      required:
+        - ten_dang_nhap
+        - mat_khau
+responses:
+  '200':
+    description: Đăng nhập thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+            result:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    refresh_token:
+                      type: string
+                      description: Refresh token để làm mới access token
+                    token:
+                      type: string
+                      description: Access token để xác thực
+                    success:
+                      type: boolean
+                      description: Trạng thái thành công
+                  example:
+                    refresh_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    success: true
+  '401':
+    description: Tài khoản hoặc mật khẩu không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1001
+            message:
+              type: string
+              example: "Tài khoản hoặc mật khẩu không hợp lệ"
+  '402':
+    description: Mật khẩu không đúng
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1001
+            message:
+              type: string
+              example: "Tài khoản hoặc mật khẩu không hợp lệ"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

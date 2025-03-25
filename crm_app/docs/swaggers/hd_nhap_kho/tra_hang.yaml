@@ -1,0 +1,96 @@
+summary: Trả hàng nhập kho
+description: Thực hiện trả hàng nhập kho, cập nhật số lượng chi tiết hóa đơn nhập và tồn kho dựa trên danh sách sản phẩm trả.
+tags:
+  - Hóa Đơn Nhập Kho
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - hoa_don_id
+        - ds_san_pham_tra
+      properties:
+        hoa_don_id:
+          type: integer
+          description: ID của hóa đơn nhập kho cần trả hàng
+          example: 1
+        ds_san_pham_tra:
+          type: array
+          description: Danh sách sản phẩm trả hàng
+          items:
+            type: object
+            required:
+              - id
+              - so_luong
+              - sku
+            properties:
+              id:
+                type: integer
+                description: ID của chi tiết hóa đơn nhập kho (ChiTietNhapKho)
+                example: 1
+              so_luong:
+                type: integer
+                description: Số lượng sản phẩm trả lại
+                example: 10
+              sku:
+                type: string
+                description: Mã SKU của sản phẩm trong tồn kho
+                example: "SKU123456"
+responses:
+  200:
+    description: Trả hàng nhập kho thành công
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+  401:
+    description: Lỗi dữ liệu không hợp lệ hoặc không tìm thấy
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          enum: [1001, 1006, 1007, 1008, 1009]
+        message:
+          type: string
+      examples:
+        HOA_DON_NHAP_NOT_FOUND:
+          value:
+            code: 1001
+            message: "Hóa đơn nhập kho không tồn tại"
+        SAN_PHAM_NOT_FOUND:
+          value:
+            code: 1006
+            message: "Sản phẩm không tồn tại trong hóa đơn nhập"
+        SO_LUONG_TRA_GREATED_THAN_ZERO:
+          value:
+            code: 1007
+            message: "Số lượng trả phải lớn hơn 0"
+        HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE:
+          value:
+            code: 1008
+            message: "Số lượng trả lớn hơn số lượng đã nhập"
+        KHO_NOT_EXISTED_SKU:
+          value:
+            code: 1009
+            message: "Không tồn tại SKU trong kho"
+        KHO_NOT_QUANTITY_FOR_RETURNS:
+          value:
+            code: 1010
+            message: "Kho không đủ số lượng để trả hàng"
+  500:
+    description: Lỗi server
+    schema:
+      type: string
+      example: "Internal Server Error"

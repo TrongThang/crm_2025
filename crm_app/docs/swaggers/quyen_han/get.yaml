@@ -1,0 +1,100 @@
+securityDefinitions:
+  Token:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Nhập token trực tiếp (ví dụ -> 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
+
+security:
+  - Token: []
+tags:
+  - Quyền Hạn
+summary: Lấy danh sách quyền của chức vụ
+description: Truy vấn danh sách quyền, nếu không cung cấp chuc_vu_id thì trả về tất cả quyền, nếu có chuc_vu_id thì trả về quyền của chức vụ cụ thể cùng với tất cả chức năng.
+parameters:
+  - in: path
+    name: chuc_vu_id
+    required: false
+    schema:
+      type: integer
+    description: ID của chức vụ cần truy vấn quyền (nếu không cung cấp, trả về tất cả quyền)
+responses:
+  '200':
+    description: Lấy danh sách quyền thành công
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/AllPermissionsResponse'
+            - $ref: '#/components/schemas/ChucVuPermissionsResponse'
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Lỗi server"
+
+components:
+  schemas:
+    AllPermissionsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          code:
+            type: string
+            description: Mã quyền (ví dụ 'view-san-pham')
+          ten_chuc_nang:
+            type: string
+            description: Tên chức năng
+        example:
+          - code: "view-san-pham"
+            ten_chuc_nang: "Xem sản phẩm"
+          - code: "create-nhan-vien"
+            ten_chuc_nang: "Tạo nhân viên"
+    ChucVuPermissionsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: ID của chức năng
+          code:
+            type: string
+            description: Mã quyền (ví dụ 'view-san-pham')
+          ten:
+            type: string
+            description: Tên chức năng
+          type:
+            type: string
+            description: Loại chức năng
+          show_in_menu:
+            type: boolean
+            description: Hiển thị trong menu hay không
+          created_at:
+            type: string
+            format: date-time
+            description: Thời gian tạo quyền
+          updated_at:
+            type: string
+            format: date-time
+            description: Thời gian cập nhật quyền
+          deleted_at:
+            type: string
+            format: date-time
+            nullable: true
+            description: Thời gian xóa mềm quyền (null nếu chưa xóa)
+        example:
+          - id: 3
+            code: "view-san-pham"
+            ten: "Xem sản phẩm"
+            type: "view"
+            show_in_menu: true
+            created_at: "2025-03-20T10:00:00Z"
+            updated_at: "2025-03-20T12:00:00Z"
+            deleted_at: null

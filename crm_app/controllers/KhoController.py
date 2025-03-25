@@ -5,6 +5,13 @@ from crm_app import app
 from flasgger import swag_from 
 
 class KhoController (Resource):
+    @swag_from('../docs/swaggers/kho/get_ton_kho.yaml')
+    @app.route('/api/ton-kho/<int:ctsp_id>')
+    def get_ton_kho(ctsp_id):
+        result   = get_ton_kho(ctsp_id=ctsp_id)
+
+        return result
+    
     @swag_from('../docs/swaggers/kho/get.yaml')
     def get(self):
         data     = request.args
@@ -50,12 +57,3 @@ class KhoController (Resource):
             print("Lỗi:", e)
             return make_response(str(e), 500)
         
-class TonKhoController(Resource):
-    @swag_from('../docs/swaggers/kho/get_ton_kho.yaml')
-    def get(seft):
-        data     = request.args
-
-        ctsp_id  = data.get("ctsp_id")
-        result   = get_ton_kho(ctsp_id=ctsp_id)
-
-        return result

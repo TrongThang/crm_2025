@@ -19,7 +19,7 @@ def get_ton_kho(ctsp_id):
     query_join = """
         LEFT JOIN san_pham ON san_pham.id = ton_kho.san_pham_id
         LEFT JOIN chi_tiet_san_pham ON chi_tiet_san_pham.id = ton_kho.ctsp_id
-        LEFT JOIN chi_tiet_hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.ctsp_id = chi_tiet_san_pham.id
+        LEFT JOIN chi_tiet_hoa_don_nhap_kho ON chi_tiet_hoa_don_nhap_kho.sku = ton_kho.sku
     """
     
     data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, query_join=query_join)

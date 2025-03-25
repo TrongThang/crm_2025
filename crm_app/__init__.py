@@ -6,7 +6,7 @@ import os
 import redis
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 redis_client = redis.Redis(host='172.23.182.206', port=6379)
 
@@ -32,5 +32,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-swagger = Swagger(app)
+swagger = Swagger(app, template_file='main.yaml')
+# swagger = Swagger(app, template_file='./docs/swaggers/main.yaml')
 db = SQLAlchemy(app=app)

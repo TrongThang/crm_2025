@@ -18,6 +18,7 @@ def excute_select_data(table: str, str_get_column :str, filter = None, limit = N
     build_offset = f" OFFSET {skip}" if limit and page else ""
 
     query_get_time = f"{table}.created_at as CreatedAt, {table}.updated_at as UpdatedAt, {table}.deleted_at as DeletedAt" 
+    
     query_get_id_table = text(f"""
         SELECT DISTINCT {table}.id
         FROM {table}
@@ -30,13 +31,19 @@ def excute_select_data(table: str, str_get_column :str, filter = None, limit = N
     print(query_get_id_table)
     result_ids = [row[0] for row in db.session.execute(query_get_id_table).fetchall()]
     print('result_ids:',result_ids)
+
+    where_condition = (
+        f"{table}.id IN ({','.join(map(str, result_ids))})"
+        if result_ids else "1=0"
+    )
+
     query = text(f"""
-                SELECT {table+'.' if query_join is not None else '' }id as ID, {str_get_column}, {query_get_time}
+                SELECT DISTINCT {table+'.' if query_join is not None else '' }id as ID, {str_get_column}, {query_get_time}
                 FROM {table}
                 {'' if query_join is None else query_join}
-                WHERE {table}.id  IN ({','.join(map(str, result_ids))})
+                WHERE {where_condition}
             """)
-    print("query:",query)
+    # print("query:",query)
     data = [dict(row) for row in db.session.execute(query).mappings().fetchall()]
 
     total_count_query = text(f"SELECT COUNT(*) AS total FROM {table} {'' if query_join is None else query_join} {build_where}")

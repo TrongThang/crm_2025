@@ -125,12 +125,12 @@ class ERROR_CODES(Enum):
     HOA_DON_XUAT_TOTAL_MONEY_NOT_SAME = 1105
     INVALID_GIFT_FLAG =  1106
 
-    HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = 1107
     HOA_DON_XUAT_SO_LUONG_BAN_NOT_SAME = 1108
     DELIVERED_STATUS_INVALID = 1109
-    LOCK_STATUS_INVALID = 1109
     HOA_DON_NHAP_IS_LOCK = 1110
-
+    LOCK_STATUS_INVALID = 1111
+    HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = 1112
+    CTHD_NHAP_NOT_FOUND = 1113
     
     #CHUC_VU- 12xx
     CHUC_VU_NOT_FOUND = 1201
@@ -265,6 +265,7 @@ class MESSAGES(Enum):
     #NHAP_KHO - 9xxx
     # NHAP_KHO_WRONG_TONG_TIEN = "Tổng tiền gửi về không khớp so vơi"
 
+    HOA_DON_NHAP_NOT_FOUND = "Không tìm thấy hoá đơn nhập!"
     HOA_DON_NHAP_PREPAID_LESS_ZERO = "Số tiền trả trước phải lớn hơn 0!"
     HOA_DON_NHAP_PREPAID_GREATER_TOTAL_MONEY = "Số tiền trả trước lớn hơn tổng tiền thanh toán!"
     HOA_DON_NHAP_PREPAID_NOT_SAME = "Số tiền trả trước gửi về không giống nhau!"
@@ -272,6 +273,8 @@ class MESSAGES(Enum):
     HOA_DON_XUAT_TOTAL_MONEY_NOT_SAME = "Tổng tiền gửi về không giống nhau!"
     INVALID_GIFT_FLAG = "Giá trị 'là quà tặng không hợp lệ!'"
     HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = "Số lượng trả của sản phẩm này lớn hơn số lượng mua!"
+    LOCK_STATUS_INVALID = "Giá trị để khoá hoá đơn không hợp lệ!"
+    CTHD_NHAP_NOT_FOUND = "Không tồn tại chi tiết hoá nhập!"
     #CHUC_VU - 11xx
     # CHUC_VU_NOT_FOUND = "Không tìm thấy chức vụ!"
     # CHUC_NANG_NOT_FOUND = "Không tìm thấy chức năng!"

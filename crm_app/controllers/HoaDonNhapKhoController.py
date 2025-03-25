@@ -5,9 +5,9 @@ from crm_app.services.HoaDonNhapKhoService import *
 from crm_app.services.CongNoService import get_cong_no_nha_phan_phoi
 from crm_app import app
 
-
 class HoaDonNhapKhoController(Resource):
-    @swag_from('../docs/swaggers/hd_nhap_kho/patch_lock.yaml')
+    def __init__(self):
+        pass
     @app.route('/api/hoa-don-nhap-kho/cong-no')
     def get_cong_no_nha_phan_phoi():
             data    = request.args
@@ -61,13 +61,25 @@ class HoaDonNhapKhoController(Resource):
         return result
     
     @swag_from('../docs/swaggers/hd_nhap_kho/patch_lock.yaml')
-    def patch(self):
-        data = request.get_json()
+    @app.route('/api/hoa-don-nhap-kho/lock', methods=["PATCH"])
+    def patch_lock():
+        data         = request.get_json()
         # nha_phan_phoi_id = data.get('nha_phan_phoi_id')
-        hoa_don_id = data.get('hoa_don_id')
+        hoa_don_id   = data.get('hoa_don_id')
         lock_or_open = data.get('lock_or_open')
 
-        result = patch_lock(hoa_don_id=hoa_don_id, khoa_don = lock_or_open)
+        result       = patch_lock(hoa_don_id=hoa_don_id, khoa_don = lock_or_open)
+        return result
+    
+    @swag_from('../docs/swaggers/hd_nhap_kho/tra_hang.yaml')
+    @app.route('/api/hoa-don-nhap-kho/tra-hang', methods=["PATCH"])
+    def patch_tra_hang():
+        data            = request.get_json()
+        # nha_phan_phoi_id = data.get('nha_phan_phoi_id')
+        hoa_don_id      = data.get('hoa_don_id')
+        ds_san_pham_tra = data.get('ds_san_pham_tra')
+
+        result          = tra_hang_nhap_kho(hoa_don_id=hoa_don_id, ds_san_pham_tra = ds_san_pham_tra)
         return result
     
     # @swag_from('../docs/swaggers/hd_nhap_kho/delete_hd_nhap_kho.yaml')

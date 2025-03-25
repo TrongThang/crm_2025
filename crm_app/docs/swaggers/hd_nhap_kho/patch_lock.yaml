@@ -1,25 +1,33 @@
+securityDefinitions:
+  Token:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Nhập token trực tiếp (ví dụ -> 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
+
+security:
+  - Token: []
+
 tags:
   - Hóa Đơn Nhập Kho
 summary: Cập nhật trạng thái khóa hóa đơn nhập kho
 description: Cập nhật trạng thái khóa (khoa_don) của một hóa đơn nhập kho dựa trên ID.
 parameters:
-  - in: path
-    name: hoa_don_id
-    required: true
-    schema:
-      type: integer
-    description: ID của hóa đơn nhập kho cần cập nhật trạng thái khóa
   - in: body
     name: body
     required: true
     schema:
       type: object
       properties:
-        khoa_don:
+        hoa_don_id:
+          type: integer
+          description: ID của hóa đơn nhập kho cần cập nhật trạng thái khóa
+        lock_or_open:
           type: boolean
           description: Trạng thái khóa đơn (true - khóa, false - mở khóa)
       required:
-        - khoa_don
+        - hoa_don_id
+        - lock_or_open
 responses:
   '200':
     description: Cập nhật trạng thái khóa thành công

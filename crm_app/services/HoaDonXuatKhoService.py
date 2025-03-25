@@ -103,7 +103,7 @@ def get_hoa_don_xuat_kho(filter, limit, page, sort, order):
         LEFT JOIN nhan_vien sale ON sale.id = hoa_don_xuat_kho.nhan_vien_sale_id
         LEFT JOIN khach_hang ON khach_hang.id = hoa_don_xuat_kho.khach_hang_id
         LEFT JOIN san_pham ON san_pham.id = chi_tiet_hoa_don_xuat_kho.san_pham_id
-        LEFT JOIN chi_tiet_san_pham ON chi_tiet_san_pham.san_pham_id = chi_tiet_hoa_don_xuat_kho.san_pham_id
+        LEFT JOIN chi_tiet_san_pham ON chi_tiet_san_pham.id = chi_tiet_hoa_don_xuat_kho.ctsp_id
     """
     
     raw_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
@@ -261,6 +261,7 @@ def add_ct_hoa_don_xuat(ngay_xuat, ds_sku, hoa_don_id, upc, san_pham_id, ctsp_id
         sku = item_sku.get("sku")
         ton_kho = TonKho.query.filter_by(sku = sku, deleted_at = None).first()
         so_luong_ban_sku      = item_sku.get("so_luong_ban")
+        print("sku:", sku)
         print("so_luong_ban_sku:", so_luong_ban_sku)
 
         
@@ -271,7 +272,7 @@ def add_ct_hoa_don_xuat(ngay_xuat, ds_sku, hoa_don_id, upc, san_pham_id, ctsp_id
             return make_response(get_error_response(ERROR_CODES.KHO_NOT_QUANTITY_FOR_SALE), 401) 
         
         ctnk = ChiTietNhapKho.query.filter_by(sku=sku, deleted_at = None).first()
-        gia_nhap = ctnk.gia_nhap
+        gia_nhap = ctnk.gia_nhap if ctnk.gia_nhap else 0
         print(not gia_nhap)
         if gia_nhap < 0:
             return make_response(get_error_response(ERROR_CODES.INVALID_COST), 401)
@@ -285,12 +286,14 @@ def add_ct_hoa_don_xuat(ngay_xuat, ds_sku, hoa_don_id, upc, san_pham_id, ctsp_id
         # thanh_tien            += thanh_tien_sku
 
         ct_xuat_kho           = ChiTietXuatKho(hoa_don_id=hoa_don_id, san_pham_id=san_pham_id, ctsp_id=ctsp_id,sku_xuat=sku_xuat, sku=sku,so_luong_ban=so_luong_ban_sku, don_vi_tinh=don_vi_tinh, gia_ban=gia_ban, gia_nhap=gia_nhap, chiet_khau=chiet_khau, thanh_tien=thanh_tien_sku, loi_nhuan=loi_nhuan_sku, la_qua_tang=la_qua_tang)
-    loi_nhuan = thanh_tien - total_cost
+        db.session.add(ct_xuat_kho)
 
+    loi_nhuan = thanh_tien - total_cost
+    print('so_luong_ban_caculate', so_luong_ban_caculate)
+    print('so_luong_ban', so_luong_ban)
     if so_luong_ban_caculate != so_luong_ban:
         return make_response(get_error_response(ERROR_CODES.HOA_DON_XUAT_SO_LUONG_BAN_NOT_SAME), 401)
 
-    db.session.add(ct_xuat_kho)
     
     ctsp            = ChiTietSanPham.query.get(ctsp_id)
     ton_kho         = TonKho.query.filter_by(sku=sku).first()
@@ -363,7 +366,7 @@ def patch_lock(hoa_don_id, khoa_don):
         hoa_don = HoaDonXuatKho.query.get(hoa_don_id)
         if not hoa_don:
             return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_NOT_FOUND), 404)
-        if not isinstance(khoa_don, bool):
+        if khoa_don not in ["lock", "open"]:
             return make_response(get_error_response(ERROR_CODES.LOCK_STATUS_INVALID))
         
         hoa_don.khoa_don = khoa_don

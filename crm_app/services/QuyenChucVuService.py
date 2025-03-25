@@ -59,7 +59,7 @@ def config_data_quyen_chuc_vu(chuc_vu_quyen, quyen_all):
         quyen['quyen'].append({
             'ten': ten, 
             'code': code,
-            'id': chuc_nang_id,
+            'ID': chuc_nang_id,
             'trang_thai': trang_thai
         })
 
@@ -156,29 +156,36 @@ def get_quyen_chuc_vu(chuc_vu_id):
         quyen_all = db.session.execute(query_all).mappings().fetchall()
         print(quyen_all)
         result = config_data_quyen_chuc_vu(chuc_vu_quyen=chuc_vu_quyen, quyen_all=quyen_all)
-        return result
-    
-def get_all_quyen_chuc_vu():
-    get_table = "chuc_vu"
-    get_attr = "chuc_vu.ten, "
-    pass
-
+        response_data = {"data": result}
+        return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 
 def modify_quyen_chuc_vu(chuc_vu_id, list_quyen):
     """ 
-        lst_quyen từ front-end gửi về phải có dạng \n
-        [
-            {
-                "id": 3,
-                "code": "",
-                "active": 0
-            }, 
-            {
-                "id": 4,
-                "code": "",
-                "active": 1
-            }, 
-        ]
+        {
+            "chuc_vu_id": 2,
+            "quyen": [
+                {
+                    "id": 3, 
+                    "code": "view-san-pham",
+                    "active": 0
+                }, 
+                {
+                    "id": 5,
+                    "code": "create-nhan-vien",
+                    "active": 0
+                },
+                {
+                    "id": 9,
+                    "code": "delete-nhan-vien",
+                    "active": 1
+                },
+                    {
+                    "id": 18,
+                    "code": "view-don-vi-tinh",
+                    "active": 1
+                }
+            ]
+        }
     """
 
     if not isExistId(id=chuc_vu_id, model=ChucVu):

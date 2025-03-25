@@ -1,3 +1,13 @@
+securityDefinitions:
+  Token:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Nhập token trực tiếp (ví dụ -> 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
+
+security:
+  - Token: []
+
 tags:
   - Bảo hành
 summary: Xóa bảo hành

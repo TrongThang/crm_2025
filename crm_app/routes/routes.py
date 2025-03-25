@@ -10,7 +10,7 @@ from crm_app.controllers import (
 from crm_app.controllers.AcountController import LoginController, RegisterController, GetMeController
 from crm_app.controllers.QuyenChucVuController import QuyenChucVuController
 from crm_app.controllers.ChucVuController import ChucVuController 
-from crm_app.controllers.KhoController import KhoController, TonKhoController
+from crm_app.controllers.KhoController import KhoController
 from crm_app.controllers.HoaDonNhapKhoController import HoaDonNhapKhoController
 from crm_app.controllers.HoaDonXuatKhoController import HoaDonXuatKhoController, ChiTietXuatKhoController
 from crm_app.controllers.NhaPhanPhoiController import NhaPhanPhoiController
@@ -40,7 +40,6 @@ def register_routes(app):
         (ChucVuController, "/chuc-vu"),
         (HoaDonNhapKhoController, "/hoa-don-nhap-kho"),
         (KhoController, "/kho"),
-        (TonKhoController, "/ton-kho"),
         (HoaDonXuatKhoController, "/hoa-don-xuat-kho"),
         (ChiTietXuatKhoController, "/xuat-kho/chi-tiet"),
     ]

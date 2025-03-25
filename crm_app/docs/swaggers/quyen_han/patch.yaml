@@ -1,0 +1,110 @@
+securityDefinitions:
+  Token:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Nhập token trực tiếp (ví dụ -> 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
+
+security:
+  - Token: []
+tags:
+  - Quyền Hạn
+summary: Sửa quyền của chức vụ
+description: Cập nhật danh sách quyền cho một chức vụ, thêm mới hoặc xóa mềm quyền dựa trên trạng thái active.
+parameters:
+  - in: path
+    name: chuc_vu_id
+    required: true
+    schema:
+      type: integer
+    description: ID của chức vụ cần sửa quyền
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        quyen:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID của chức năng (chuc_nang_id)
+              code:
+                type: string
+                description: Mã chức năng (ví dụ 'view-san-pham')
+              active:
+                type: integer
+                enum: [0, 1]
+                description: Trạng thái hoạt động (0 - xóa quyền, 1 - thêm/giữ quyền)
+            required:
+              - id
+              - code
+              - active
+          description: Danh sách quyền cần cập nhật
+      required:
+        - quyen
+      example:
+        quyen:
+          - id: 3
+            code: "view-san-pham"
+            active: 0
+          - id: 5
+            code: "create-nhan-vien"
+            active: 0
+          - id: 9
+            code: "delete-nhan-vien"
+            active: 1
+          - id: 18
+            code: "view-don-vi-tinh"
+            active: 1
+responses:
+  '200':
+    description: Cập nhật quyền thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 0
+            message:
+              type: string
+              example: "Success"
+  '401':
+    description: Chức vụ hoặc chức năng không tồn tại
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              enum: [1004, 1005]
+            message:
+              type: string
+          examples:
+            CHUC_VU_NOT_FOUND:
+              value:
+                code: 1004
+                message: "Chức vụ không tồn tại"
+            CHUC_NANG_NOT_FOUND:
+              value:
+                code: 1005
+                message: "Chức năng không tồn tại"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

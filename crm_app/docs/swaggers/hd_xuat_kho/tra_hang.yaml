@@ -1,0 +1,87 @@
+summary: Trả hàng xuất kho
+description: Thực hiện trả hàng xuất kho, cập nhật số lượng chi tiết hóa đơn xuất và tồn kho dựa trên danh sách sản phẩm trả.
+tags:
+  - Hóa Đơn Xuất Kho
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - hoa_don_id
+        - ds_san_pham_tra
+      properties:
+        hoa_don_id:
+          type: integer
+          description: ID của hóa đơn xuất kho cần trả hàng
+          example: 1
+        ds_san_pham_tra:
+          type: array
+          description: Danh sách sản phẩm trả hàng
+          items:
+            type: object
+            required:
+              - cthd_xuat_kho_id
+              - so_luong_tra
+              - sku
+            properties:
+              cthd_xuat_kho_id:
+                type: integer
+                description: ID của chi tiết hóa đơn xuất kho (ChiTietXuatKho)
+                example: 1
+              so_luong_tra:
+                type: integer
+                description: Số lượng sản phẩm trả lại
+                example: 10
+              sku:
+                type: string
+                description: Mã SKU của sản phẩm trong tồn kho
+                example: "SKU123456"
+responses:
+  200:
+    description: Trả hàng xuất kho thành công
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "Success"
+  401:
+    description: Lỗi dữ liệu không hợp lệ hoặc không tìm thấy
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          enum: [1002, 1006, 1007, 1008, 1009]
+        message:
+          type: string
+      examples:
+        HOA_DON_XUAT_NOT_FOUND:
+          value:
+            code: 1002
+            message: "Hóa đơn xuất kho không tồn tại"
+        SAN_PHAM_NOT_FOUND:
+          value:
+            code: 1006
+            message: "Sản phẩm không tồn tại trong hóa đơn xuất"
+        SO_LUONG_TRA_GREATED_THAN_ZERO:
+          value:
+            code: 1007
+            message: "Số lượng trả phải lớn hơn 0"
+        HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE:
+          value:
+            code: 1008
+            message: "Số lượng trả lớn hơn số lượng đã bán"
+        KHO_NOT_EXISTED_SKU:
+          value:
+            code: 1009
+            message: "Không tồn tại SKU trong kho"

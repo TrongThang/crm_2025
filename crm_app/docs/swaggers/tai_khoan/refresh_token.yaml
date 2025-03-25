@@ -1,0 +1,80 @@
+tags:
+  - Tài Khoản
+summary: Làm mới Access Token
+description: Sử dụng Refresh Token để tạo một Access Token mới.
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          description: Refresh Token dùng để làm mới Access Token
+      required:
+        - refresh_token
+responses:
+  '200':
+    description: Làm mới token thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: Access Token mới
+            success:
+              type: boolean
+              description: Trạng thái thành công
+          example:
+            access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            success: true
+  '401':
+    description: Refresh Token không được cung cấp
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 1002
+            message:
+              type: string
+              example: "Token không hợp lệ"
+  '403':
+    description: Refresh Token hết hạn hoặc không hợp lệ
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              enum: [1002, 1003]
+            message:
+              type: string
+          examples:
+            TOKEN_EXPIRED:
+              value:
+                code: 1003
+                message: "Token đã hết hạn"
+            TOKEN_INVALID:
+              value:
+                code: 1002
+                message: "Token không hợp lệ"
+  '500':
+    description: Lỗi server (giả định)
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 5000
+            message:
+              type: string
+              example: "Lỗi server"

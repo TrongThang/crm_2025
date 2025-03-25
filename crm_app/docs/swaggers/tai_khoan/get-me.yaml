@@ -1,0 +1,52 @@
+tags:
+  - Tài Khoản
+summary: Lấy thông tin nhân viên hiện tại
+description: Truy vấn thông tin của nhân viên đang đăng nhập dựa trên token xác thực.
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: Token xác thực (token, ví dụ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
+responses:
+  '200':
+    description: Lấy thông tin nhân viên thành công
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: ID của nhân viên
+            username:
+              type: string
+              description: Tên đăng nhập
+            chuc_vu_id:
+              type: string
+              description: ID chức vụ của nhân viên
+            # Thêm các trường khác tùy thuộc vào get_nhan_vien_by_username
+          example:
+            id: 1
+            username: "admin"
+            chuc_vu_id: "1"
+  '401':
+    description: Token không hợp lệ, hết hạn hoặc không được cung cấp
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+          examples:
+            NO_TOKEN:
+              value:
+                message: "Unauthorized"
+            TOKEN_EXPIRED:
+              value:
+                message: "Token đã hết hạn!"
+            TOKEN_INVALID:
+              value:
+                message: "Token không hợp lệ!"

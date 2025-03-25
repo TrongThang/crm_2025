@@ -59,6 +59,7 @@ class HoaDonXuatKhoController(Resource):
 
         return result
     
+    @swag_from('../docs/swaggers/hd_xuat_kho/put.yaml')
     def put(seft):
         data                    = request.get_json()
         hoa_don_id              = data.get("hoa_don_id")
@@ -77,12 +78,25 @@ class HoaDonXuatKhoController(Resource):
         result = put_hoa_don_xuat_kho(hoa_don_id=hoa_don_id, khach_hang_id=khach_hang_id, nv_giao_hang_id=nhan_vien_giao_hang_id, nv_sale_id=nhan_vien_sale_id, ngay_xuat=ngay_xuat, vat=vat, tra_truoc=tra_truoc, ghi_chu=ghi_chu, da_giao_hang=da_giao_hang, loai_chiet_khau=loai_chiet_khau, gia_tri_chiet_khau=gia_tri_chiet_khau, khoa_don=khoa_don)
         return result
     
-    def patch(seft):
+    @swag_from('../docs/swaggers/hd_xuat_kho/patch_lock.yaml')
+    @app.route('/api/hoa-don-xuat-kho/lock', methods=["PATCH"])
+    def patch_lock_xuat():
         data                    = request.get_json()
         hoa_don_id              = data.get("hoa_don_id")
-        khoa_don                = data.get("khoa_don")
+        lock_or_open            = data.get("lock_or_open") 
 
-        result = patch_lock(hoa_don_id=hoa_don_id, khoa_don=khoa_don)
+        result = patch_lock(hoa_don_id=hoa_don_id, khoa_don=lock_or_open)
+        return result
+    
+    @swag_from('../docs/swaggers/hd_xuat_kho/tra_hang.yaml', methods=["PATCH"])
+    @app.route('/api/hoa-don-xuat-kho/tra-hang', methods=["PATCH"])
+    def patch_tra_hang_xuat():
+        data            = request.get_json()
+        
+        hoa_don_id      = data.get('hoa_don_id')
+        ds_san_pham_tra = data.get('ds_san_pham_tra')
+
+        result          = tra_hang(hoa_don_id=hoa_don_id, ds_san_pham_tra = ds_san_pham_tra)
         return result
     
 class ChiTietXuatKhoController(Resource):
