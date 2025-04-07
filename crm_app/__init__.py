@@ -8,7 +8,7 @@ import redis
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
-redis_client = redis.Redis(host='172.23.182.206', port=6379)
+redis_client = redis.Redis(host='35.239.212.215', port=6379)
 
 UPLOAD_FOLDER = 'uploads'
 app.secret_key = '@@#*&Y()P2T@@#*@#$#$%^&*('
