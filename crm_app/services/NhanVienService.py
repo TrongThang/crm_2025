@@ -17,7 +17,6 @@ def get_nhan_vien_by_username(username, chuc_vu_id):
 
     data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, query_join=query_join)
     response_data = data.get("data")
-    print(data)
     ds_quyen = [q.decode('utf-8') for q in get_permission_by_role(chuc_vu_id=chuc_vu_id)]
     
     response_data[0]["quyen"] = json.loads(ds_quyen[0])
@@ -30,7 +29,6 @@ def get_nhan_vien(filter, limit, page, sort, order):
     query_join = text(""" LEFT JOIN chuc_vu ON chuc_vu.id = nhan_vien.chuc_vu_id """)
     
     response_data = excute_select_data(table=get_table, str_get_column=get_attr, filter=filter, limit=limit, page=page, sort=sort, order=order, query_join=query_join)
-    print('response_data:', response_data)
     return get_error_response(ERROR_CODES.SUCCESS, result=response_data)
 
 def post_nhan_vien(username, ho_ten, email, dien_thoai, dia_chi, avatar, chuc_vu_id):

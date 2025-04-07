@@ -36,7 +36,7 @@ def register_routes(app):
         (NhaPhanPhoiController, "/nha-phan-phoi"),
         (NhanVienController, "/nhan-vien"),
         (KhachHangController, "/khach-hang"),
-        (QuyenChucVuController, "/quyen-han"),
+        (QuyenChucVuController, "/quyen"),
         (ChucVuController, "/chuc-vu"),
         (HoaDonNhapKhoController, "/hoa-don-nhap-kho"),
         (KhoController, "/kho"),

@@ -10,7 +10,6 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
-
 def create_consumer (topic):
     consumer = KafkaConsumer(
         topic,

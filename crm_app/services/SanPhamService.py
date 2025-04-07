@@ -23,38 +23,6 @@ from crm_app.services.ChiTietSanPhamService import *
 from crm_app.services.utils import isExistId
 import math 
 
-def to_dict(result_set):
-    result_list = [
-        {
-            "ID": row["ID"],
-            "ten": row["ten"],
-            "upc": row["upc"],
-            "hinh_anh": row["hinh_anh"],
-            "vat": row["vat"],
-            "mo_ta": (
-                row["mo_ta"].decode('utf-8', errors='replace')
-                if isinstance(row["mo_ta"], bytes)
-                else row["mo_ta"]
-            ),
-            "trang_thai": 'active' if row["trang_thai"] == 1 else 'inactive',
-            "loai_san_pham_id": row["loai_san_pham_id"],
-            "loai_san_pham": row["loai_san_pham"],
-            "don_vi_tinh_id": row["don_vi_tinh_id"],
-            "don_vi_tinh": row["don_vi_tinh"],
-            "loai_giam_gia_id": row["loai_giam_gia_id"],
-            "loai_giam_gia": row["loai_giam_gia"],
-            "thoi_gian_bao_hanh_id": row["thoi_gian_bao_hanh_id"],
-            "thoi_gian_bao_hanh": row["thoi_gian_bao_hanh"],
-
-            "CreatedAt": str(row["CreatedAt"]),
-            "UpdatedAt": str(row["UpdatedAt"]),
-            "DeletedAt": str(row["DeletedAt"]) if row["DeletedAt"] else None
-        }
-        for row in result_set
-    ]
-
-    return result_list
-
 def get_san_pham (limit, page, sort, order, filter, get_attr = None, get_table = None):
     if get_attr is None:
         get_attr = text(f"""
@@ -63,8 +31,7 @@ def get_san_pham (limit, page, sort, order, filter, get_attr = None, get_table =
             loai_giam_gia.id as loai_giam_gia_id, loai_giam_gia.ten as loai_giam_gia, thoi_gian_bao_hanh.id as thoi_gian_bao_hanh_id, thoi_gian_bao_hanh.ten as thoi_gian_bao_hanh
         """)
 
-    if get_table is None:
-        get_table = "san_pham"
+    get_table = "san_pham"
 
     query_join = text("""
         LEFT JOIN 

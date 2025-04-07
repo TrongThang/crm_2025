@@ -275,6 +275,7 @@ class MESSAGES(Enum):
     HOA_DON_NHAP_SL_TRA_GREATED_THAN_SO_LUONG_SALE = "Số lượng trả của sản phẩm này lớn hơn số lượng mua!"
     LOCK_STATUS_INVALID = "Giá trị để khoá hoá đơn không hợp lệ!"
     CTHD_NHAP_NOT_FOUND = "Không tồn tại chi tiết hoá nhập!"
+    DELIVERED_STATUS_INVALID = "Trạng thái đã giao hàng không hợp lệ!"
     #CHUC_VU - 11xx
     # CHUC_VU_NOT_FOUND = "Không tìm thấy chức vụ!"
     # CHUC_NANG_NOT_FOUND = "Không tìm thấy chức năng!"

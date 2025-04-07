@@ -62,6 +62,7 @@ def config_data_response(raw_data):
         # Thêm chi tiết hóa đơn vào danh sách
         grouped_data[hoa_don_id]["ds_san_pham_nhap"].append({
             "ID": row["cthd_nhap_kho_id"],
+            "upc": row["upc"],
             "san_pham_id": row["san_pham_id"],
             "ctsp_id": row["ctsp_id"],
             "ctsp_ten": row["ctsp_ten"],
@@ -86,7 +87,7 @@ def get_hoa_don_nhap_kho(filter, limit, page, sort, order):
         so_hoa_don, ma_hoa_don, nha_phan_phoi.ten as nha_phan_phoi, nha_phan_phoi.id as nha_phan_phoi_id, 
         kho.ten as kho, kho.id as kho_id, ngay_nhap, khoa_don,
         tong_tien, tra_truoc, con_lai, ghi_chu,
-        chi_tiet_hoa_don_nhap_kho.id AS cthd_nhap_kho_id, chi_tiet_hoa_don_nhap_kho.san_pham_id, chi_tiet_hoa_don_nhap_kho.ctsp_id, chi_tiet_hoa_don_nhap_kho.sku, chi_tiet_hoa_don_nhap_kho.han_su_dung , chi_tiet_hoa_don_nhap_kho.so_luong, chi_tiet_hoa_don_nhap_kho.don_vi_tinh, chi_tiet_hoa_don_nhap_kho.ke, chi_tiet_hoa_don_nhap_kho.gia_nhap, chi_tiet_hoa_don_nhap_kho.gia_ban, chi_tiet_hoa_don_nhap_kho.thanh_tien, chi_tiet_hoa_don_nhap_kho.chiet_khau, chi_tiet_san_pham.ten_phan_loai as ctsp_ten, chi_tiet_hoa_don_nhap_kho.la_qua_tang, san_pham.ten AS san_pham_ten
+        chi_tiet_hoa_don_nhap_kho.id AS cthd_nhap_kho_id, chi_tiet_hoa_don_nhap_kho.san_pham_id, chi_tiet_hoa_don_nhap_kho.ctsp_id, chi_tiet_hoa_don_nhap_kho.sku, chi_tiet_hoa_don_nhap_kho.han_su_dung , chi_tiet_hoa_don_nhap_kho.so_luong, chi_tiet_hoa_don_nhap_kho.don_vi_tinh, chi_tiet_hoa_don_nhap_kho.ke, chi_tiet_hoa_don_nhap_kho.gia_nhap, chi_tiet_hoa_don_nhap_kho.gia_ban, chi_tiet_hoa_don_nhap_kho.thanh_tien, chi_tiet_hoa_don_nhap_kho.chiet_khau, chi_tiet_san_pham.ten_phan_loai as ctsp_ten, chi_tiet_hoa_don_nhap_kho.la_qua_tang, san_pham.ten AS san_pham_ten, san_pham.upc
     """
     query_join = """
         LEFT JOIN nha_phan_phoi ON hoa_don_nhap_kho.nha_phan_phoi_id = nha_phan_phoi.id
@@ -171,6 +172,7 @@ def post_hoa_don_nhap_kho(nha_phan_phoi_id, kho_id, ngay_nhap, tong_tien, tra_tr
                 "gia_ban": item.get("gia_ban"),
                 "thanh_tien": item.get("thanh_tien")
             }
+            
             producer.send('chi_tiet_hoa_don_nhap_kho', event_data)
             producer.flush()
             print("đã gửi kafka chi tiết hoá đơn nhập kho")
@@ -256,10 +258,8 @@ def add_ct_hoa_don_nhap(upc, ngay_nhap, counter, hoa_don_id, san_pham_id, ctsp_i
 
     return thanh_tien
 
-def put_hoa_don_nhap_kho(hoa_don_id, kho_id, ngay_nhap, tong_tien, tra_truoc, ghi_chu, khoa_don):
+def put_hoa_don_nhap_kho(hoa_don_id, kho_id, ngay_nhap, tra_truoc, ghi_chu, khoa_don):
     try:
-        # if ngay_nhap is False:
-        #     return make_response(get_error_response(ERROR_CODES.DATETIME_INVALID), 400)
         hoa_don = HoaDonNhapKho.query.get(hoa_don_id)
         if not hoa_don:
             return make_response(get_error_response(ERROR_CODES.HOA_DON_NHAP_NOT_FOUND), 400)
@@ -268,11 +268,11 @@ def put_hoa_don_nhap_kho(hoa_don_id, kho_id, ngay_nhap, tong_tien, tra_truoc, gh
         if not isExistId(kho_id, Kho):
             return make_response(get_error_response(ERROR_CODES.KHO_NOT_FOUND), 400)
         
-        error = validate_number(number=tra_truoc)
-        if error:
-            return make_response(get_error_response(ERROR_CODES.NUMBER_INVALID), 400)
+        ngay_nhap = convert_datetime(ngay_nhap)
+        if ngay_nhap is False:
+            return make_response(get_error_response(ERROR_CODES.DATETIME_INVALID), 500)
         
-        error = validate_number(number=tong_tien)
+        error = validate_number(number=tra_truoc)
         if error:
             return make_response(get_error_response(ERROR_CODES.NUMBER_INVALID), 400)
         
@@ -326,7 +326,6 @@ def get_last_record_number_bill(model):
         return int(last_record.so_hoa_don)
     else:
         return 1
-    
 
 def get_counter_detail_product_in_day(ngay_nhap, ctsp_id):
     print('ngay_nhap:', ngay_nhap)

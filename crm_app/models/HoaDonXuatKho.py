@@ -22,6 +22,7 @@ class HoaDonXuatKho(BaseModel):
     loai_chiet_khau = Column(TEXT, default='')
     gia_tri_chiet_khau = Column(TEXT, default='')
     ghi_chu = Column(TEXT, default='')
+    khoa_don = Column(BOOLEAN, default=False)
 
     # chi_tiet_hoa_don_xuat_khos = relationship("ChiTietXuatKho", back_populates="hoa_don_xuat_kho")
     

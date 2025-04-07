@@ -11,7 +11,7 @@ class BaseModel(db.Model):
 
     def soft_delete(self):
         """Đánh dấu bản ghi là đã bị xóa."""
-        print(datetime.now())
+        print('Thời gian xoá:',datetime.now())
         self.deleted_at = datetime.now()
         # db.session.add(self)
         db.session.commit()

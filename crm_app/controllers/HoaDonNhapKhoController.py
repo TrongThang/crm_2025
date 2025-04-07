@@ -10,15 +10,15 @@ class HoaDonNhapKhoController(Resource):
         pass
     @app.route('/api/hoa-don-nhap-kho/cong-no')
     def get_cong_no_nha_phan_phoi():
-            data    = request.args
-            limit   = data.get("limit")
-            page    = data.get("page")
-            sort    = data.get("sort")
-            order   = data.get("order")
-            
-            result  = get_cong_no_nha_phan_phoi(limit=limit, page=page, sort=sort, order=order) 
+        data    = request.args
+        limit   = data.get("limit")
+        page    = data.get("page")
+        sort    = data.get("sort")
+        order   = data.get("order")
+        
+        result  = get_cong_no_nha_phan_phoi(limit=limit, page=page, sort=sort, order=order) 
 
-            return result
+        return result
 
     @swag_from('../docs/swaggers/hd_nhap_kho/get_hd_nhap_kho.yaml')
     def get(self):

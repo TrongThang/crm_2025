@@ -7,6 +7,7 @@ from crm_app import app
 from crm_app.services.ChiTietSanPhamService import *
 class SanPhamController(Resource):
     @swag_from('../docs/swaggers/san_pham/get_san_pham.yaml')
+    # api/san-pham?kw=den&limit=2&page=5
     def get(self):
         data = request.args
         limit = data.get('limit')

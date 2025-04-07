@@ -42,12 +42,11 @@ def getMe(token):
         return jsonify({"message": "Unauthorized"}), 401
     
     try:
-        print('chuẩn bị lấy thông tin nhân viên')
         decoded = jwt.decode(token, app.secret_key, algorithms=["HS256"])
         print('decoded:', decoded)
         g.user = decoded
         chuc_vu_id = (get_role_by_employee(decoded.get("nhan_vien_id"))).decode('utf-8')
-        print("chuc_vu_id:", chuc_vu_id)
+        
         result = get_nhan_vien_by_username(username=decoded.get("username"), chuc_vu_id= chuc_vu_id)
         return result
             

@@ -11,7 +11,7 @@ def process_message(message):
 
     elif topic == "chi_tiet_hoa_don_nhap_kho":
         print(f"🛒 Chi tiết hóa đơn nhập kho: {data}")
-        print('hoa-don-id:', data.get(""))
+        
         # Xử lý cập nhật sản phẩm, kho hàng...
 
 consumer = KafkaConsumer(

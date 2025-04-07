@@ -6,7 +6,7 @@ from crm_app import app
 
 class QuyenChucVuController(Resource):
     @swag_from('../docs/swaggers/quyen_han/get.yaml')
-    @app.route('/api/quyen-han/<int:chuc_vu_id>', methods=['GET'])
+    @app.route('/api/quyen/<int:chuc_vu_id>', methods=['GET'])
     def get_quyen_han(chuc_vu_id):
 
         result = get_quyen_chuc_vu(chuc_vu_id=chuc_vu_id)
@@ -14,8 +14,8 @@ class QuyenChucVuController(Resource):
         return result
     
     @swag_from('../docs/swaggers/quyen_han/patch.yaml')
-    @app.route('/api/quyen-han/modify', methods=["PATCH"])
-    def patch_modify_permission(self):
+    @app.route('/api/quyen/modify', methods=["PATCH"])
+    def patch_modify_permission():
         data = request.get_json()
         chuc_vu_id = data.get('chuc_vu_id')
         list_quyen = data.get('quyen')

@@ -1,0 +1,10 @@
+flask
+bcrypt
+jwt
+flask_sqlalchemy
+pymysql
+kafka
+flasgger
+flask_restful
+flask_cors
+redis
