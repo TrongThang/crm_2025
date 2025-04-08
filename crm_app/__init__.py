@@ -30,7 +30,7 @@ app.secret_key = '@@#*&Y()P2T@@#*@#$#$%^&*('
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db_host = os.getenv('DB_HOST', 'localhost')  # Mặc định là localhost
 db_password = os.getenv('DB_PASSWORD', '')  # Mặc định là không
-db_user = os.getenv('DB_PASSWORD', 'root')  # Mặc định là root
+db_user = os.getenv('DB_USER', 'root')  # Mặc định là root
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/crm_2025?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
