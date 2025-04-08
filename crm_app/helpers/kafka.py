@@ -1,8 +1,8 @@
 from kafka import KafkaProducer, KafkaConsumer
 import os
 import json
-
-bootstrap_servers = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+kafka_host = os.getenv('KAFKA_HOST', 'localhost')  # Mặc định là localhost
+bootstrap_servers = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", f"{kafka_host}:9092")
 
 
 producer = KafkaProducer(
