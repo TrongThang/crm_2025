@@ -3,17 +3,35 @@ from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from flask_cors import CORS
 import os 
-import redis
+import redis # 172.23.182.206
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
-redis_client = redis.Redis(host='35.239.212.215', port=6379)
+import time
+
+def connect_redis():
+    while True:
+        try:
+            redis_host = os.getenv('REDIS_HOST', 'localhost')  # Mặc định là localhost
+            client = redis.Redis(host=redis_host, port=6379)
+            client.ping()
+            print("Connected to Redis")
+            return client
+        except redis.ConnectionError:
+            print("Waiting for Redis...")
+            time.sleep(1)
+
+redis_client = connect_redis()
 
 UPLOAD_FOLDER = 'uploads'
 app.secret_key = '@@#*&Y()P2T@@#*@#$#$%^&*('
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/crm_2025?charset=utf8mb4'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/crm_2025?charset=utf8mb4'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db_host = os.getenv('DB_HOST', 'localhost')  # Mặc định là localhost
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root:@{db_host}/crm_2025?charset=utf8mb4'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 app.config['SWAGGER'] = {
     'title': "API CRM APP 2025",
     'uiversion': 3
