@@ -12,6 +12,7 @@ from crm_app import redis_client
 from crm_app.helpers.redis import get_role_by_employee
 
 REFRESH_SECRET_KEY = "IS@!(*RE(FRESH&*TOKEN))" 
+print("JWT is being imported from:", jwt.__file__)
 
 def create_token(username, nhan_vien_id):
     token = jwt.encode(
