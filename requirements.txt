@@ -1,6 +1,6 @@
 flask
 bcrypt
-jwt
+PyJWT
 flask_sqlalchemy
 pymysql
 kafka-python
