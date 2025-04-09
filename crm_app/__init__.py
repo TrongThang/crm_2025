@@ -45,15 +45,3 @@ if not os.path.exists(UPLOAD_FOLDER):
 swagger = Swagger(app, template_file='main.yaml')
 # swagger = Swagger(app, template_file='./docs/swaggers/main.yaml')
 db = SQLAlchemy(app=app)
-
-def wait_for_db():
-    while True:
-        try:
-            db.session.execute('SELECT 1')
-            print("MySQL connected")
-            break
-        except Exception as e:
-            print(f"Waiting for MySQL: {e}")
-            time.sleep(1)
-
-wait_for_db()
