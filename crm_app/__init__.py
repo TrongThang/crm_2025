@@ -34,6 +34,8 @@ db_user = os.getenv('DB_USER', 'root')  # Mặc định là root
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/crm_2025?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+print("Database URI:", app.config['SQLALCHEMY_DATABASE_URI'])
+
 app.config['SWAGGER'] = {
     'title': "API CRM APP 2025",
     'uiversion': 3
